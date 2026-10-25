@@ -1,0 +1,4 @@
+{
+  "method": "polyhedral_minimax_regret",
+  "lp_solver": "highs"
+}

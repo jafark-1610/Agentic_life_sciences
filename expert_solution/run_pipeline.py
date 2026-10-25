@@ -6,7 +6,7 @@ from expert_solution import analyse
 HERE=Path(__file__).resolve().parent
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--data',type=Path,default=HERE.parent/'task/data');p.add_argument('--output-dir',type=Path,default=HERE/'results');p.add_argument('--config',type=Path,default=HERE/'config/parameters.json');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--data',type=Path,default=HERE.parent/'task/data');p.add_argument('--output-dir',type=Path,default=HERE/'results');p.add_argument('--config',type=Path,default=HERE/'config/parameters.yaml');a=p.parse_args()
  config=json.loads(a.config.read_text());assert config=={'method':'polyhedral_minimax_regret','lp_solver':'highs'}
  start=time.monotonic();subprocess.run([sys.executable,str(a.data/'validate_dataset.py'),'--data',str(a.data)],check=True)
  answer=analyse(a.data);jsonschema.validate(answer,json.loads((a.data/'output_schema.json').read_text()))

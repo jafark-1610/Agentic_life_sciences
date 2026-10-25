@@ -1,6 +1,6 @@
 # Expert pipeline
 
-From the package root, execute the commands in the root README. `run_pipeline.py` accepts `--data`, `--output-dir` and `--config`; defaults resolve relative to its location. `config/parameters.json` selects the polyhedral minimax-regret method and HiGHS solver. The pipeline checks the input, solves the flux and decision problems, validates the full JSON schema and writes the answer, analysis and execution summary.
+From the package root, execute the commands in the root README. `run_pipeline.py` accepts `--data`, `--output-dir` and `--config`; defaults resolve relative to its location. `config/parameters.yaml` selects the polyhedral minimax-regret method and HiGHS solver. The YAML configuration uses JSON-compatible YAML syntax so it can be read without an additional dependency. `config/parameters.json` remains an equivalent compatibility configuration. The pipeline checks the input, solves the flux and decision problems, validates the full JSON schema and writes the answer, analysis and execution summary.
 
 `expert_solution.py` computes every result from staged inputs. `final_answer.json` is the canonical computed output. The grader accepts `--answer`, `--data` and optional `--output`, returns process status 0 for pass and 1 for fail, and reports all scientific groups. `build_rubric_md.py` generates both rubric files; `--check` detects drift. `tests/independent_oracle.py` independently assembles the constraints and computes support values, including primal/dual agreement.
 
