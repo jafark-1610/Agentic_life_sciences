@@ -1,44 +1,59 @@
 # Rubric
 
-Case: ALS_FLUX_RESCUE_001
+Full submitted-code grading: `python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control`.
 
-| Scientific group | Points | Required behavior |
-|---|---:|---|
-| robust_selection | 55 | Safe minimax-regret design within published selection slack, or correct no-rescue status |
-| utility_envelopes | 20 | Every culture and global floor and regret within numeric tolerance |
-| flux_ranges | 15 | Every feasible flux endpoint and width-based identifiability flag correct |
-| adversarial_witness | 10 | Feasible shared state and legal challenger attain selected global regret |
+* course_decision: 40 points; all published fields in that group must pass.
+* counterfactual_predictions: 25 points; all published fields in that group must pass.
+* global_identifiability: 20 points; all published fields in that group must pass.
+* continuous_peak_witness: 10 points; all published fields in that group must pass.
+* measurement_fit: 5 points; all published fields in that group must pass.
 
-All comparisons use supplied public inputs and computed reference. No method requirement. All scientific groups are gates. Any failed scientific group caps at 79. Presentation-only schema errors deduct 5 once, never activate cap. Arrays are matched by IDs or sorted module tuples. Malformed/missing numerical entries fail their group. Each group is all-or-nothing. Code provenance and offline execution are separately reviewed, not inferred from text or automatically scored. No other caps or deductions.
+Any failed scientific group caps at 79; execution/input-dependence failure caps at 79; caps precede presentation and delivery deductions. Pass threshold 80 inclusive. Group credit is all-or-nothing. Presentation deduction applies once and never activates a scientific cap. Delivery deductions total at most 10 including requirements.
 
-Pass threshold: 80 inclusive. Automatic zero: answer missing, unreadable, duplicate-key or nonfinite JSON.
+Submitted pipeline must execute in staged offline isolation and pass both base and physically regenerated data. A failed or non-running pipeline or failed regenerated scientific result prevents acceptance and caps overall score at 79; missing/non-running pipeline is zero.
 
-## Published tolerances
+requirements.txt must exist and list numpy, scipy and jsonschema if imported by submitted code; missing/incorrect declaration deducts 2, within delivery cap 10.
+
+Automatic zeros: absent/unreadable/duplicate-key/nonfinite JSON; missing or non-running pipeline in full submission verification.
+
+Recovery: One-element answer-array wrapper and numeric strings are normalized before scientific evaluation. Extra fields and schema/case metadata slips incur presentation only. No arbitrary identifier renaming is accepted.
+
+Delivery deductions: analysis diagnostic block 5; summary hashes/schema 5; requirements 2; combined cap 10.
+
+## Public tolerances and data-derived dimensions
+
 ```json
 {
-  "numeric_abs": 0.002,
-  "witness_feasibility_abs": 2e-05,
-  "witness_objective_abs": 0.002,
-  "selection_regret_slack": 0.002,
-  "identifiable_width": 0.01
-}
-```
-
-## Dataset dimensions
-```json
-{
-  "cultures": 8,
-  "reactions_per_culture": 32,
-  "feasible_designs": 17
-}
-```
-
-## Graded field contract
-```json
-{
-  "robust_selection": "prompt.md: Decision and Deliverables selection",
-  "utility_envelopes": "prompt.md: Deliverables designs",
-  "flux_ranges": "prompt.md: Deliverables cultures",
-  "adversarial_witness": "prompt.md: Adversarial witness"
+  "tolerances": {
+    "parameter_relative": 0.015,
+    "parameter_absolute": 0.0005,
+    "calibration_absolute": 0.0001,
+    "fit_rmse_max": 2e-05,
+    "efficacy_absolute": 0.002,
+    "peak_absolute": 0.003,
+    "witness_value_absolute": 0.003,
+    "mass_balance_max": 2e-05,
+    "cost_slack": 1e-06
+  },
+  "dimensions": {
+    "chips": 6,
+    "courses": 48,
+    "model_counts": {
+      "chip_01": 2,
+      "chip_02": 2,
+      "chip_03": 2,
+      "chip_04": 2,
+      "chip_05": 2,
+      "chip_06": 2
+    }
+  },
+  "field_contract": {
+    "course_decision": "prompt.md: Counterfactual courses",
+    "counterfactual_predictions": "prompt.md: Counterfactual courses",
+    "global_identifiability": "prompt.md: Measurements and inference target",
+    "continuous_peak_witness": "prompt.md: Counterfactual courses",
+    "measurement_fit": "prompt.md: Measurements and inference target",
+    "delivery": "prompt.md: Diagnostic evidence and Required deliverables"
+  }
 }
 ```

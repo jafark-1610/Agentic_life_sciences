@@ -1,0 +1,171 @@
+{
+  "role": "full_submission_verification",
+  "case_id": "ALS_TMDD_PULSE_002",
+  "seed": 49173,
+  "runtime": {
+    "python": "3.12.14",
+    "dependencies": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "jsonschema": "4.26.0"
+    }
+  },
+  "status": "success",
+  "isolation": {
+    "uid": 1000,
+    "private_paths_denied": true,
+    "task_readable": true,
+    "task_read_only": true,
+    "network_connection_blocked": true,
+    "mounts": {
+      "/task": "read-only task data only",
+      "/solver": "submitted source/config only, writable",
+      "/results": "writable fresh output",
+      "/tmp": "fresh tmpfs",
+      "runtime": "read-only Python prefix and system libraries",
+      "network": "separate namespace, no external interface"
+    },
+    "command": "python /solver/run_pipeline.py --data /task/data --output-dir /results"
+  },
+  "runs": [
+    {
+      "dataset": "base",
+      "exit_code": 0,
+      "elapsed_seconds": 129.159,
+      "grade": {
+        "checks": {
+          "global_identifiability": true,
+          "measurement_fit": true,
+          "counterfactual_predictions": true,
+          "course_decision": true,
+          "continuous_peak_witness": true
+        },
+        "details": {
+          "max_recomputed_fit_rmse": 1.1775205471568263e-12,
+          "max_efficacy_error": 0.0,
+          "max_peak_error": 0.0
+        },
+        "raw_score": 100,
+        "final_score": 100,
+        "scientific_cap_applied": false,
+        "presentation_deduction": 0,
+        "passed": true,
+        "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+        "schema_errors": [],
+        "delivery": {
+          "errors": [],
+          "deduction": 0
+        },
+        "requirements_errors": []
+      },
+      "output_files": [
+        "analysis.md",
+        "final_answer.json",
+        "run_summary.json"
+      ],
+      "stdout_stderr": "{\"status\": \"success\", \"chips\": 6, \"protocols\": 3, \"courses\": 48, \"observations\": 720}\n{\"status\": \"success\", \"chips\": 6, \"courses\": 48, \"seconds\": 127.26}\n"
+    },
+    {
+      "dataset": "regenerated",
+      "exit_code": 0,
+      "elapsed_seconds": 123.782,
+      "grade": {
+        "checks": {
+          "global_identifiability": true,
+          "measurement_fit": true,
+          "counterfactual_predictions": true,
+          "course_decision": true,
+          "continuous_peak_witness": true
+        },
+        "details": {
+          "max_recomputed_fit_rmse": 1.1112727792416836e-12,
+          "max_efficacy_error": 8.430878217779991e-11,
+          "max_peak_error": 1.6774315270140505e-10
+        },
+        "raw_score": 100,
+        "final_score": 100,
+        "scientific_cap_applied": false,
+        "presentation_deduction": 0,
+        "passed": true,
+        "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+        "schema_errors": [],
+        "delivery": {
+          "errors": [],
+          "deduction": 0
+        },
+        "requirements_errors": []
+      },
+      "output_files": [
+        "analysis.md",
+        "final_answer.json",
+        "run_summary.json"
+      ],
+      "stdout_stderr": "{\"status\": \"success\", \"chips\": 6, \"protocols\": 3, \"courses\": 48, \"observations\": 720}\n{\"status\": \"success\", \"chips\": 6, \"courses\": 48, \"seconds\": 122.52}\n"
+    }
+  ],
+  "passed": true,
+  "final_score": 100,
+  "stored_answer_replay_control": {
+    "runs": [
+      {
+        "dataset": "base",
+        "exit_code": 0,
+        "grade": {
+          "checks": {
+            "global_identifiability": true,
+            "measurement_fit": true,
+            "counterfactual_predictions": true,
+            "course_decision": true,
+            "continuous_peak_witness": true
+          },
+          "details": {
+            "max_recomputed_fit_rmse": 1.1775205471568263e-12,
+            "max_efficacy_error": 0.0,
+            "max_peak_error": 0.0
+          },
+          "raw_score": 100,
+          "final_score": 100,
+          "scientific_cap_applied": false,
+          "presentation_deduction": 0,
+          "passed": true,
+          "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+          "schema_errors": [],
+          "delivery": {
+            "errors": [],
+            "deduction": 0
+          }
+        }
+      },
+      {
+        "dataset": "regenerated",
+        "exit_code": 0,
+        "grade": {
+          "checks": {
+            "global_identifiability": false,
+            "measurement_fit": false,
+            "counterfactual_predictions": false,
+            "course_decision": true,
+            "continuous_peak_witness": false
+          },
+          "details": {
+            "max_recomputed_fit_rmse": 0.15471875912833824
+          },
+          "raw_score": 40,
+          "final_score": 40,
+          "scientific_cap_applied": true,
+          "presentation_deduction": 0,
+          "passed": false,
+          "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+          "schema_errors": [],
+          "delivery": {
+            "errors": [],
+            "deduction": 0
+          }
+        }
+      }
+    ],
+    "rejected": true,
+    "hashes_refreshed": true,
+    "isolated_execution": true
+  }
+}

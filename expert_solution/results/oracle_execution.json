@@ -1,0 +1,8 @@
+{
+  "role": "isolated_oracle_execution",
+  "status": "success",
+  "exit_code": 0,
+  "answer_sha256": "f52d538f966bbe867cf9b9be4558fa62ead15f0dedf226f8662a5c71c6c66860",
+  "canonical_byte_identical": true,
+  "command": "python /solver/run_pipeline.py --data /task/data --output-dir /results"
+}

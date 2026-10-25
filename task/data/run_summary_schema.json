@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "required": [
+    "case_id",
+    "status",
+    "input_sha256",
+    "answer_sha256",
+    "elapsed_seconds"
+  ],
+  "properties": {
+    "case_id": {
+      "const": "ALS_TMDD_PULSE_002"
+    },
+    "status": {
+      "const": "success"
+    },
+    "input_sha256": {
+      "type": "string"
+    },
+    "answer_sha256": {
+      "type": "string"
+    },
+    "elapsed_seconds": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

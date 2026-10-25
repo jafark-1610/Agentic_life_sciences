@@ -1,0 +1,46 @@
+[
+  {
+    "id": "low",
+    "horizon": 48.0,
+    "pulses": [
+      [
+        0.0,
+        0.8
+      ]
+    ],
+    "blockade": []
+  },
+  {
+    "id": "high",
+    "horizon": 48.0,
+    "pulses": [
+      [
+        0.0,
+        5.5
+      ]
+    ],
+    "blockade": []
+  },
+  {
+    "id": "wash",
+    "horizon": 48.0,
+    "pulses": [
+      [
+        0.0,
+        3.0
+      ],
+      [
+        10.0,
+        2.0
+      ]
+    ],
+    "blockade": [
+      {
+        "start": 2.0,
+        "end": 8.0,
+        "strength": 12.0,
+        "site": "both"
+      }
+    ]
+  }
+]

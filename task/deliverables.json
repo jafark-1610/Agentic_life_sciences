@@ -1,0 +1,43 @@
+{
+  "case_id": "ALS_TMDD_PULSE_002",
+  "required_deliverables": [
+    {
+      "path": "run_pipeline.py",
+      "role": "executable",
+      "base": "solver_solution"
+    },
+    {
+      "path": "requirements.txt",
+      "role": "dependencies",
+      "base": "solver_solution"
+    },
+    {
+      "path": "final_answer.json",
+      "role": "structured_answer",
+      "base": "output_dir"
+    },
+    {
+      "path": "analysis.md",
+      "role": "diagnostic_evidence",
+      "base": "output_dir"
+    },
+    {
+      "path": "run_summary.json",
+      "role": "execution_record",
+      "base": "output_dir"
+    }
+  ],
+  "command": [
+    "python",
+    "run_pipeline.py",
+    "--data",
+    "../task/data",
+    "--output-dir",
+    "results"
+  ],
+  "schemas": {
+    "final_answer.json": "data/output_schema.json",
+    "run_summary.json": "data/run_summary_schema.json"
+  },
+  "analysis_contract": "prompt.md#diagnostic-evidence"
+}

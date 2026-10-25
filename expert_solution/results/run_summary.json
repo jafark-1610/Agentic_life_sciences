@@ -1,11 +1,7 @@
 {
+  "case_id": "ALS_TMDD_PULSE_002",
   "status": "success",
-  "exit_code": 0,
-  "python": "3.12.14",
-  "elapsed_seconds": 19.25,
-  "answer_sha256": "3cb410b60e46435f8630fd06e02cd1764da8cc116c3dbd4debf67c7351fe9f46",
-  "config": {
-    "method": "polyhedral_minimax_regret",
-    "lp_solver": "highs"
-  }
+  "input_sha256": "7d255620dbbec60f41061cff9ef496748944d8c62015c30de56835da38b20173",
+  "answer_sha256": "f52d538f966bbe867cf9b9be4558fa62ead15f0dedf226f8662a5c71c6c66860",
+  "elapsed_seconds": 127.24482866399921
 }

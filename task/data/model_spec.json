@@ -1,0 +1,101 @@
+{
+  "case_id": "ALS_TMDD_PULSE_002",
+  "schema": "tmdd_pulse/1",
+  "parameters": [
+    "ka",
+    "kel",
+    "vmax",
+    "km",
+    "kon1",
+    "koff1",
+    "q1",
+    "kon2",
+    "koff2",
+    "q2"
+  ],
+  "parameter_bounds": [
+    [
+      0.3,
+      4.0
+    ],
+    [
+      0.04,
+      0.45
+    ],
+    [
+      0.3,
+      2.0
+    ],
+    [
+      0.15,
+      2.5
+    ],
+    [
+      0.2,
+      3.0
+    ],
+    [
+      0.008,
+      0.8
+    ],
+    [
+      0.2,
+      3.0
+    ],
+    [
+      0.2,
+      3.0
+    ],
+    [
+      0.008,
+      0.8
+    ],
+    [
+      0.2,
+      3.0
+    ]
+  ],
+  "channels": [
+    "plasma",
+    "tissue_total"
+  ],
+  "standards": [
+    0.0,
+    0.1,
+    0.4,
+    1.5,
+    4.0,
+    12.0
+  ],
+  "calibration_bounds": {
+    "gain": [
+      0.5,
+      4.0
+    ],
+    "kd": [
+      0.3,
+      8.0
+    ],
+    "offset": [
+      -0.1,
+      0.2
+    ]
+  },
+  "horizon": 36.0,
+  "local_rank_relative_cutoff": 1e-07,
+  "acceptance": {
+    "parameter_relative": 0.015,
+    "parameter_absolute": 0.0005,
+    "calibration_absolute": 0.0001,
+    "fit_rmse_max": 2e-05,
+    "efficacy_absolute": 0.002,
+    "peak_absolute": 0.003,
+    "witness_value_absolute": 0.003,
+    "mass_balance_max": 2e-05,
+    "cost_slack": 1e-06
+  },
+  "decision": {
+    "efficacy_floor": 0.4,
+    "peak_ceiling": 0.93
+  }
+}

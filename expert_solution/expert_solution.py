@@ -1,80 +1,70 @@
-"""Polyhedral flux uncertainty and discrete minimax-regret rescue design."""
+"""Data-driven nonlinear inversion and global observational-equivalence analysis."""
 from pathlib import Path
-import itertools,json
+import json,itertools
 import numpy as np
-from scipy.optimize import linprog
+from scipy.optimize import least_squares
+from mechanism import simulate,NAMES
 
 def load(data):
- data=Path(data)
- return {x:json.loads((data/(x+'.json')).read_text()) for x in ['network','assay_panel','cultures','design_rules','study_metadata']}
+ d=Path(data);return {f:json.loads((d/(f+'.json')).read_text()) for f in ['model_spec','protocols','chips','scenarios','courses']}
+def swap(p):return np.asarray(p)[[0,1,2,3,7,8,9,4,5,6]]
+def calibrate(chip,spec):
+ out={}
+ for c in spec['channels']:
+  rows=[o for o in chip['standards'] if o['channel']==c];x=np.array([o['concentration'] for o in rows]);y=np.array([o['signal'] for o in rows])
+  def residual(p):g,k,b=p;return b+g*x/(k+x)-y
+  r=least_squares(residual,[2.,2.,.03],bounds=tuple(zip(*[spec['calibration_bounds'][k] for k in ['gain','kd','offset']])),gtol=1e-13,xtol=1e-13,ftol=1e-13)
+  out[c]=dict(zip(['gain','kd','offset'],map(float,r.x)))
+ return out
 
-def portfolios(rules):
- groups=sorted({m['group'] for m in rules['modules']})
- lookup={m['id']:m for m in rules['modules']}
- result=[]
- for p in itertools.product(*[[m['id'] for m in rules['modules'] if m['group']==g] for g in groups]):
-  if sum(lookup[i]['cost'] for i in p)>rules['budget']:continue
-  if any(set(pair)<=set(p) for pair in rules['incompatible_pairs']):continue
-  result.append(tuple(sorted(p)))
- return sorted(result)
+def fit_chip(chip,D):
+ spec=D['model_spec'];sensors=calibrate(chip,spec);bounds=np.array(spec['parameter_bounds']);protocols={p['id']:p for p in D['protocols']};rows=chip['observations'];batches=[]
+ for pid,proto in protocols.items():
+  times=sorted({o['time'] for o in rows if o['protocol']==pid});ys=[]
+  for t in times:
+   pair=[]
+   for c in spec['channels']:
+    o=next(o for o in rows if o['protocol']==pid and o['time']==t and o['channel']==c);s=sensors[c];z=o['signal']-s['offset'];pair.append(s['kd']*z/(s['gain']-z))
+   ys.append(pair)
+  batches.append((proto,times,np.array(ys)))
+ def residual(z,precise=False):
+  pieces=[]
+  for proto,times,ys in batches:
+   sim=simulate(np.exp(z),chip['known'],proto,times,precise=precise);Y=sim['states'] if precise else sim
+   pieces.extend((np.column_stack((Y[:,1],Y[:,2]+Y[:,3]+Y[:,4]))-ys).ravel())
+  return np.array(pieces)
+ # Asymmetric deterministic initializations avoid the coincident-pool stationary set.
+ initials=[np.sqrt(bounds[:,0]*bounds[:,1]) for _ in range(2)]
+ initials[0][[4,5,6,7,8,9]]=[.65,.04,1.4,1.3,.3,.7]
+ initials[1][[4,5,6,7,8,9]]=[1.6,.35,.8,.5,.025,1.6]
+ fits=[]
+ for initial in initials:
+  r=least_squares(residual,np.log(initial),bounds=(np.log(bounds[:,0]),np.log(bounds[:,1])),diff_step=2e-4,x_scale='jac',max_nfev=180,gtol=1e-10,xtol=1e-10,ftol=1e-10)
+  fits.append(r)
+ best=min(fits,key=lambda r:np.linalg.norm(r.fun));p=np.exp(best.x)
+ # Refine against the high-accuracy observation operator used for reporting.
+ r=least_squares(lambda z:residual(z,True),np.log(p),bounds=(np.log(bounds[:,0]),np.log(bounds[:,1])),diff_step=1e-4,x_scale='jac',max_nfev=60,gtol=2e-12,xtol=2e-12,ftol=2e-12)
+ p=np.exp(r.x);models=sorted([p.tolist(),swap(p).tolist()],key=lambda x:tuple(x));sv=np.linalg.svd(r.jac,compute_uv=False);rank=int(np.sum(sv>sv[0]*spec['local_rank_relative_cutoff']))
+ rmse=float(np.sqrt(np.mean(r.fun**2)))
+ return {'id':chip['id'],'calibration':sensors,'models':models,'target_capacity_interval':[float(min(p[6],p[9])),float(max(p[6],p[9]))],'target_capacity_point_identified':bool(abs(p[6]-p[9])<=spec['acceptance']['parameter_absolute']),'local_rank':rank,'fit_rmse':rmse}
 
-def polytope(D,culture):
- S=np.asarray(D['network']['stoichiometry'],float);H=np.asarray(D['assay_panel']['H'],float)
- n=S.shape[1];g=len(culture['offset_bounds']);A=[];b=[]
- channels=D['assay_panel']['channels'];groups=D['assay_panel']['offset_groups']
- for o in culture['observations']:
-  j=channels.index(o['channel']);row=np.zeros(n+g);row[:n]=H[j];row[n+groups[j]]=1
-  A.extend([row,-row]);b.extend([o['value']+o['halfwidth'],-o['value']+o['halfwidth']])
- for o in culture['standards']:
-  row=np.zeros(n+g);row[n+o['offset_group']]=1;y=o['observed']-o['known']
-  A.extend([row,-row]);b.extend([y+o['halfwidth'],-y+o['halfwidth']])
- return {'A_ub':np.asarray(A),'b_ub':np.asarray(b),'A_eq':np.pad(S,((0,0),(0,g))),'b_eq':np.zeros(S.shape[0]),'bounds':culture['bounds']+culture['offset_bounds']}
+def predict(D,fits):
+ by={f['id']:f for f in fits};courses=[]
+ for course in D['courses']:
+  cases=[]
+  for chip in D['chips']:
+   for j,p in enumerate(by[chip['id']]['models']):
+    for scenario in D['scenarios']:
+     sim=simulate(p,chip['known'],course,scenario=scenario['multipliers'],precise=True)
+     cases.append({'chip':chip['id'],'model_index':j,'scenario':scenario['id'],'efficacy':sim['efficacy'],'peak_free':sim['peak_free']})
+  courses.append({'id':course['id'],'minimum_efficacy':min(c['efficacy'] for c in cases),'maximum_peak_free':max(c['peak_free'] for c in cases),'cases':cases})
+ return courses
 
-def solve(poly,c):
- r=linprog(c,**poly,method='highs')
- if not r.success:raise ValueError('LP failed: '+r.message)
- return float(r.fun),r.x
-
-def utility(culture,plan):
- r=culture['response'];a=r['baseline_intercept'];c=np.asarray(r['baseline_coefficients'],float).copy()
- for m in plan:
-  a+=r['modules'][m]['intercept'];c+=r['modules'][m]['coefficients']
- return a,np.r_[c,np.zeros(len(culture['offset_bounds']))]
+def select(D,courses):
+ rules=D['model_spec']['decision'];raw={c['id']:c for c in D['courses']};feasible=[c for c in courses if c['minimum_efficacy']>=rules['efficacy_floor'] and c['maximum_peak_free']<=rules['peak_ceiling']]
+ if not feasible:return {'status':'no_qualifying_course','course':None}
+ best=min(feasible,key=lambda c:(raw[c['id']]['cost'],c['id']));return {'status':'selected','course':best['id']}
 
 def analyse(data):
- D=load(data);plans=portfolios(D['design_rules']);n=len(D['network']['reactions']);tol=D['study_metadata']['tie_tolerance']
- answer={'schema':D['study_metadata']['schema'],'case_id':D['study_metadata']['case_id'],'cultures':[],'designs':[]}
- floors=np.full(len(plans),np.inf);regrets=np.zeros(len(plans));witnesses={};polys={}
- for culture in sorted(D['cultures'],key=lambda x:x['id']):
-  cid=culture['id'];poly=polytope(D,culture);polys[cid]=poly
-  ranges=[]
-  for i,name in enumerate(D['network']['reactions']):
-   e=np.zeros(n+4);e[i]=1
-   lo,_=solve(poly,e);neg,_=solve(poly,-e);hi=-neg
-   ranges.append({'reaction':name,'lower':lo,'upper':hi,'identifiable':bool(hi-lo<=D['study_metadata']['acceptance']['identifiable_width'])})
-  # The ordinary least-squares point is deliberately not the decision target.
-  answer['cultures'].append({'id':cid,'flux_ranges':ranges})
-  utility_rows=[utility(culture,p) for p in plans]
-  for i,(a,c) in enumerate(utility_rows):
-   low,_=solve(poly,c);floors[i]=min(floors[i],a+low)
-   for j,(aa,cc) in enumerate(utility_rows):
-    neg,x=solve(poly,c-cc);gap=aa-a-neg
-    if i not in witnesses or gap>regrets[i]+tol:
-     regrets[i]=max(0.,gap)
-     witnesses[i]={'culture':cid,'challenger':list(plans[j]),'flux':x[:n].tolist(),'offsets':x[n:].tolist(),'regret':max(0.,gap)}
-  for i,p in enumerate(plans):
-   # Per-culture floor and regret, in addition to global values, are independently graded.
-   a,c=utility_rows[i];low,_=solve(poly,c)
-   rr=max(aa-a-solve(poly,c-cc)[0] for aa,cc in utility_rows)
-   answer.setdefault('_per_culture',{}).setdefault(i,[]).append({'culture':cid,'floor':a+low,'regret':max(0.,rr)})
- for i,p in enumerate(plans):
-  answer['designs'].append({'modules':list(p),'floor':float(floors[i]),'regret':float(regrets[i]),'by_culture':answer['_per_culture'][i]})
- del answer['_per_culture']
- safe=[i for i in range(len(plans)) if floors[i]>=D['design_rules']['safety_floor']-tol]
- if not safe:
-  answer['selection']={'status':'no_robust_rescue','modules':[],'witness':None}
- else:
-  optimum=min(regrets[i] for i in safe)
-  chosen=min((i for i in safe if regrets[i]<=optimum+tol),key=lambda i:plans[i])
-  answer['selection']={'status':'selected','modules':list(plans[chosen]),'witness':witnesses[chosen]}
- return answer
+ D=load(data);fits=[fit_chip(chip,D) for chip in D['chips']];courses=predict(D,fits)
+ return {'schema':D['model_spec']['schema'],'case_id':D['model_spec']['case_id'],'chips':fits,'courses':courses,'selection':select(D,courses)}

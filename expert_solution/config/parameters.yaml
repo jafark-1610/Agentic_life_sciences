@@ -1,4 +1,12 @@
 {
-  "method": "polyhedral_minimax_regret",
-  "lp_solver": "highs"
+  "case_id": "ALS_TMDD_PULSE_002",
+  "method": "global_equivalence_and_continuous_extrema",
+  "required_deliverables": [
+    "run_pipeline.py",
+    "requirements.txt",
+    "final_answer.json",
+    "analysis.md",
+    "run_summary.json"
+  ],
+  "network": "none"
 }

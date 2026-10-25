@@ -1,75 +1,76 @@
-# ALS_FLUX_RESCUE_001
+# ALS_TMDD_PULSE_002: Chemical-site identifiability and pulse-course design
 
-## Rescue design under isotope-constrained metabolic uncertainty
+Six synthetic organ-chip systems were studied using three dosing protocols and two optical readouts. Infer the full set of observationally compatible mechanistic models, then choose a course meeting an efficacy floor and a continuous-time safety limit in every chip, compatible model and specified physiological scenario. These are simulated mechanistic experiments, not patient measurements or clinical recommendations.
 
-Eight independent synthetic cultures represent steady-state metabolic stress environments. Choose one three-module rescue design to use unchanged in every environment. Your deliverable is a robust decision and a quantitative account of what the assays do and do not identify. These are simulated microbial methods-study data, not clinical observations.
+## State model
 
-### Supplied model and measurements
+For each chip, use seven states initially zero: depot amount D, circulating amount C, free tissue amount F, amounts B1 and B2 bound to chemical sites 1 and 2, cumulative target occupancy A, and eliminated amount L. Compartments have equal normalized reference volume; amounts and concentrations share the declared numerical units. Time is hours. Positive parameters, in `model_spec.json` order, are ka, kel, vmax, km, kon1, koff1, q1, kon2, koff2, q2. Site capacities are q1 and q2. Three known rate constants are supplied per chip. Equations between input events are
 
-All inputs are in `data/`. `network.json` defines the order of 32 irreversible flux coordinates, nine intracellular balance equations, and their stoichiometric matrix S. A feasible flux v satisfies S v = 0 and the culture-specific inclusive lower and upper capacity bounds in `cultures.json`. Carbon pools are carbon-equivalent amounts; cofactor rows have their stated model units. Carbon losses at PDH represent unmodelled external CO2. The network is the complete stipulated reduced model; do not replace its coefficients using external pathways or atom maps.
+    transport = vmax*C/(km+C)
+    net1 = kon1*f1(t)*F*(q1-B1) - koff1*B1
+    net2 = kon2*f2(t)*F*(q2-B2) - koff2*B2
+    D'  = -ka*D
+    C'  = ka*D - kel*C - transport + kreturn*F
+    F'  = transport - kreturn*F - net1 - net2
+    B1' = net1 - kint1*B1
+    B2' = net2 - kint2*B2
+    A'  = B2/q2
+    L'  = kel*C + kint1*B1 + kint2*B2.
 
-`assay_panel.json` supplies channels, a calibrated matrix H, and a group index for every channel. The assay is a linear tracer-flux fingerprint. It is NOT a raw isotope mass-isotopomer distribution and its entries need not be positive or sum to one. In culture s, channel j has a reported value y_j and a deterministic absolute error bound e_j:
+At each pulse time, add its dose to D and change no other state. Blockade windows are half-open [start,end). For each site i, fi(t) is 1/(1 + sum of strengths of active windows that affect site i). A `both` window affects both sites; a `site1` window affects chemical site 1 only. At a window boundary states remain continuous. Blockade changes association rates, not dissociation, internalization or capacity. Every experiment and candidate course starts from zero, not from the final state of another experiment. The conservation identity is D+C+F+B1+B2+L = cumulative administered amount.
 
-    abs(H[j] @ v + b[group[j]] - y_j) <= e_j.
+## Measurements and inference target
 
-The four additive calibration offsets b are unknown. All channels in the same group share that offset. Every supplied standard with known level k, observed level z, group g and halfwidth e imposes
+`chips.json` provides standards and observations. The true concentration represented by channel `plasma` is C; by `tissue_total`, F+B1+B2. Each chip and channel has its own unknown gain g, sensor kd h and offset o:
 
-    abs(k + b[g] - z) <= e.
+    signal = o + g*x/(h+x).
 
-The explicit offset bounds also apply. Each culture has its own four offsets; no offset is shared across cultures. Every observation and standard participates. Bounds represent simultaneous admissible errors, not standard deviations or independent statistical confidence intervals. No probability distribution over feasible states is specified. Denote the JOINT feasible flux/offset set in culture s by P_s. Uncertainty in b must be retained when projecting P_s onto flux space.
+`standards` supplies x and signal for calibration. The signal generator rounds to 12 decimal places; there is no additional stochastic noise. Treat calibration and mechanistic estimation as deterministic inverse problems with the parameter bounds in `model_spec.json`. Do not mistake sensor kd for the mechanistic transport km. Protocols are in `protocols.json`. All observations, including the wash protocol, participate.
 
-### Intervention model
+The inference target is the complete set of globally optimal parameter vectors for the joint calibration and concentration-observation fit, not merely a full-rank local optimum. Rounding and numerical integration errors are covered by the published acceptance tolerances. A fitted vector's local differential rank does not define global identification. Chemical-site labels carry physical meaning for the candidate interventions and target efficacy. Do not impose an unreported rate-ordering constraint on chemical names. Return every distinct compatible mechanistic solution within the declared parameter domain; do not repeat numerically equivalent solutions. The supplied deterministic experiments identify isolated solutions rather than a continuous parameter family. Distinct solutions differ beyond the published parameter comparison tolerances. The fitted sensor parameters are shared across protocols of their chip.
 
-`design_rules.json` lists module IDs, groups, costs, a budget and incompatible pairs. A legal design contains exactly one module from each of the uptake, redox and export groups, costs no more than the budget, and contains neither full incompatible pair. Module order has no scientific meaning. The design menu is the complete set satisfying these rules; it must be enumerated from the input.
+For each chip report `calibration`, `models` (one ten-number vector per distinct solution in model-spec order), `target_capacity_interval` (minimum and maximum q2 across that set), and `target_capacity_point_identified` (true iff its interval width is at most `parameter_absolute`). Report `local_rank` of the concentration-observation Jacobian at any one returned solution: rows are protocol/time/channel observations, columns are derivatives with respect to log parameters, rank uses singular values greater than largest singular value times `local_rank_relative_cutoff`. Sensor parameters are held at their fitted values for this rank. Report `fit_rmse`, the root mean square concentration residual over all protocol/time/channel rows for that same solution. Invert the fitted sensor response to obtain observed concentrations. Any compatible solution gives the same residual/rank within tolerances. Parameter bounds, units and all numerical thresholds are public in `model_spec.json`.
 
-Each culture supplies a baseline intercept and flux coefficients, plus an intercept and coefficient vector for each module. Under the stipulated first-order response model, rescue utility is
+## Counterfactual courses
 
-    U_s(p,v) = baseline_intercept_s + baseline_coefficients_s @ v
-               + sum(intercept_s[m] + coefficients_s[m] @ v for m in p).
+`courses.json` is the entire candidate menu. Each record gives its pulses, blockade, horizon and resource cost. `scenarios.json` supplies physiological multipliers. Multiply each named mechanistic parameter before simulating the course. The same multiplier applies to that chemical parameter in each compatible model; it does not relabel sites or refit observations. Known constants are unchanged. In particular, a scenario may act differently on the two chemical sites. All scenarios apply to all chips.
 
-Utility is dimensionless, can be negative, and depends on flux but not directly on assay offsets. These response coefficients are exact for this task. They describe utility conditional on the pre-intervention steady state. They do not alter S, H, capacities or P_s, and no post-intervention flux-balance reoptimization is requested.
+For every chip, compatible model and scenario, compute
 
-### Decision
+    efficacy = A(horizon)/horizon
+    peak_free = max_{0 <= t <= horizon} F(t).
 
-For every legal design p, determine the lower utility envelope and maximum opportunity regret:
+Efficacy is target-site-2 occupancy averaged continuously over time. Safety is a continuous-time extremum, including event endpoints, not the largest sampled assay value. For each course give all case rows and their minimum efficacy and maximum peak_free. Acceptable courses satisfy both `decision.efficacy_floor` and `decision.peak_ceiling` simultaneously in every case. Select a qualifying course of minimum supplied cost. Any qualifying course within `cost_slack` of the smallest qualifying cost is accepted; course-ID lexical order is only a convenient tie convention. If no course qualifies, report `no_qualifying_course` with null course and witness.
 
-    L_s(p) = min_{(v,b) in P_s} U_s(p,v)
-    R_s(p) = max_{(v,b) in P_s} [max_{q legal} U_s(q,v) - U_s(p,v)]
-    L(p)   = min_s L_s(p)
-    R(p)   = max_s R_s(p).
+For a selected course supply a `peak_witness`: chip ID, zero-based index into that chip's returned models, scenario ID, time, and free-tissue value. At that time the physical model must attain the course's maximum peak_free within `witness_value_absolute`. Any near-maximizing time is valid; tied peaks need not use a fixed time. There is no requirement to reproduce an evaluator's particular peak-time coordinate.
 
-Both terms in a utility difference refer to the SAME feasible flux state in the SAME culture. The challenger q ranges over the entire legal menu, including designs whose global safety floor fails. A safety-ineligible challenger remains a legitimate per-state opportunity benchmark. There is no distribution or averaging over cultures. The empty design is not in the menu. R_s is nonnegative because q=p is allowed.
+## Required deliverables
 
-A design is safe when L(p) >= `design_rules.json -> safety_floor`. Select a safe design minimizing R(p). If none is safe, return `no_robust_rescue`. When exact minimizers tie within `study_metadata.json -> tie_tolerance`, a lexicographically smallest sorted module tuple is a convenient canonical choice. Evaluation accepts any legal safe design within `selection_regret_slack` of the smallest achievable safe regret; that numerical slack does not relax the safety rule. Safety comparisons use `tie_tolerance` only for floating-point equality at the boundary.
+The machine-readable contract is `../task/deliverables.json`. Work in `solver_solution/`, with read-only `task/` as a sibling. Supply these five files:
 
-### Deliverables
+1. `solver_solution/run_pipeline.py`
+2. `solver_solution/requirements.txt`
+3. `solver_solution/results/final_answer.json`
+4. `solver_solution/results/analysis.md`
+5. `solver_solution/results/run_summary.json`
 
-Create `run_pipeline.py` and `requirements.txt` in your working `solver_solution/` directory, with `task/` as a read-only sibling. The pipeline must derive its outputs from the staged inputs at runtime, work offline, and accept arbitrary paths:
-
-    python run_pipeline.py --data ../task/data --output-dir results
-
-Write `results/final_answer.json` and `results/analysis.md`. Do not read evaluator files, use external data, embed calculated outputs in executable code, or install packages during execution. Python 3.11+, numpy, scipy and jsonschema are available. Additional packages are unnecessary. Validate the input before analysis:
+Run the validator and the pipeline offline with Python 3.11+ and numpy, scipy and jsonschema available:
 
     python ../task/data/validate_dataset.py --data ../task/data
+    python run_pipeline.py --data ../task/data --output-dir results
 
-`data/output_schema.json` defines the complete output structure. Output strict finite JSON with no duplicate keys. Each supplied culture, reaction and legal design must occur exactly once; every design must contain each culture once. Match by IDs, not input or output row order. Module arrays can be in any order.
+Accept arbitrary input and output paths. Treat task files as immutable. Do not download data, install packages, read evaluator/private paths, copy stored answers, or embed outputs in code. The evaluator reruns the submitted pipeline against a regenerated, physically consistent instrument dataset; results must depend on the actual staged observations. Module helpers in your submission directory are permitted. Submit regular files and directories; symbolic links are not supported by the isolated staging contract. Both initial and regenerated executions use the same model and command contract.
 
-Top-level fields:
+`final_answer.json` follows `data/output_schema.json`. All IDs and model indices must resolve; include each chip, course and chip/model/scenario case exactly once. Order is irrelevant except parameter-vector order and the meaning of model_index. Use finite JSON numbers, never NaN or infinity.
 
-* `schema`: `flux_rescue/1`.
-* `case_id`: `ALS_FLUX_RESCUE_001`.
-* `cultures`: eight objects, each with `id` and `flux_ranges`. For every reaction, report `reaction`, `lower`, `upper`, and `identifiable`. The endpoints are the minimum and maximum of that individual flux over P_s. `identifiable` is true exactly when upper minus lower is at most `acceptance.identifiable_width`. This is an operational width criterion, not a claim of statistical confidence or of point identification. Do not constrain one reaction to the midpoint of another's range.
-* `designs`: one object for EVERY legal design, with `modules`, global `floor` L(p), global `regret` R(p), and `by_culture`. Each `by_culture` object has `culture`, `floor` L_s(p), and `regret` R_s(p). Report unrounded scientific quantities; JSON decimal precision is otherwise unrestricted.
-* `selection`: `status`, `modules`, `witness`. With a selected design, status is `selected`, modules are that design, and witness is the object described next. With no safe design, status is `no_robust_rescue`, modules is an empty list and witness is null.
+`run_summary.json` follows `data/run_summary_schema.json`. Record case_id, status `success`, input_sha256, answer_sha256 and nonnegative elapsed_seconds. Compute input_sha256 as SHA-256 of UTF-8 `json.dumps({filename: sha256(raw_file_bytes) for filename in data_manifest['files']}, sort_keys=True, separators=(',', ':'))`. Hash only the files named in the manifest, by basename. answer_sha256 hashes the exact written final_answer.json bytes. A self-written success status is not proof of execution; rerun evidence is generated independently.
 
-### Adversarial witness
+## Diagnostic evidence
 
-For a selected design p, supply one feasible state and legal challenger attaining R(p), not a separate state per utility term. `witness` contains `culture` (a supplied ID), `challenger` (three module IDs), `flux` (32 numbers in network reaction order), `offsets` (four numbers in offset-group order), and `regret` (the utility gap U_s(q,v)-U_s(p,v) at that state). Degenerate optima may use any feasible maximizing state. Do not report a box corner assembled from marginal flux ranges unless it is jointly feasible.
+`analysis.md` must contain exactly one fenced `json` block whose object contains `case_id`, `chip_diagnostics`, `selection`, `decision_limits`, and `limitations`. `chip_diagnostics` lists each chip's id, fit_rmse, local_rank, target_capacity_interval and target_capacity_point_identified from the computed answer. `selection` repeats the computed selection object, including witness. `decision_limits` repeats the two public decision limits. `limitations` must list these applicable model qualifications: `synthetic_reduced_system`, `rounded_deterministic_signals`, `counterfactuals_depend_on_model`. Other narrative is optional and not numerically scored. This structured evidence, the summary hashes, and the actual runtime are checked by the executable verifier; they are not deferred to an unspecified prose review.
 
-### Acceptance and analysis
+## Acceptance and presentation
 
-All acceptance tolerances are published in `study_metadata.json -> acceptance`. Every flux endpoint and every per-culture and global floor/regret must agree with the scientific optimum within `numeric_abs`, an absolute tolerance. Identifiability flags must match the width definition. Selection must satisfy the decision criterion above. Witness inequalities, bounds and mass balance must hold within `witness_feasibility_abs`; both its actual utility gap and reported regret must attain the selected design's true global regret within `witness_objective_abs` (the reported regret must also agree with its recomputed gap within `numeric_abs`). Every scientific group is required for acceptance. Any computational method producing these quantities is accepted.
+All reported compatible parameter solutions are checked modulo their output ordering against the full model-equivalence set, using `parameter_absolute + parameter_relative*abs(expected)` per coordinate. Sensor coefficients use calibration_absolute. Every returned model must fit the observations with RMSE no greater than fit_rmse_max; the reported fit_rmse for the representative solution must agree with recomputation within fit_rmse_max. Interval endpoints use parameter tolerances, flags are Boolean, and local_rank must agree with the stated rank definition. Every efficacy and continuous peak uses its respective absolute tolerance. Witness time must be in the course horizon and its recomputed value must match the reported value and global maximum within witness_value_absolute. Conservation error in independent forward checks must not exceed mass_balance_max.
 
-In `analysis.md`, describe your uncertainty representation, how the design menu and decision were computed, at least one numerical identifiability diagnostic and one numerical decision diagnostic, and the biological/model limitations. Claims based only on fitting residuals do not establish that a decision is robust. This report and runtime provenance are reviewed alongside the numerical rubric; the executable numeric grader does not award points for unverified textual claims.
-
-Missing or malformed numerical content fails the corresponding scientific group. An unreadable answer, nonfinite JSON or duplicate-key JSON cannot be graded and receives zero. Other schema deviations incur one presentation deduction and leave scientific calculations unchanged where the fields remain readable. No required numerical field is silently inferred from an explanation. Presentation alone does not create a scientific failure.
+Every scientific group and the input-dependent rerun are required for acceptance. A single readable answer object inside a one-element array is unwrapped for all scientific calculations; numeric strings in numeric fields are recovered. These, extra fields, and incorrect/missing schema metadata incur one presentation deduction, never a scientific failure by themselves. Structural omissions of scientific fields fail their group. Unreadable, absent, duplicate-key or nonfinite JSON receives zero. Missing report/summary/dependency artifacts receive the published delivery deductions; a missing or non-running pipeline cannot satisfy execution. The grader documents numeric scoring separately; no unlisted formatting rule affects science.

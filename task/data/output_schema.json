@@ -3,283 +3,231 @@
   "required": [
     "schema",
     "case_id",
-    "cultures",
-    "designs",
+    "chips",
+    "courses",
     "selection"
   ],
   "properties": {
     "schema": {
-      "const": "flux_rescue/1"
+      "const": "tmdd_pulse/1"
     },
     "case_id": {
-      "const": "ALS_FLUX_RESCUE_001"
+      "const": "ALS_TMDD_PULSE_002"
     },
-    "cultures": {
+    "chips": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
           "id",
-          "flux_ranges"
+          "calibration",
+          "models",
+          "target_capacity_interval",
+          "target_capacity_point_identified",
+          "local_rank",
+          "fit_rmse"
         ],
         "properties": {
           "id": {
-            "type": "string",
-            "enum": [
-              "culture_01",
-              "culture_02",
-              "culture_03",
-              "culture_04",
-              "culture_05",
-              "culture_06",
-              "culture_07",
-              "culture_08"
-            ]
+            "type": "string"
           },
-          "flux_ranges": {
+          "calibration": {
+            "type": "object",
+            "required": [
+              "plasma",
+              "tissue_total"
+            ],
+            "properties": {
+              "plasma": {
+                "type": "object",
+                "required": [
+                  "gain",
+                  "kd",
+                  "offset"
+                ],
+                "properties": {
+                  "gain": {
+                    "type": "number"
+                  },
+                  "kd": {
+                    "type": "number"
+                  },
+                  "offset": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "tissue_total": {
+                "type": "object",
+                "required": [
+                  "gain",
+                  "kd",
+                  "offset"
+                ],
+                "properties": {
+                  "gain": {
+                    "type": "number"
+                  },
+                  "kd": {
+                    "type": "number"
+                  },
+                  "offset": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "models": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [
-                "reaction",
-                "lower",
-                "upper",
-                "identifiable"
-              ],
-              "properties": {
-                "reaction": {
-                  "type": "string",
-                  "enum": [
-                    "glucose_import",
-                    "hexose_activation",
-                    "glycolysis",
-                    "PDH",
-                    "TCA_entry",
-                    "precursor_synthesis",
-                    "anaplerosis",
-                    "biomass",
-                    "acetate_export",
-                    "lactate_export",
-                    "ethanol_export",
-                    "respiration",
-                    "ATP_maintenance",
-                    "oxidative_PPP",
-                    "malic_shunt",
-                    "transhydrogenase",
-                    "NADPH_drain",
-                    "hexose_precursor",
-                    "precursor_export",
-                    "alternative_respiration",
-                    "triose_import",
-                    "pyruvate_import",
-                    "isomerase_forward",
-                    "isomerase_reverse",
-                    "precursor_exchange_forward",
-                    "precursor_exchange_reverse",
-                    "reverse_transhydrogenase",
-                    "NADPH_respiration",
-                    "glyoxylate_shunt",
-                    "TCA_export",
-                    "pyruvate_export",
-                    "photophosphorylation"
-                  ]
-                },
-                "lower": {
-                  "type": "number"
-                },
-                "upper": {
-                  "type": "number"
-                },
-                "identifiable": {
-                  "type": "boolean"
-                }
+              "type": "array",
+              "items": {
+                "type": "number"
               },
-              "additionalProperties": false
+              "minItems": 10,
+              "maxItems": 10
             },
-            "minItems": 32,
-            "maxItems": 32
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "target_capacity_interval": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "target_capacity_point_identified": {
+            "type": "boolean"
+          },
+          "local_rank": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "fit_rmse": {
+            "type": "number",
+            "minimum": 0
           }
         },
         "additionalProperties": false
       },
-      "minItems": 8,
-      "maxItems": 8
+      "minItems": 6,
+      "maxItems": 6
     },
-    "designs": {
+    "courses": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
-          "modules",
-          "floor",
-          "regret",
-          "by_culture"
+          "id",
+          "minimum_efficacy",
+          "maximum_peak_free",
+          "cases"
         ],
         "properties": {
-          "modules": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "uptake_1",
-                "uptake_2",
-                "uptake_3",
-                "redox_1",
-                "redox_2",
-                "redox_3",
-                "export_1",
-                "export_2",
-                "export_3"
-              ]
-            },
-            "minItems": 3,
-            "maxItems": 3,
-            "uniqueItems": true
+          "id": {
+            "type": "string"
           },
-          "floor": {
+          "minimum_efficacy": {
             "type": "number"
           },
-          "regret": {
-            "type": "number",
-            "minimum": 0
+          "maximum_peak_free": {
+            "type": "number"
           },
-          "by_culture": {
+          "cases": {
             "type": "array",
             "items": {
               "type": "object",
               "required": [
-                "culture",
-                "floor",
-                "regret"
+                "chip",
+                "model_index",
+                "scenario",
+                "efficacy",
+                "peak_free"
               ],
               "properties": {
-                "culture": {
-                  "type": "string",
-                  "enum": [
-                    "culture_01",
-                    "culture_02",
-                    "culture_03",
-                    "culture_04",
-                    "culture_05",
-                    "culture_06",
-                    "culture_07",
-                    "culture_08"
-                  ]
+                "chip": {
+                  "type": "string"
                 },
-                "floor": {
+                "model_index": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "scenario": {
+                  "type": "string"
+                },
+                "efficacy": {
                   "type": "number"
                 },
-                "regret": {
-                  "type": "number",
-                  "minimum": 0
+                "peak_free": {
+                  "type": "number"
                 }
               },
               "additionalProperties": false
             },
-            "minItems": 8,
-            "maxItems": 8
+            "minItems": 1
           }
         },
         "additionalProperties": false
-      }
+      },
+      "minItems": 48,
+      "maxItems": 48
     },
     "selection": {
       "type": "object",
       "required": [
         "status",
-        "modules",
-        "witness"
+        "course",
+        "peak_witness"
       ],
       "properties": {
         "status": {
           "enum": [
             "selected",
-            "no_robust_rescue"
+            "no_qualifying_course"
           ]
         },
-        "modules": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "uptake_1",
-              "uptake_2",
-              "uptake_3",
-              "redox_1",
-              "redox_2",
-              "redox_3",
-              "export_1",
-              "export_2",
-              "export_3"
-            ]
-          },
-          "uniqueItems": true,
-          "maxItems": 3
+        "course": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
-        "witness": {
+        "peak_witness": {
           "anyOf": [
             {
               "type": "object",
               "required": [
-                "culture",
-                "challenger",
-                "flux",
-                "offsets",
-                "regret"
+                "chip",
+                "model_index",
+                "scenario",
+                "time",
+                "value"
               ],
               "properties": {
-                "culture": {
-                  "type": "string",
-                  "enum": [
-                    "culture_01",
-                    "culture_02",
-                    "culture_03",
-                    "culture_04",
-                    "culture_05",
-                    "culture_06",
-                    "culture_07",
-                    "culture_08"
-                  ]
+                "chip": {
+                  "type": "string"
                 },
-                "challenger": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "uptake_1",
-                      "uptake_2",
-                      "uptake_3",
-                      "redox_1",
-                      "redox_2",
-                      "redox_3",
-                      "export_1",
-                      "export_2",
-                      "export_3"
-                    ]
-                  },
-                  "minItems": 3,
-                  "maxItems": 3,
-                  "uniqueItems": true
-                },
-                "flux": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 32,
-                  "maxItems": 32
-                },
-                "offsets": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 4,
-                  "maxItems": 4
-                },
-                "regret": {
-                  "type": "number",
+                "model_index": {
+                  "type": "integer",
                   "minimum": 0
+                },
+                "scenario": {
+                  "type": "string"
+                },
+                "time": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 36
+                },
+                "value": {
+                  "type": "number"
                 }
               },
               "additionalProperties": false

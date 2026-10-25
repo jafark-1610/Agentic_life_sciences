@@ -1,124 +1,91 @@
-# Metabolic rescue design analysis
+# Computed disposition and course diagnostics
 
-The feasible state includes 32 fluxes and four shared calibration offsets per culture. Linear programs retain mass balance, capacities, standards and all assay intervals jointly. Each flux range is optimized directly. Utility differences use the same feasible state for both designs. Global regret maximizes over culture, challenger and feasible state. Safety is a separate worst-case utility constraint.
-
-## Decision
+```json
 {
-  "selection": [
-    "export_1",
-    "redox_2",
-    "uptake_1"
+  "case_id": "ALS_TMDD_PULSE_002",
+  "chip_diagnostics": [
+    {
+      "id": "chip_01",
+      "fit_rmse": 1.061386466807673e-12,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.9456830872693298,
+        1.4300683691699096
+      ],
+      "target_capacity_point_identified": false
+    },
+    {
+      "id": "chip_02",
+      "fit_rmse": 9.44035956834048e-13,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.8936508616397215,
+        1.0438487801044531
+      ],
+      "target_capacity_point_identified": false
+    },
+    {
+      "id": "chip_03",
+      "fit_rmse": 9.093204353759814e-13,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.9963780668226313,
+        1.2523155859671788
+      ],
+      "target_capacity_point_identified": false
+    },
+    {
+      "id": "chip_04",
+      "fit_rmse": 8.802671867985405e-13,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.9184727661260207,
+        1.178070532611281
+      ],
+      "target_capacity_point_identified": false
+    },
+    {
+      "id": "chip_05",
+      "fit_rmse": 1.1775205471568263e-12,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.7343778261520598,
+        1.4190189672915738
+      ],
+      "target_capacity_point_identified": false
+    },
+    {
+      "id": "chip_06",
+      "fit_rmse": 8.460505040136185e-13,
+      "local_rank": 10,
+      "target_capacity_interval": [
+        0.7413013558377961,
+        1.0555904903563182
+      ],
+      "target_capacity_point_identified": false
+    }
   ],
-  "metrics": {
-    "modules": [
-      "export_1",
-      "redox_2",
-      "uptake_1"
-    ],
-    "floor": 10.597267369187339,
-    "regret": 31.388735674682387,
-    "by_culture": [
-      {
-        "culture": "culture_01",
-        "floor": 32.049108845138974,
-        "regret": 29.20629411607236
-      },
-      {
-        "culture": "culture_02",
-        "floor": 24.328232272429158,
-        "regret": 31.388735674682387
-      },
-      {
-        "culture": "culture_03",
-        "floor": 24.367938396947178,
-        "regret": 8.653414189383351
-      },
-      {
-        "culture": "culture_04",
-        "floor": 10.597267369187339,
-        "regret": 24.124813942167734
-      },
-      {
-        "culture": "culture_05",
-        "floor": 28.554881464017257,
-        "regret": 16.038917835145476
-      },
-      {
-        "culture": "culture_06",
-        "floor": 15.899149274366785,
-        "regret": 30.25949820604933
-      },
-      {
-        "culture": "culture_07",
-        "floor": 40.22876377975173,
-        "regret": 4.727777619367494
-      },
-      {
-        "culture": "culture_08",
-        "floor": 19.300319865464154,
-        "regret": 18.738320709269203
-      }
-    ]
-  }
+  "selection": {
+    "status": "selected",
+    "course": "course_020",
+    "peak_witness": {
+      "chip": "chip_06",
+      "model_index": 0,
+      "scenario": "slow_clearance",
+      "time": 14.560684948378686,
+      "value": 0.8858309708365496
+    }
+  },
+  "decision_limits": {
+    "efficacy_floor": 0.4,
+    "peak_ceiling": 0.93
+  },
+  "limitations": [
+    "synthetic_reduced_system",
+    "rounded_deterministic_signals",
+    "counterfactuals_depend_on_model"
+  ]
 }
+```
 
-## Identifiability
-The forward and reverse exchange cycles admit large gross-flux ranges. Their interval widths, not a point estimate or assay residual, determine the reported identifiability flags.
-
-## Computed diagnostics
-All endpoints are LP optima. The selected witness is a feasible adversarial state attaining the global regret. Separate unit tests verify primal feasibility and support-function duality; the robustness workflow tests ordering, units, calibration translation and scientifically wrong decision procedures.
-
-## Limitations
-This is a synthetic reduced carbon-equivalent network with stipulated affine response surfaces. The assay is a calibrated linear tracer fingerprint, not a nonlinear raw mass-isotopomer model. Bounded errors are deterministic admissibility bounds, not confidence intervals. Findings do not establish clinical efficacy.
-
-## Numerical identifiability diagnostics
-[
-  {
-    "culture": "culture_01",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_02",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_03",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_04",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_05",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_06",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_07",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  },
-  {
-    "culture": "culture_08",
-    "identifiable_count": 2,
-    "widest_interval": 16.0,
-    "widest_reaction": "hexose_activation"
-  }
-]
+The parameter solutions describe chemical-site identities without imposing a rate ordering. Counterfactuals cover every returned solution and specified scenario. Continuous free-tissue peaks are optimized between input events. The model is synthetic and is not a clinical dosing recommendation.

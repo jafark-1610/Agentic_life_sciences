@@ -1,60 +1,76 @@
-import unittest,sys,json,copy,subprocess,tempfile,hashlib
+import unittest,json,copy,sys,tempfile,subprocess,hashlib
 from pathlib import Path
-import numpy as np
-import jsonschema
-HERE=Path(__file__).resolve().parents[1];ROOT=HERE.parent;DATA=ROOT/'task/data';sys.path.insert(0,str(HERE));sys.path.insert(0,str(Path(__file__).resolve().parent))
-from score_rubric import grade,read_strict
-from expert_solution import analyse,load,portfolios,polytope,solve,utility
-from independent_oracle import verify,menu,inputs
+import numpy as np,jsonschema
+HERE=Path(__file__).resolve().parents[1];DATA=HERE.parent/'task/data';sys.path.insert(0,str(HERE));sys.path.insert(0,str(Path(__file__).resolve().parent))
+from score_rubric import science,strict_read,delivery
+from expert_solution import load,swap
+from mechanism import simulate
+from artifacts import write_outputs,add_witness,input_hash
+from independent_oracle import integrate
 
-class PackageTests(unittest.TestCase):
+class Tests(unittest.TestCase):
  @classmethod
- def setUpClass(cls):
-  cls.answer=read_strict(HERE/'final_answer.json');cls.D=load(DATA)
- def test_01_dataset_validation(self):
-  subprocess.run([sys.executable,str(DATA/'validate_dataset.py')],check=True,capture_output=True)
- def test_02_full_schema(self):
-  jsonschema.validate(self.answer,read_strict(DATA/'output_schema.json'))
- def test_03_oracle_recomputes_answer(self):
-  actual=analyse(DATA);self.assertTrue(grade(actual,DATA)['passed'])
- def test_04_independent_science(self):
-  result=verify(DATA,self.answer);self.assertGreater(result['lp_checks'],1000);self.assertLess(result['maximum_absolute_error'],1e-6)
- def test_05_canonical_grades_full(self):
-  r=grade(self.answer,DATA);self.assertEqual(r['final_score'],100);self.assertFalse(r['scientific_cap_applied'])
- def test_06_wrong_safe_decision_fails(self):
-  a=copy.deepcopy(self.answer);winner=a['selection']['modules'];other=next(d for d in a['designs'] if d['modules']!=winner and d['floor']>=self.D['design_rules']['safety_floor']);a['selection']['modules']=other['modules'];self.assertFalse(grade(a,DATA)['checks']['robust_selection'])
- def test_07_infeasible_witness_fails(self):
-  a=copy.deepcopy(self.answer);a['selection']['witness']['flux'][0]+=1;self.assertFalse(grade(a,DATA)['checks']['adversarial_witness'])
- def test_08_wrong_regret_fails(self):
-  a=copy.deepcopy(self.answer);a['designs'][0]['by_culture'][0]['regret']+=.1;self.assertFalse(grade(a,DATA)['passed'])
- def test_09_wrong_identifiability_fails(self):
-  a=copy.deepcopy(self.answer);r=a['cultures'][0]['flux_ranges'][0];r['identifiable']=not r['identifiable'];self.assertFalse(grade(a,DATA)['checks']['flux_ranges'])
- def test_10_format_only_does_not_cap(self):
-  a=copy.deepcopy(self.answer);a['schema']='wrong';r=grade(a,DATA);self.assertEqual(r['final_score'],95);self.assertFalse(r['scientific_cap_applied'])
- def test_11_order_invariance(self):
-  a=copy.deepcopy(self.answer);a['cultures'].reverse();a['designs'].reverse()
-  for d in a['designs']:d['modules'].reverse();d['by_culture'].reverse()
-  a['selection']['modules'].reverse();a['selection']['witness']['challenger'].reverse();self.assertEqual(grade(a,DATA)['final_score'],100)
- def test_12_malformed_and_duplicate_ids_fail(self):
-  a=copy.deepcopy(self.answer);a['cultures'][0]['flux_ranges'][0]['lower']=None;self.assertFalse(grade(a,DATA)['passed'])
-  a=copy.deepcopy(self.answer);a['designs'].append(a['designs'][0]);self.assertFalse(grade(a,DATA)['checks']['utility_envelopes'])
- def test_13_strict_json(self):
-  for text in ['{"x":1,"x":2}','{"x":NaN}','{"x":1e999}']:
-   with tempfile.TemporaryDirectory() as t:
-    p=Path(t)/'a.json';p.write_text(text)
-    with self.assertRaises(ValueError):read_strict(p)
- def test_14_generated_rubrics_current(self):
-  subprocess.run([sys.executable,str(HERE/'build_rubric_md.py'),'--check'],check=True)
- def test_15_independent_menu(self):
-  self.assertEqual(portfolios(self.D['design_rules']),menu(self.D['design_rules']))
- def test_16_unobservable_cycle(self):
-  c=self.D['cultures'][0];P=polytope(self.D,c);x=solve(P,np.zeros(36))[1];z=np.zeros(36);z[22:24]=1
-  self.assertLess(np.max(np.abs(P['A_eq']@z)),1e-12);self.assertLess(np.max(np.abs(P['A_ub']@z)),1e-12)
- def test_17_missing_group_is_not_pass(self):
-  a=copy.deepcopy(self.answer);del a['selection'];r=grade(a,DATA);self.assertFalse(r['passed']);self.assertTrue(r['scientific_cap_applied'])
- def test_18_manifest_corruption_rejected(self):
-  import shutil
-  with tempfile.TemporaryDirectory() as t:
-   d=Path(t)/'data';shutil.copytree(DATA,d);(d/'cultures.json').write_text('[]')
-   r=subprocess.run([sys.executable,str(d/'validate_dataset.py')],capture_output=True);self.assertNotEqual(r.returncode,0)
+ def setUpClass(cls):cls.answer=strict_read(HERE/'final_answer.json');cls.D=load(DATA)
+ def test_01_schema(self):jsonschema.validate(self.answer,strict_read(DATA/'output_schema.json'))
+ def test_02_data_integrity(self):subprocess.run([sys.executable,str(DATA/'validate_dataset.py')],check=True,capture_output=True)
+ def test_03_canonical_full_science(self):self.assertEqual(science(self.answer,DATA)['final_score'],100)
+ def test_04_wrapper_recovers_all_science(self):
+  r=science([self.answer],DATA);self.assertEqual(r['final_score'],95);self.assertTrue(all(r['checks'].values()));self.assertFalse(r['scientific_cap_applied'])
+ def test_05_extra_field_presentation_only(self):
+  a=copy.deepcopy(self.answer);a['note']='extra';r=science(a,DATA);self.assertEqual(r['final_score'],95);self.assertFalse(r['scientific_cap_applied'])
+ def test_06_order_and_model_index_invariance(self):
+  a=copy.deepcopy(self.answer);a['chips'].reverse();a['courses'].reverse()
+  for c in a['chips']:c['models'].reverse()
+  for c in a['courses']:
+   c['cases'].reverse()
+   for x in c['cases']:x['model_index']=1-x['model_index']
+  w=a['selection']['peak_witness'];w['model_index']=1-w['model_index'];self.assertEqual(science(a,DATA)['final_score'],100)
+ def test_07_missing_compatible_model_rejected(self):
+  a=copy.deepcopy(self.answer);a['chips'][0]['models'].pop();self.assertFalse(science(a,DATA)['checks']['global_identifiability'])
+ def test_08_global_claim_not_local_rank(self):
+  a=copy.deepcopy(self.answer);a['chips'][0]['target_capacity_point_identified']=True;self.assertFalse(science(a,DATA)['checks']['global_identifiability'])
+ def test_09_wrong_case_prediction_rejected(self):
+  a=copy.deepcopy(self.answer);a['courses'][0]['cases'][0]['peak_free']+=.1;self.assertFalse(science(a,DATA)['checks']['counterfactual_predictions'])
+ def test_10_wrong_peak_time_rejected(self):
+  a=copy.deepcopy(self.answer);a['selection']['peak_witness']['time']=0.;self.assertFalse(science(a,DATA)['checks']['continuous_peak_witness'])
+ def test_11_wrong_course_rejected(self):
+  a=copy.deepcopy(self.answer);a['selection']['course']='course_001';self.assertFalse(science(a,DATA)['checks']['course_decision'])
+ def test_12_diagnostic_artifact_and_hashes(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   write_outputs(self.answer,self.D,DATA,tmp,0.);self.assertEqual(delivery(self.answer,DATA,tmp)['deduction'],0)
+   p=Path(tmp)/'run_summary.json';x=json.loads(p.read_text());x['input_sha256']='bad';p.write_text(json.dumps(x));self.assertEqual(delivery(self.answer,DATA,tmp)['deduction'],5)
+ def test_13_unsupported_report_fails(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   write_outputs(self.answer,self.D,DATA,tmp,0.);(Path(tmp)/'analysis.md').write_text('Everything passed');self.assertEqual(delivery(self.answer,DATA,tmp)['deduction'],5)
+ def test_13b_report_order_and_rounding_accepted(self):
+  import re
+  with tempfile.TemporaryDirectory() as tmp:
+   write_outputs(self.answer,self.D,DATA,tmp,0.);p=Path(tmp)/'analysis.md';text=p.read_text();block=re.search(r'```json\s*\n(.*?)\n```',text,re.S);e=json.loads(block[1]);e['chip_diagnostics'].reverse();e['limitations'].reverse()
+   for c in e['chip_diagnostics']:c['fit_rmse']=round(c['fit_rmse'],8)
+   p.write_text('```json\n'+json.dumps(e)+'\n```\n');self.assertEqual(delivery(self.answer,DATA,tmp)['deduction'],0)
+ def test_14_numeric_strings_recovered(self):
+  a=copy.deepcopy(self.answer);a['chips'][0]['models'][0]=list(map(str,a['chips'][0]['models'][0]));r=science(a,DATA);self.assertEqual(r['final_score'],95)
+ def test_15_strict_json_errors(self):
+  for text in ['{"x":NaN}','{"x":1e999}','{"x":1,"x":2}']:
+   with tempfile.TemporaryDirectory() as tmp:
+    p=Path(tmp)/'x';p.write_text(text)
+    with self.assertRaises(ValueError):strict_read(p)
+ def test_16_independent_forward_equations(self):
+  chip=self.D['chips'][0];p=self.answer['chips'][0]['models'][0];course=self.D['courses'][19]
+  for scenario in self.D['scenarios']:
+   x=simulate(p,chip['known'],course,scenario=scenario['multipliers'],precise=True);y=integrate(p,chip['known'],course,scenario['multipliers'])
+   self.assertLess(abs(x['efficacy']-y['efficacy']),1e-6);self.assertLess(abs(x['peak_free']-y['peak_free']),1e-6);self.assertLess(y['mass_error'],1e-8)
+ def test_17_observational_symmetry(self):
+  chip=self.D['chips'][0];p=self.answer['chips'][0]['models'][0]
+  for proto in self.D['protocols']:
+   t=[.1,1.,4.,12.,36.];x=simulate(p,chip['known'],proto,t,precise=True)['states'];y=simulate(swap(p),chip['known'],proto,t,precise=True)['states']
+   self.assertLess(np.max(abs(x[:,1]-y[:,1])),1e-7);self.assertLess(np.max(abs(x[:,2:5].sum(axis=1)-y[:,2:5].sum(axis=1))),1e-7)
+ def test_18_counterfactual_breaks_symmetry(self):
+  chip=self.D['chips'][0];p=self.answer['chips'][0]['models'][0];course=self.D['courses'][19]
+  x=simulate(p,chip['known'],course,precise=True);y=simulate(swap(p),chip['known'],course,precise=True);self.assertGreater(abs(x['efficacy']-y['efficacy']),.01)
+ def test_19_rubric_regeneration(self):subprocess.run([sys.executable,str(HERE/'build_rubric_md.py'),'--check'],check=True)
+ def test_20_deliverable_slots_explicit(self):
+  m=strict_read(HERE.parent/'task/deliverables.json');self.assertEqual({r['path'] for r in m['required_deliverables']},{'run_pipeline.py','requirements.txt','final_answer.json','analysis.md','run_summary.json'})
+ def test_21_empty_scientific_content_is_not_format(self):
+  a=copy.deepcopy(self.answer);a['chips']=[];self.assertFalse(science(a,DATA)['passed'])
 if __name__=='__main__':unittest.main()

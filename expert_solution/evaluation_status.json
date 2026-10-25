@@ -1,10 +1,11 @@
 {
+  "case_id": "ALS_TMDD_PULSE_002",
   "status": "awaiting_external_evaluation",
   "platform_structure_validation": "not_run",
-  "platform_python_validation": "not_run",
+  "platform_script_validation": "not_run",
   "platform_oracle": "not_run",
-  "preliminary_prompt_only_model_attempts": "not_run: no solver execution service available in this environment",
-  "five_independent_model_runs": [
+  "prompt_only_model_pilots": "not_run: no model evaluation service available",
+  "model_runs": [
     {
       "run": 1,
       "status": "not_run",
@@ -37,14 +38,6 @@
     }
   ],
   "autoreview_score": null,
-  "difficulty_eligibility": "unconfirmed; requires at least three genuine failures among five frozen runs",
-  "requested_target": "one pass with four failures, or all five failures with platform autoreview score 5",
-  "note": "Local oracle, scientific tests, and baseline procedures are not platform model runs. No autoreview or model outcome is asserted.",
-  "infrastructure_corrections": [
-    {
-      "change": "Added required expert_solution/config/parameters.yaml and made it the default configuration path; retained equivalent JSON configuration.",
-      "scope": "Package/configuration compatibility only; scientific inputs, calculations, canonical answer and grading policy unchanged.",
-      "validation": "Local oracle and numerical grading revalidated; platform validation must be rerun."
-    }
-  ]
+  "qualification": "unconfirmed until five frozen runs are independently graded; at least three must fail",
+  "evidence_policy": "Local numerical baselines and oracle checks are not counted as model trials. Platform isolation must be checked against the supplied verifier contract."
 }

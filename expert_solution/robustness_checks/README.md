@@ -1,5 +1,5 @@
-# Robustness pipeline
+# Robustness workflow
 
-Run `python expert_solution/robustness_checks/run_checks.py` from the package root. Checks independently rebuild support functions after reversing input order, shifting the calibration origin and rescaling the flux unit. They also compare feasible-point and marginal-box decision procedures to the joint-state decision, verify gate margins and reject scientifically changed answers with the frozen grader. Results distinguish validation checks from baseline procedures; they are not solver model trials.
+Run `python expert_solution/robustness_checks/run_checks.py` from the package root. The workflow checks hidden generation-truth recovery, an independent Radau implementation and finer peak search, reference gate margins, and presentation recovery. It evaluates single-fit and sampled-peak methods as scientific baselines. Those baselines are not model trials. Result files record observations, criteria and pass/fail status.
 
-Each record includes status, observed values and a criterion. A failed baseline is expected when its scientific method does not satisfy the decision problem; a failed invariance or oracle check requires investigation.
+Runtime isolation, regenerated-measurement input dependence, and stored-answer replay are exercised separately by `verify_submission.py --replay-control`. Their completed evidence is stored in `../results/verification_result.json` when generated.

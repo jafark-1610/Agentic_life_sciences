@@ -1,35 +1,60 @@
 {
-  "case_id": "ALS_FLUX_RESCUE_001",
-  "version": "1.0",
+  "full_grading_command": "python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control",
+  "case_id": "ALS_TMDD_PULSE_002",
   "weights": {
-    "robust_selection": 55,
-    "utility_envelopes": 20,
-    "flux_ranges": 15,
-    "adversarial_witness": 10
+    "course_decision": 40,
+    "counterfactual_predictions": 25,
+    "global_identifiability": 20,
+    "continuous_peak_witness": 10,
+    "measurement_fit": 5
   },
   "pass_threshold": 80,
   "scientific_failure_cap": 79,
   "presentation_deduction": 5,
-  "automatic_zero": [
-    "answer missing, unreadable, duplicate-key or nonfinite JSON"
-  ],
-  "acceptance": {
-    "numeric_abs": 0.002,
-    "witness_feasibility_abs": 2e-05,
-    "witness_objective_abs": 0.002,
-    "selection_regret_slack": 0.002,
-    "identifiable_width": 0.01
+  "delivery_deductions": {
+    "analysis_diagnostics": 5,
+    "summary_hashes": 5,
+    "total_cap": 10
   },
-  "counts": {
-    "cultures": 8,
-    "reactions_per_culture": 32,
-    "feasible_designs": 17
+  "execution_gate": "Submitted pipeline must execute in staged offline isolation and pass both base and physically regenerated data. A failed or non-running pipeline or failed regenerated scientific result prevents acceptance and caps overall score at 79; missing/non-running pipeline is zero.",
+  "requirements_rule": "requirements.txt must exist and list numpy, scipy and jsonschema if imported by submitted code; missing/incorrect declaration deducts 2, within delivery cap 10.",
+  "automatic_zero": [
+    "absent/unreadable/duplicate-key/nonfinite JSON",
+    "missing or non-running pipeline in full submission verification"
+  ],
+  "tolerances": {
+    "parameter_relative": 0.015,
+    "parameter_absolute": 0.0005,
+    "calibration_absolute": 0.0001,
+    "fit_rmse_max": 2e-05,
+    "efficacy_absolute": 0.002,
+    "peak_absolute": 0.003,
+    "witness_value_absolute": 0.003,
+    "mass_balance_max": 2e-05,
+    "cost_slack": 1e-06
+  },
+  "dimensions": {
+    "chips": 6,
+    "courses": 48,
+    "model_counts": {
+      "chip_01": 2,
+      "chip_02": 2,
+      "chip_03": 2,
+      "chip_04": 2,
+      "chip_05": 2,
+      "chip_06": 2
+    }
   },
   "field_contract": {
-    "robust_selection": "prompt.md: Decision and Deliverables selection",
-    "utility_envelopes": "prompt.md: Deliverables designs",
-    "flux_ranges": "prompt.md: Deliverables cultures",
-    "adversarial_witness": "prompt.md: Adversarial witness"
+    "course_decision": "prompt.md: Counterfactual courses",
+    "counterfactual_predictions": "prompt.md: Counterfactual courses",
+    "global_identifiability": "prompt.md: Measurements and inference target",
+    "continuous_peak_witness": "prompt.md: Counterfactual courses",
+    "measurement_fit": "prompt.md: Measurements and inference target",
+    "delivery": "prompt.md: Diagnostic evidence and Required deliverables"
   },
-  "policy": "All comparisons use supplied public inputs and computed reference. No method requirement. All scientific groups are gates. Any failed scientific group caps at 79. Presentation-only schema errors deduct 5 once, never activate cap. Arrays are matched by IDs or sorted module tuples. Malformed/missing numerical entries fail their group. Each group is all-or-nothing. Code provenance and offline execution are separately reviewed, not inferred from text or automatically scored. No other caps or deductions."
+  "ordering": "IDs and model-equivalence mappings; all array orderings accepted with consistent model indices",
+  "caps": "Any failed scientific group caps at 79; execution/input-dependence failure caps at 79; caps precede presentation and delivery deductions. Pass threshold 80 inclusive. Group credit is all-or-nothing. Presentation deduction applies once and never activates a scientific cap. Delivery deductions total at most 10 including requirements.",
+  "recovery": "One-element answer-array wrapper and numeric strings are normalized before scientific evaluation. Extra fields and schema/case metadata slips incur presentation only. No arbitrary identifier renaming is accepted.",
+  "ground_truth": "Computed canonical inverse solution, verified against independent integration and generation truth; no typed answer values in rubric."
 }

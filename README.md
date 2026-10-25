@@ -1,19 +1,25 @@
-# Metabolic rescue design pipeline
+# Chemical-site disposition and pulse-course pipeline
 
-The pipeline combines steady-state flux constraints, bounded tracer fingerprints and shared calibration standards to select a safe intervention with minimum worst-case opportunity regret.
+The pipeline calibrates saturable optical sensors, infers all compatible two-site disposition models, and evaluates pulse courses across physiological scenarios. The decision combines target-site occupancy with continuous free-tissue safety limits.
 
-`task/` contains the problem, data, schema and input validator. `expert_solution/` contains the executable analysis, canonical output, grader, generated rubric, tests and robustness workflow.
+`task/` contains the problem, scientific inputs, schemas and explicit deliverable contract. `expert_solution/` contains the inverse analysis, canonical output, numerical grader, independent checks and isolated submission verifier.
 
-Run from the package root with Python 3.11 or newer and numpy, scipy and jsonschema available:
+From the package root, with Python 3.11+, numpy, scipy and jsonschema available:
 
 ```bash
 python task/data/validate_dataset.py
 python expert_solution/run_pipeline.py --data task/data --output-dir expert_solution/results
-python expert_solution/score_rubric.py --answer expert_solution/results/final_answer.json
+python expert_solution/score_rubric.py --answer expert_solution/results/final_answer.json --artifacts-dir expert_solution/results
 python -m unittest discover -s expert_solution/tests -v
 python expert_solution/robustness_checks/run_checks.py
 python expert_solution/build_rubric_md.py --check
 python expert_solution/freeze_package.py --check
 ```
 
-The analysis writes `final_answer.json`, `analysis.md` and `run_summary.json` in the requested output directory. The grader accepts an answer path and optionally an output path for its numerical evaluation. Tests verify scientific calculations, schema behavior, grading and integrity. The robustness workflow exercises changes of ordering, calibration origin and flux units, and evaluates alternative decision procedures.
+For full runtime and input-dependence verification on a Linux host with bubblewrap and unprivileged namespaces:
+
+```bash
+python expert_solution/verify_submission.py --solver expert_solution --data task/data --output-dir /tmp/tmdd-verification --replay-control
+```
+
+A solver submission can replace the `--solver` path. The verifier stages public task files, hides evaluator files, disables network access, reruns the submitted code on original and physically regenerated measurements, and assesses structured diagnostic evidence and output hashes. An unavailable namespace capability is reported as blocked rather than a scientific failure. The numerical JSON grader reports its limited scope separately from complete submission verification.

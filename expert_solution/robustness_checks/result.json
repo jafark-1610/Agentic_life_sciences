@@ -1,206 +1,83 @@
 {
-  "role": "local_scientific_robustness_not_model_runs",
+  "role": "local_scientific_robustness_not_model_trials",
   "status": "pass",
   "checks": [
     {
-      "check": "independent_matrix_assembly_and_dual_certificates",
+      "check": "generation_truth_recovery",
       "observed": {
-        "lp_checks": 2824,
-        "maximum_absolute_error": 7.602807272633072e-13,
-        "primal_dual_tolerance": 1e-07
+        "max_relative_parameter_error": 7.064455687100235e-10
       },
-      "criterion": "every computed endpoint and regret agrees within 1e-6",
+      "criterion": "parameter error < 0.001, providing more than threefold tolerance clearance",
       "status": "pass"
     },
     {
-      "check": "input_order",
+      "check": "independent_radau_and_peak_refinement",
       "observed": {
-        "max_support_difference": 0.0
+        "max_efficacy_difference": 1.706900176756676e-10,
+        "max_peak_difference": 6.800904284176568e-11,
+        "max_mass_error": 7.647216193618078e-13
       },
-      "criterion": "maximum support difference < 1e-6",
+      "criterion": "all differences < 1e-6 and mass error < 1e-7",
       "status": "pass"
     },
     {
-      "check": "calibration_origin",
+      "check": "single_compatible_fit_baseline",
       "observed": {
-        "max_support_difference": 6.039613253960852e-14
-      },
-      "criterion": "maximum support difference < 1e-6",
-      "status": "pass"
-    },
-    {
-      "check": "flux_unit",
-      "observed": {
-        "max_support_difference": 1.1546319456101628e-13
-      },
-      "criterion": "maximum support difference < 1e-6",
-      "status": "pass"
-    },
-    {
-      "check": "baseline_feasible_point",
-      "observed": {
-        "selected": [
-          "export_1",
-          "redox_2",
-          "uptake_2"
-        ],
-        "accepted_decision": false,
-        "true_metrics": {
-          "modules": [
-            "export_1",
-            "redox_2",
-            "uptake_2"
-          ],
-          "floor": 4.168509357835962,
-          "regret": 35.8118115360507,
-          "by_culture": [
-            {
-              "culture": "culture_01",
-              "floor": 36.78908408783111,
-              "regret": 23.91361863440171
-            },
-            {
-              "culture": "culture_02",
-              "floor": 32.2566168725828,
-              "regret": 30.73369970579848
-            },
-            {
-              "culture": "culture_03",
-              "floor": 23.22083146140605,
-              "regret": 11.031269267271997
-            },
-            {
-              "culture": "culture_04",
-              "floor": 4.168509357835962,
-              "regret": 35.8118115360507
-            },
-            {
-              "culture": "culture_05",
-              "floor": 28.130571040563467,
-              "regret": 17.948241754995138
-            },
-            {
-              "culture": "culture_06",
-              "floor": 18.36756366130713,
-              "regret": 28.221266932870996
-            },
-            {
-              "culture": "culture_07",
-              "floor": 26.872930232509137,
-              "regret": 17.908843035758345
-            },
-            {
-              "culture": "culture_08",
-              "floor": 20.73482955890777,
-              "regret": 20.99607792104667
-            }
-          ]
+        "selected": "course_013",
+        "score": 15,
+        "checks": {
+          "global_identifiability": false,
+          "measurement_fit": true,
+          "counterfactual_predictions": false,
+          "course_decision": false,
+          "continuous_peak_witness": true
         },
-        "point_max_constraint_violation": 1.4210854715202004e-14
+        "all_calibration_and_observation_fits_pass": true
       },
-      "criterion": "baseline must fail the scientific decision to demonstrate a meaningful method distinction",
+      "criterion": "single-fit baseline must be rejected despite passing observation-fit checks",
       "status": "pass"
     },
     {
-      "check": "baseline_marginal_box",
+      "check": "sampled_peak_baseline",
       "observed": {
-        "selected": [],
-        "accepted_decision": false,
-        "true_metrics": null,
-        "point_max_constraint_violation": null
-      },
-      "criterion": "baseline must fail the scientific decision to demonstrate a meaningful method distinction",
-      "status": "pass"
-    },
-    {
-      "check": "baseline_maximin_utility",
-      "observed": {
-        "selected": [
-          "export_3",
-          "redox_2",
-          "uptake_1"
-        ],
-        "accepted_decision": false,
-        "true_metrics": {
-          "modules": [
-            "export_3",
-            "redox_2",
-            "uptake_1"
-          ],
-          "floor": 12.125632137507395,
-          "regret": 40.583107935507506,
-          "by_culture": [
-            {
-              "culture": "culture_01",
-              "floor": 27.68413649915762,
-              "regret": 33.10941308538708
-            },
-            {
-              "culture": "culture_02",
-              "floor": 18.745121397982743,
-              "regret": 40.583107935507506
-            },
-            {
-              "culture": "culture_03",
-              "floor": 23.074151002534613,
-              "regret": 18.643143887730282
-            },
-            {
-              "culture": "culture_04",
-              "floor": 20.329985578112222,
-              "regret": 0.0
-            },
-            {
-              "culture": "culture_05",
-              "floor": 27.48031534914835,
-              "regret": 16.968207219455827
-            },
-            {
-              "culture": "culture_06",
-              "floor": 32.74515141380324,
-              "regret": 6.597886786568029
-            },
-            {
-              "culture": "culture_07",
-              "floor": 27.802370974396485,
-              "regret": 14.136094419811428
-            },
-            {
-              "culture": "culture_08",
-              "floor": 12.125632137507395,
-              "regret": 31.50781885286954
-            }
-          ]
+        "selected": "course_020",
+        "score": 75,
+        "checks": {
+          "global_identifiability": true,
+          "measurement_fit": true,
+          "counterfactual_predictions": false,
+          "course_decision": true,
+          "continuous_peak_witness": true
         },
-        "point_max_constraint_violation": null
+        "max_peak_error": 0.5322596855441022
       },
-      "criterion": "baseline must fail the scientific decision to demonstrate a meaningful method distinction",
+      "criterion": "sampled maxima must fail continuous counterfactual criteria",
       "status": "pass"
     },
     {
       "check": "reference_gate_clearance",
       "observed": {
-        "witness_violation": 2.4424906541753444e-15,
-        "decision_margin": 8.95150069686165,
-        "safety_margin": 1.597267369187339,
-        "witness_tolerance": 2e-05,
-        "selection_slack": 0.002
+        "efficacy_margin": 0.02297977935383555,
+        "peak_margin": 0.044169029163450446,
+        "efficacy_tolerance": 0.002,
+        "peak_tolerance": 0.003
       },
-      "criterion": "witness error <= tolerance/3 and decision and safety margins >= 3*selection slack",
+      "criterion": "selected course clears efficacy and safety gates by >= 3 numerical tolerances",
       "status": "pass"
     },
     {
-      "check": "changed_witness_rejected",
+      "check": "readable_wrapper_recovery",
       "observed": {
-        "score": 79,
+        "score": 95,
         "checks": {
-          "flux_ranges": true,
-          "utility_envelopes": true,
-          "robust_selection": true,
-          "adversarial_witness": false
+          "global_identifiability": true,
+          "measurement_fit": true,
+          "counterfactual_predictions": true,
+          "course_decision": true,
+          "continuous_peak_witness": true
         }
       },
-      "criterion": "infeasible witness fails scientific gate",
+      "criterion": "wrapper is scientific pass with one presentation deduction",
       "status": "pass"
     }
   ]

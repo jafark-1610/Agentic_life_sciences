@@ -1,8 +1,7 @@
 {
-  "origin": "Entirely synthetic methods-study data",
+  "origin": "Original synthetic organ-chip experiments, no human or animal measurements",
+  "seed": 618420,
+  "method": "Numerical integration of the declared mass-conserving two-site disposition system; sensor signals rounded to 12 decimals",
   "generator": "expert_solution/source_archive/generate_data.py",
-  "seed": 814729,
-  "measurement_model": "Bounded-error calibrated linear tracer-flux fingerprints with shared additive offset per group; not raw isotope mass-isotopomer distributions.",
-  "biological_scope": "Reduced carbon-equivalent network; reaction stoichiometry is the complete stipulated model, with no claim of atom mapping or clinical validity.",
-  "rights": "Original generated data released under CC0-1.0. Code released under MIT; see SOURCE_RIGHTS.md."
+  "rights": "CC0-1.0 for synthetic fixtures; MIT for code; see SOURCE_RIGHTS.md"
 }
