@@ -1,7 +1,7 @@
 {
   "case_id": "ALS_PAIRED_IMMUNITY_003",
   "status": "candidate_awaiting_external_pilots",
-  "platform_structure_validation": "not_run",
+  "platform_structure_validation": "failed on prior upload: missing expert_solution/results/run_summary.json; corrected package pending external revalidation",
   "platform_oracle": "not_run",
   "platform_output_ingestion": "unverified; package requests only the three existing slots",
   "prompt_only_model_pilots": "not_run: no model-evaluation service callable here",
@@ -47,5 +47,11 @@
     "source_hashes_verified": true,
     "exact_cross_runtime_mismatches": 0,
     "three_slot_contract_validated": true
-  }
+  },
+  "infrastructure_corrections": [
+    {
+      "change": "Added required expert_solution/results/run_summary.json using the existing verified execution record and added preflight checks for its presence and hashes.",
+      "scope": "Expert package metadata only; scientific data, solver three-slot contract, algorithm and grading unchanged."
+    }
+  ]
 }

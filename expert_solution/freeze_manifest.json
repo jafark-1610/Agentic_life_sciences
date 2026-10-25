@@ -18,7 +18,7 @@
     "task/prompt.md": "2c66935675dcbfbedfeaac8d04d5cbc7076c95e6585c6f15f9eba2781fe2e8d3",
     "task/required_deliverables.json": "9c0e4f857756d02d6f0327ae0aba513fc70d7b69961b50555827fe1e096d90e2",
     "task/requirements.txt": "cc3fca89e8a9232393062d811138f3e6b01c089612cefa250294d45e549fd2df",
-    "expert_solution/README.md": "5fb289ec9fa8a6e444967c284a24aba755e5cea614950512e1f9f2ca15b2f569",
+    "expert_solution/README.md": "9114d5369d5bc0137cd8c200968d9b1d32ae560301731310299f6da36f009cd8",
     "expert_solution/analysis.md": "55bd07faf928eefc7e6883b838a857636cf9277fb1f1d7196e3d1f8f75257c83",
     "expert_solution/artifacts.py": "48d512ae68e8e3724edd8a93a78ed91c3de4e699ec0a738a10c218d33d84eb6a",
     "expert_solution/build_rubric_md.py": "ecc37f84df049ad0a2911430cb9f551efaaec81b65792a49bf29385cf988c4ef",
@@ -38,7 +38,7 @@
     "expert_solution/source_archive/generate_data.py": "97b4137fd0334d748c6878e8d5b8cd888ce7af074475262bc310c9e1e2955158",
     "expert_solution/tests/independent_oracle.py": "79b511016b4a2003f4eca35f5792320b28691106d4f5ff1f7b97e9e18aac048b",
     "expert_solution/tests/test_package.py": "d0fdf93f57845a9e2f9a7a66c13ed3a46101a23639e13a11622ff26619d8fc5f",
-    "expert_solution/validate_package.py": "b2f9dbc8613bda337d58ab6e3dbe71511c425bf0383c552d125e8b7a787cfd2d",
+    "expert_solution/validate_package.py": "f50e9b81014e1b783706fd27e821d9d3d76f244a2296fbad06eff939da8d37db",
     "expert_solution/verify_submission.py": "4767fe1f282679c98f1ae975fc858b101a422f7fe3c93898098d0640a68b8d1c",
     "README.md": "0e65481d87a9ce7ced16ab44d25f816d88c12b1b7df1dd3c9aa8e355559364cb"
   }

@@ -3,7 +3,7 @@
   "status": "success",
   "exit_code": 0,
   "tests_run": 24,
-  "elapsed_seconds": 0.356,
+  "elapsed_seconds": 0.362,
   "passed_tests": [
     "test_01_data_validation",
     "test_02_schema",
