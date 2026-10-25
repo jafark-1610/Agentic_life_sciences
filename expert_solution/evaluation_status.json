@@ -1,0 +1,43 @@
+{
+  "status": "awaiting_external_evaluation",
+  "platform_structure_validation": "not_run",
+  "platform_python_validation": "not_run",
+  "platform_oracle": "not_run",
+  "preliminary_prompt_only_model_attempts": "not_run: no solver execution service available in this environment",
+  "five_independent_model_runs": [
+    {
+      "run": 1,
+      "status": "not_run",
+      "score": null,
+      "passed": null
+    },
+    {
+      "run": 2,
+      "status": "not_run",
+      "score": null,
+      "passed": null
+    },
+    {
+      "run": 3,
+      "status": "not_run",
+      "score": null,
+      "passed": null
+    },
+    {
+      "run": 4,
+      "status": "not_run",
+      "score": null,
+      "passed": null
+    },
+    {
+      "run": 5,
+      "status": "not_run",
+      "score": null,
+      "passed": null
+    }
+  ],
+  "autoreview_score": null,
+  "difficulty_eligibility": "unconfirmed; requires at least three genuine failures among five frozen runs",
+  "requested_target": "one pass with four failures, or all five failures with platform autoreview score 5",
+  "note": "Local oracle, scientific tests, and baseline procedures are not platform model runs. No autoreview or model outcome is asserted."
+}

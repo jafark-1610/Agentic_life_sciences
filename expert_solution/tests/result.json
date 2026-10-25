@@ -1,0 +1,34 @@
+{
+  "role": "local_package_tests",
+  "status": "success",
+  "exit_code": 0,
+  "tests_run": 18,
+  "seconds": 37.423,
+  "passed_tests": [
+    "test_01_dataset_validation",
+    "test_02_full_schema",
+    "test_03_oracle_recomputes_answer",
+    "test_04_independent_science",
+    "test_05_canonical_grades_full",
+    "test_06_wrong_safe_decision_fails",
+    "test_07_infeasible_witness_fails",
+    "test_08_wrong_regret_fails",
+    "test_09_wrong_identifiability_fails",
+    "test_10_format_only_does_not_cap",
+    "test_11_order_invariance",
+    "test_12_malformed_and_duplicate_ids_fail",
+    "test_13_strict_json",
+    "test_14_generated_rubrics_current",
+    "test_15_independent_menu",
+    "test_16_unobservable_cycle",
+    "test_17_missing_group_is_not_pass",
+    "test_18_manifest_corruption_rejected"
+  ],
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "jsonschema": "4.26.0"
+  },
+  "command": "python -m unittest discover -s expert_solution/tests -v"
+}

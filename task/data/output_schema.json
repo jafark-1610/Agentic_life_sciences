@@ -1,0 +1,298 @@
+{
+  "type": "object",
+  "required": [
+    "schema",
+    "case_id",
+    "cultures",
+    "designs",
+    "selection"
+  ],
+  "properties": {
+    "schema": {
+      "const": "flux_rescue/1"
+    },
+    "case_id": {
+      "const": "ALS_FLUX_RESCUE_001"
+    },
+    "cultures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "flux_ranges"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "culture_01",
+              "culture_02",
+              "culture_03",
+              "culture_04",
+              "culture_05",
+              "culture_06",
+              "culture_07",
+              "culture_08"
+            ]
+          },
+          "flux_ranges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "reaction",
+                "lower",
+                "upper",
+                "identifiable"
+              ],
+              "properties": {
+                "reaction": {
+                  "type": "string",
+                  "enum": [
+                    "glucose_import",
+                    "hexose_activation",
+                    "glycolysis",
+                    "PDH",
+                    "TCA_entry",
+                    "precursor_synthesis",
+                    "anaplerosis",
+                    "biomass",
+                    "acetate_export",
+                    "lactate_export",
+                    "ethanol_export",
+                    "respiration",
+                    "ATP_maintenance",
+                    "oxidative_PPP",
+                    "malic_shunt",
+                    "transhydrogenase",
+                    "NADPH_drain",
+                    "hexose_precursor",
+                    "precursor_export",
+                    "alternative_respiration",
+                    "triose_import",
+                    "pyruvate_import",
+                    "isomerase_forward",
+                    "isomerase_reverse",
+                    "precursor_exchange_forward",
+                    "precursor_exchange_reverse",
+                    "reverse_transhydrogenase",
+                    "NADPH_respiration",
+                    "glyoxylate_shunt",
+                    "TCA_export",
+                    "pyruvate_export",
+                    "photophosphorylation"
+                  ]
+                },
+                "lower": {
+                  "type": "number"
+                },
+                "upper": {
+                  "type": "number"
+                },
+                "identifiable": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 32,
+            "maxItems": 32
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 8,
+      "maxItems": 8
+    },
+    "designs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "modules",
+          "floor",
+          "regret",
+          "by_culture"
+        ],
+        "properties": {
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "uptake_1",
+                "uptake_2",
+                "uptake_3",
+                "redox_1",
+                "redox_2",
+                "redox_3",
+                "export_1",
+                "export_2",
+                "export_3"
+              ]
+            },
+            "minItems": 3,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "floor": {
+            "type": "number"
+          },
+          "regret": {
+            "type": "number",
+            "minimum": 0
+          },
+          "by_culture": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "culture",
+                "floor",
+                "regret"
+              ],
+              "properties": {
+                "culture": {
+                  "type": "string",
+                  "enum": [
+                    "culture_01",
+                    "culture_02",
+                    "culture_03",
+                    "culture_04",
+                    "culture_05",
+                    "culture_06",
+                    "culture_07",
+                    "culture_08"
+                  ]
+                },
+                "floor": {
+                  "type": "number"
+                },
+                "regret": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 8,
+            "maxItems": 8
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "selection": {
+      "type": "object",
+      "required": [
+        "status",
+        "modules",
+        "witness"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "selected",
+            "no_robust_rescue"
+          ]
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "uptake_1",
+              "uptake_2",
+              "uptake_3",
+              "redox_1",
+              "redox_2",
+              "redox_3",
+              "export_1",
+              "export_2",
+              "export_3"
+            ]
+          },
+          "uniqueItems": true,
+          "maxItems": 3
+        },
+        "witness": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "culture",
+                "challenger",
+                "flux",
+                "offsets",
+                "regret"
+              ],
+              "properties": {
+                "culture": {
+                  "type": "string",
+                  "enum": [
+                    "culture_01",
+                    "culture_02",
+                    "culture_03",
+                    "culture_04",
+                    "culture_05",
+                    "culture_06",
+                    "culture_07",
+                    "culture_08"
+                  ]
+                },
+                "challenger": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "uptake_1",
+                      "uptake_2",
+                      "uptake_3",
+                      "redox_1",
+                      "redox_2",
+                      "redox_3",
+                      "export_1",
+                      "export_2",
+                      "export_3"
+                    ]
+                  },
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "flux": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 32,
+                  "maxItems": 32
+                },
+                "offsets": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "regret": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

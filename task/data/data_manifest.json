@@ -1,0 +1,28 @@
+{
+  "files": {
+    "network.json": {
+      "bytes": 4257,
+      "sha256": "71fcc1dee9ad7e29c32afdd3771f54af9340eafcb9dfc26875399bdd67d47fcb"
+    },
+    "assay_panel.json": {
+      "bytes": 20345,
+      "sha256": "01082787bc502a9c0dfc5b2d011f876fdde54f171af4eb9d509644098f9a57ec"
+    },
+    "cultures.json": {
+      "bytes": 140616,
+      "sha256": "64ff319c68df63493f6a94dcb355e15700518aaaa2641bef5fa1e1aec08795f5"
+    },
+    "design_rules.json": {
+      "bytes": 906,
+      "sha256": "57a1d18467849320a7c1c35f7e4ba349a2bf68f4102114a054afc5cbe4b3c2a5"
+    },
+    "study_metadata.json": {
+      "bytes": 398,
+      "sha256": "b9ec1a15b0035cf96971042cfc8f85c3b2f8556b8962786a9cc21a8e8923fe73"
+    },
+    "source_provenance.json": {
+      "bytes": 588,
+      "sha256": "66dcd20d0fdbb5a577190169b103a6c2fd39dd723905b21093af4b5e2769fa96"
+    }
+  }
+}

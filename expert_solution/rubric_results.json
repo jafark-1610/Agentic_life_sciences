@@ -1,0 +1,21 @@
+{
+  "role": "numerical_rubric_evaluation",
+  "checks": {
+    "flux_ranges": true,
+    "utility_envelopes": true,
+    "robust_selection": true,
+    "adversarial_witness": true
+  },
+  "details": {
+    "flux_max_absolute_error": 0.0,
+    "utility_max_absolute_error": 0.0,
+    "witness_violation": 2.4424906541753444e-15,
+    "witness_objective_error": 0.0
+  },
+  "raw_score": 100,
+  "scientific_cap_applied": false,
+  "presentation_deduction": 0,
+  "final_score": 100,
+  "passed": true,
+  "schema_errors": []
+}

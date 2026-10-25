@@ -1,0 +1,35 @@
+{
+  "case_id": "ALS_FLUX_RESCUE_001",
+  "version": "1.0",
+  "weights": {
+    "robust_selection": 55,
+    "utility_envelopes": 20,
+    "flux_ranges": 15,
+    "adversarial_witness": 10
+  },
+  "pass_threshold": 80,
+  "scientific_failure_cap": 79,
+  "presentation_deduction": 5,
+  "automatic_zero": [
+    "answer missing, unreadable, duplicate-key or nonfinite JSON"
+  ],
+  "acceptance": {
+    "numeric_abs": 0.002,
+    "witness_feasibility_abs": 2e-05,
+    "witness_objective_abs": 0.002,
+    "selection_regret_slack": 0.002,
+    "identifiable_width": 0.01
+  },
+  "counts": {
+    "cultures": 8,
+    "reactions_per_culture": 32,
+    "feasible_designs": 17
+  },
+  "field_contract": {
+    "robust_selection": "prompt.md: Decision and Deliverables selection",
+    "utility_envelopes": "prompt.md: Deliverables designs",
+    "flux_ranges": "prompt.md: Deliverables cultures",
+    "adversarial_witness": "prompt.md: Adversarial witness"
+  },
+  "policy": "All comparisons use supplied public inputs and computed reference. No method requirement. All scientific groups are gates. Any failed scientific group caps at 79. Presentation-only schema errors deduct 5 once, never activate cap. Arrays are matched by IDs or sorted module tuples. Malformed/missing numerical entries fail their group. Each group is all-or-nothing. Code provenance and offline execution are separately reviewed, not inferred from text or automatically scored. No other caps or deductions."
+}

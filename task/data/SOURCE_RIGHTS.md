@@ -1,0 +1,5 @@
+# Rights and provenance
+
+All network fixtures, coefficients and measurements are original synthetic material, dedicated to the public domain under CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). No third-party measurements, patient records, images or licensed pathway database content are included.
+
+The included Python implementations may be used, copied, modified and redistributed under the MIT License. Copyright 2026 task contributors. Permission is granted, free of charge, to any person obtaining a copy of this software and associated documentation files, to deal in the Software without restriction, including the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies, and to permit persons to whom the Software is furnished to do so, subject to retaining this copyright and permission notice. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.

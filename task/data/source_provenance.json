@@ -1,0 +1,8 @@
+{
+  "origin": "Entirely synthetic methods-study data",
+  "generator": "expert_solution/source_archive/generate_data.py",
+  "seed": 814729,
+  "measurement_model": "Bounded-error calibrated linear tracer-flux fingerprints with shared additive offset per group; not raw isotope mass-isotopomer distributions.",
+  "biological_scope": "Reduced carbon-equivalent network; reaction stoichiometry is the complete stipulated model, with no claim of atom mapping or clinical validity.",
+  "rights": "Original generated data released under CC0-1.0. Code released under MIT; see SOURCE_RIGHTS.md."
+}

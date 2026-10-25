@@ -1,0 +1,2508 @@
+{
+  "schema": "flux_rescue/1",
+  "case_id": "ALS_FLUX_RESCUE_001",
+  "cultures": [
+    {
+      "id": "culture_01",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 8.0,
+          "upper": 8.0,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 4.80239627671782,
+          "upper": 7.56971162108592,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 4.978235547374653,
+          "upper": 7.163085783205945,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 1.3575097129356175,
+          "upper": 3.4943752877430883,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 7.0355310559146025,
+          "upper": 9.287208153365391,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.015642397592615,
+          "upper": 2.298255836607312,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.0,
+          "upper": 0.21912404131908056,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 1.5140825810453817,
+          "upper": 1.7978539678119105,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.16898426855657464,
+          "upper": 0.43591156245405227,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 0.7674862769728968,
+          "upper": 1.0500997159875942,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 2.7972385972943457,
+          "upper": 5.450583464411146,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 1.4209123037447087,
+          "upper": 1.7077471395243955,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 8.341893686112423,
+          "upper": 10.51025454172462,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 9.743449559382569,
+          "upper": 11.946774398542331,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 2.777825362009427,
+          "upper": 5.394788017599674,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 0.4579643567952104,
+          "upper": 3.5721802920718124,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 2.013458488340048,
+          "upper": 2.2972298751065763,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 1.7759700606083486,
+          "upper": 4.427565694737699,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.6187050454799172,
+          "upper": 1.885632339377395,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 0.9467677432095428,
+          "upper": 1.2293811822242402,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 8.036493872356985,
+          "upper": 10.758056649777842,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 0.15446943952336828,
+          "upper": 2.31866036718782,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.709646397054862,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.9732600008358819,
+          "upper": 2.451711938509685,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.0,
+          "upper": 1.7508248655027159,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_02",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 8.45,
+          "upper": 8.45,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 3.8352686306773154,
+          "upper": 6.58539592913542,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 7.729287593579239,
+          "upper": 9.845424794410357,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 3.70406334936728,
+          "upper": 5.642371685505051,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 6.502731101876763,
+          "upper": 8.650163390204492,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 3.574337105868538,
+          "upper": 3.8540016526973426,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.0,
+          "upper": 0.1572101355886642,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.25750342866071535,
+          "upper": 0.5336588038711572,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.0,
+          "upper": 0.24354045238066185,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 1.1578476545288714,
+          "upper": 1.4375122013576769,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.722432530873747,
+          "upper": 9.322654418640376,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 1.7212696154619704,
+          "upper": 2.004952379643796,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 10.615176481725682,
+          "upper": 12.722735307032282,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 3.383206848814621,
+          "upper": 5.537039435802897,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 1.0478704706136064,
+          "upper": 3.7871910553652883,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 1.6331386821120655,
+          "upper": 4.703806608977378,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 2.8135230412118766,
+          "upper": 3.0896784164223177,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 3.9464660297085707,
+          "upper": 6.607372139476441,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.7300135798096945,
+          "upper": 1.9834947990035208,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.1001694401460973,
+          "upper": 1.3798339869749028,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 1.6941296432859099,
+          "upper": 4.377666752121871,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 2.241053016128667,
+          "upper": 4.365705899325883,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.429157848044619,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.0,
+          "upper": 0.7420600118723983,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.38345644222150205,
+          "upper": 2.2784425826747676,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_03",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 8.9,
+          "upper": 8.9,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 4.141196503431279,
+          "upper": 6.887577191602671,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 7.337643532595077,
+          "upper": 9.504617154586619,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 2.395883751504353,
+          "upper": 4.552701584905522,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 15.50928675830285,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 2.2548824090991495,
+          "upper": 4.54638910288179,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.2882947886314167,
+          "upper": 2.5789606259686266,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.21605963472847578,
+          "upper": 0.4968616557583169,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.6995788988891929,
+          "upper": 0.9840166144424889,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.4535981667645613,
+          "upper": 0.7231776576388279,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 0.14934522282173607,
+          "upper": 0.4400110601589465,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.132930420386733,
+          "upper": 8.790267419505927,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 2.810453134573517,
+          "upper": 3.091255155603358,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 5.668076699999276,
+          "upper": 7.829448257240428,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 6.0368092304770755,
+          "upper": 8.233507117707761,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 1.5451474116479966,
+          "upper": 4.167585506689882,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 0.623795091701469,
+          "upper": 3.711380446584932,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 2.480835961019992,
+          "upper": 2.7652736765732873,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 3.7291862069981008,
+          "upper": 6.3849169325983315,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.556608569430885,
+          "upper": 1.826188060305152,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.0381016437120074,
+          "upper": 1.328767481049218,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 15.509286758302842,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.49071324169715824,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 4.407026404703169,
+          "upper": 7.121917306770744,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 1.1951367636833574,
+          "upper": 3.367592842701774,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.765828342146408,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.7278907180854346,
+          "upper": 2.2097685001302514,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.0,
+          "upper": 1.71899208848988,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_04",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 9.35,
+          "upper": 9.35,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 4.955956312563079,
+          "upper": 7.592690367118683,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 8.427809525765529,
+          "upper": 10.58704519957535,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 2.9772767124575354,
+          "upper": 5.002130945522041,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 15.765071889034969,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 6.231081500645045,
+          "upper": 8.487334173801981,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 3.070054957146413,
+          "upper": 3.345973385095024,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.5503873489040443,
+          "upper": 0.8210869573248186,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.5594930781662693,
+          "upper": 0.8430823036724188,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.6372878935523265,
+          "upper": 0.8953612119055322,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 1.1076309665463115,
+          "upper": 1.3835493944949233,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.339810942040837,
+          "upper": 8.950581804195998,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 2.045455696283094,
+          "upper": 2.3161553047038677,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 10.618971403117675,
+          "upper": 12.769580657495089,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 8.836035887531533,
+          "upper": 10.99120326688844,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 2.491264135035066,
+          "upper": 5.1477873229817845,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 0.854083501851771,
+          "upper": 3.806723158710641,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 1.042540323766671,
+          "upper": 1.3261295492728207,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 3.7372635710707813,
+          "upper": 6.378958202898257,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.3462937748225774,
+          "upper": 1.6043670931757834,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.1096608737797748,
+          "upper": 1.3855793017283866,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 15.765071889034962,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.23492811096507582,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 7.117671485750517,
+          "upper": 9.814837240328933,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 1.3514439974405086,
+          "upper": 3.503486076519774,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.301094446726574,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.08232609842890748,
+          "upper": 1.5420947929992694,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.5356995448553792,
+          "upper": 2.624942028031192,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_05",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 9.8,
+          "upper": 9.8,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 5.419154950310732,
+          "upper": 8.076472698062524,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 7.76237945693695,
+          "upper": 9.931093337910236,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 2.5867784875183277,
+          "upper": 4.68660433062567,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 6.667098746922657,
+          "upper": 8.9172030149875,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.2140465013518655,
+          "upper": 2.493470371304178,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.3061052034160616,
+          "upper": 0.5798388328638648,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.0,
+          "upper": 0.1329230209706551,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.3199953436848417,
+          "upper": 0.5910800462579029,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 1.914939607981769,
+          "upper": 2.194363477934082,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.161912990538661,
+          "upper": 8.780510280299465,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 1.8519354110462751,
+          "upper": 2.125669040494078,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 8.703111050286221,
+          "upper": 10.855173313105507,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 7.914002228144981,
+          "upper": 10.110832527468764,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 5.375715388540423,
+          "upper": 8.00366720545503,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 1.388089539198045,
+          "upper": 4.403686194262232,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 3.253557824078066,
+          "upper": 3.5264808450487206,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 0.0,
+          "upper": 2.4953264540527225,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.6692394354214,
+          "upper": 1.9403241379944614,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.2738927386118528,
+          "upper": 1.5,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 2.820022418759807,
+          "upper": 5.5052435896180745,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 1.3340258372323766,
+          "upper": 3.4512190796366244,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.828825932561717,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 1.4913738994328158,
+          "upper": 2.916009423124914,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.1399652358380848,
+          "upper": 2.1554821773138992,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_06",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 10.25,
+          "upper": 10.25,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 4.552190993029507,
+          "upper": 7.19526089758858,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 7.590904618397874,
+          "upper": 9.731929160507097,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 2.3963736850280823,
+          "upper": 4.396933859217745,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 14.976235233388085,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 9.416065467800264,
+          "upper": 11.619489738445877,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.2298850471904896,
+          "upper": 2.50721009236992,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.4775851464207036,
+          "upper": 0.7542703336133041,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.0,
+          "upper": 0.1133916851073165,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.7479480117071766,
+          "upper": 1.0279480117071773,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 1.0777468223091646,
+          "upper": 1.3550718674885955,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.238811117881864,
+          "upper": 8.840181798926132,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 1.3066338564917805,
+          "upper": 1.5833190436843811,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 13.15877031467446,
+          "upper": 15.27184345658187,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 8.957167148416845,
+          "upper": 11.154333233915551,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 2.424454477750187,
+          "upper": 5.123592715740744,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 3.0529292329957354,
+          "upper": 6.017945910108605,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 2.5925524865573815,
+          "upper": 2.845944171664698,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 2.3574967529808872,
+          "upper": 4.969342872164524,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.4390409310016703,
+          "upper": 1.719040931001671,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.2705358701512774,
+          "upper": 1.5,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 14.976235233388092,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 1.0237647666118845,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 6.491168988830785,
+          "upper": 9.109384092162598,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 3.1247898989296545,
+          "upper": 5.23260992891228,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.3621470148383397,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.8771870124397851,
+          "upper": 2.2817577952588453,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 1.17010568646201,
+          "upper": 3.1362259216816,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_07",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 10.7,
+          "upper": 10.7,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 5.620806490389008,
+          "upper": 8.46896085288678,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 8.154368518685612,
+          "upper": 10.32366498405678,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 1.0259083007868695,
+          "upper": 3.172784608644186,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 14.53518323126736,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 4.7659760186811075,
+          "upper": 7.033941711382199,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.16818007029432,
+          "upper": 2.4514995202141976,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 0.5805869405889369,
+          "upper": 0.8500249339872125,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.3231709708736757,
+          "upper": 0.6016463011495576,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.4477717535480113,
+          "upper": 0.7154048348971418,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 2.1024016706021573,
+          "upper": 2.3857211205220348,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 6.329443320954875,
+          "upper": 8.94807059544077,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 0.33041834647138185,
+          "upper": 0.5998563398696574,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 8.848826208694867,
+          "upper": 10.993138620067402,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 9.329374567528799,
+          "upper": 11.476787583924583,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 2.585681100007904,
+          "upper": 5.313776441215005,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 3.498494634982638,
+          "upper": 6.6580576271442595,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 3.587748251021714,
+          "upper": 3.8662235812975956,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 0.6001330381222705,
+          "upper": 3.247738895918822,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.7405928089184315,
+          "upper": 2.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 1.1021533977093485,
+          "upper": 1.3854728476292264,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 14.535183231267338,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 1.4648167687326477,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 6.0162065786197765,
+          "upper": 8.719111906565795,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 1.1752874053655462,
+          "upper": 3.3552887191883967,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 1.3540709913056306,
+          "upper": 4.291277336264786,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.0,
+          "upper": 1.1411977505690247,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 1.5286693237565108,
+          "upper": 3.6143060789871773,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    },
+    {
+      "id": "culture_08",
+      "flux_ranges": [
+        {
+          "reaction": "glucose_import",
+          "lower": 11.15,
+          "upper": 11.15,
+          "identifiable": true
+        },
+        {
+          "reaction": "hexose_activation",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "glycolysis",
+          "lower": 6.221976130352598,
+          "upper": 9.059368980950945,
+          "identifiable": false
+        },
+        {
+          "reaction": "PDH",
+          "lower": 11.622141278149497,
+          "upper": 13.78826655654388,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_entry",
+          "lower": 3.878478683122571,
+          "upper": 5.97447893147602,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_synthesis",
+          "lower": 0.0,
+          "upper": 15.53842980125729,
+          "identifiable": false
+        },
+        {
+          "reaction": "anaplerosis",
+          "lower": 4.555284551343939,
+          "upper": 6.817007035025792,
+          "identifiable": false
+        },
+        {
+          "reaction": "biomass",
+          "lower": 2.7937257232056174,
+          "upper": 3.0728815814167096,
+          "identifiable": false
+        },
+        {
+          "reaction": "acetate_export",
+          "lower": 1.1710376776893112,
+          "upper": 1.4425521243023816,
+          "identifiable": false
+        },
+        {
+          "reaction": "lactate_export",
+          "lower": 0.1800010008162216,
+          "upper": 0.46624233906747503,
+          "identifiable": false
+        },
+        {
+          "reaction": "ethanol_export",
+          "lower": 0.7348764547400457,
+          "upper": 0.9985131824265685,
+          "identifiable": false
+        },
+        {
+          "reaction": "respiration",
+          "lower": 1.3471370609151334,
+          "upper": 1.6262929191262263,
+          "identifiable": false
+        },
+        {
+          "reaction": "ATP_maintenance",
+          "lower": 7.4982467944150155,
+          "upper": 10.113108026908087,
+          "identifiable": false
+        },
+        {
+          "reaction": "oxidative_PPP",
+          "lower": 2.1940253430996894,
+          "upper": 2.4655397897127593,
+          "identifiable": false
+        },
+        {
+          "reaction": "malic_shunt",
+          "lower": 9.859355747848456,
+          "upper": 11.974194879388556,
+          "identifiable": false
+        },
+        {
+          "reaction": "transhydrogenase",
+          "lower": 8.264087394613258,
+          "upper": 10.433612843869057,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_drain",
+          "lower": 6.070231260779815,
+          "upper": 8.841896143943607,
+          "identifiable": false
+        },
+        {
+          "reaction": "hexose_precursor",
+          "lower": 1.5536587801931212,
+          "upper": 4.634829338060202,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_export",
+          "lower": 2.4652027985438116,
+          "upper": 2.751444136795065,
+          "identifiable": false
+        },
+        {
+          "reaction": "alternative_respiration",
+          "lower": 2.400720838149403,
+          "upper": 5.046471173184792,
+          "identifiable": false
+        },
+        {
+          "reaction": "triose_import",
+          "lower": 1.8664397255561789,
+          "upper": 2.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_import",
+          "lower": 0.9387714042597785,
+          "upper": 1.2179272624708712,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_forward",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "isomerase_reverse",
+          "lower": 0.0,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_forward",
+          "lower": 0.0,
+          "upper": 15.538429801257301,
+          "identifiable": false
+        },
+        {
+          "reaction": "precursor_exchange_reverse",
+          "lower": 0.46157019874268723,
+          "upper": 16.0,
+          "identifiable": false
+        },
+        {
+          "reaction": "reverse_transhydrogenase",
+          "lower": 2.967934706704149,
+          "upper": 5.672589113374457,
+          "identifiable": false
+        },
+        {
+          "reaction": "NADPH_respiration",
+          "lower": 1.123797356746584,
+          "upper": 3.310665162596511,
+          "identifiable": false
+        },
+        {
+          "reaction": "glyoxylate_shunt",
+          "lower": 0.0,
+          "upper": 2.820294843189725,
+          "identifiable": false
+        },
+        {
+          "reaction": "TCA_export",
+          "lower": 0.3284704896183251,
+          "upper": 1.7863495469339543,
+          "identifiable": false
+        },
+        {
+          "reaction": "pyruvate_export",
+          "lower": 0.0,
+          "upper": 1.9218083672692097,
+          "identifiable": false
+        },
+        {
+          "reaction": "photophosphorylation",
+          "lower": 0.0,
+          "upper": -0.0,
+          "identifiable": true
+        }
+      ]
+    }
+  ],
+  "designs": [
+    {
+      "modules": [
+        "export_1",
+        "redox_1",
+        "uptake_1"
+      ],
+      "floor": 1.9640899612303713,
+      "regret": 42.0428118799441,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 40.67964846960458,
+          "regret": 15.49373245778833
+        },
+        {
+          "culture": "culture_02",
+          "floor": 38.78126084007012,
+          "regret": 16.1313177793809
+        },
+        {
+          "culture": "culture_03",
+          "floor": 16.926336326459623,
+          "regret": 17.88175890721009
+        },
+        {
+          "culture": "culture_04",
+          "floor": 1.9640899612303713,
+          "regret": 30.96405444402844
+        },
+        {
+          "culture": "culture_05",
+          "floor": 36.36361335260712,
+          "regret": 14.552879253139913
+        },
+        {
+          "culture": "culture_06",
+          "floor": 5.453799835235813,
+          "regret": 42.0428118799441
+        },
+        {
+          "culture": "culture_07",
+          "floor": 36.06359719130335,
+          "regret": 12.908117290286352
+        },
+        {
+          "culture": "culture_08",
+          "floor": 2.3692587750722183,
+          "regret": 40.32959524508991
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_1",
+        "uptake_2"
+      ],
+      "floor": -4.001086352192438,
+      "regret": 44.084086641197665,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 46.07616960701112,
+          "regret": 9.09308085263269
+        },
+        {
+          "culture": "culture_02",
+          "floor": 44.3963690504325,
+          "regret": 14.909058817258806
+        },
+        {
+          "culture": "culture_03",
+          "floor": 17.60751622942276,
+          "regret": 18.121243907841734
+        },
+        {
+          "culture": "culture_04",
+          "floor": -4.001086352192438,
+          "regret": 42.623196491801345
+        },
+        {
+          "culture": "culture_05",
+          "floor": 36.244074061740704,
+          "regret": 13.025874575118536
+        },
+        {
+          "culture": "culture_06",
+          "floor": 7.337872889756689,
+          "regret": 40.430322310195024
+        },
+        {
+          "culture": "culture_07",
+          "floor": 22.32507813412396,
+          "regret": 26.012252766090697
+        },
+        {
+          "culture": "culture_08",
+          "floor": 2.9700601501689015,
+          "regret": 44.084086641197665
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_1",
+        "uptake_3"
+      ],
+      "floor": -1.2722907246793795,
+      "regret": 52.02825600870411,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 51.35220504812919,
+          "regret": 3.3243663869220286
+        },
+        {
+          "culture": "culture_02",
+          "floor": 41.08223227989189,
+          "regret": 8.034245848451173
+        },
+        {
+          "culture": "culture_03",
+          "floor": 19.076188397677782,
+          "regret": 19.314224517987753
+        },
+        {
+          "culture": "culture_04",
+          "floor": 2.27153108412147,
+          "regret": 35.95950477646435
+        },
+        {
+          "culture": "culture_05",
+          "floor": 38.141714684890914,
+          "regret": 6.370497868694461
+        },
+        {
+          "culture": "culture_06",
+          "floor": -1.2722907246793795,
+          "regret": 52.02825600870411
+        },
+        {
+          "culture": "culture_07",
+          "floor": 30.778853810764456,
+          "regret": 11.677630363573716
+        },
+        {
+          "culture": "culture_08",
+          "floor": 17.8364597310985,
+          "regret": 23.74847534799803
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_2",
+        "uptake_1"
+      ],
+      "floor": 10.597267369187339,
+      "regret": 31.388735674682387,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 32.049108845138974,
+          "regret": 29.20629411607236
+        },
+        {
+          "culture": "culture_02",
+          "floor": 24.328232272429158,
+          "regret": 31.388735674682387
+        },
+        {
+          "culture": "culture_03",
+          "floor": 24.367938396947178,
+          "regret": 8.653414189383351
+        },
+        {
+          "culture": "culture_04",
+          "floor": 10.597267369187339,
+          "regret": 24.124813942167734
+        },
+        {
+          "culture": "culture_05",
+          "floor": 28.554881464017257,
+          "regret": 16.038917835145476
+        },
+        {
+          "culture": "culture_06",
+          "floor": 15.899149274366785,
+          "regret": 30.25949820604933
+        },
+        {
+          "culture": "culture_07",
+          "floor": 40.22876377975173,
+          "regret": 4.727777619367494
+        },
+        {
+          "culture": "culture_08",
+          "floor": 19.300319865464154,
+          "regret": 18.738320709269203
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_2",
+        "uptake_2"
+      ],
+      "floor": 4.168509357835962,
+      "regret": 35.8118115360507,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 36.78908408783111,
+          "regret": 23.91361863440171
+        },
+        {
+          "culture": "culture_02",
+          "floor": 32.2566168725828,
+          "regret": 30.73369970579848
+        },
+        {
+          "culture": "culture_03",
+          "floor": 23.22083146140605,
+          "regret": 11.031269267271997
+        },
+        {
+          "culture": "culture_04",
+          "floor": 4.168509357835962,
+          "regret": 35.8118115360507
+        },
+        {
+          "culture": "culture_05",
+          "floor": 28.130571040563467,
+          "regret": 17.948241754995138
+        },
+        {
+          "culture": "culture_06",
+          "floor": 18.36756366130713,
+          "regret": 28.221266932870996
+        },
+        {
+          "culture": "culture_07",
+          "floor": 26.872930232509137,
+          "regret": 17.908843035758345
+        },
+        {
+          "culture": "culture_08",
+          "floor": 20.73482955890777,
+          "regret": 20.99607792104667
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_2",
+        "uptake_3"
+      ],
+      "floor": 10.071162235694977,
+      "regret": 40.34023637154404,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 43.99799259689752,
+          "regret": 17.108403883011356
+        },
+        {
+          "culture": "culture_02",
+          "floor": 30.111724710329522,
+          "regret": 20.847046240681014
+        },
+        {
+          "culture": "culture_03",
+          "floor": 21.042002513244878,
+          "regret": 14.370156926871044
+        },
+        {
+          "culture": "culture_04",
+          "floor": 10.370450921502371,
+          "regret": 29.284894473204247
+        },
+        {
+          "culture": "culture_05",
+          "floor": 30.0016209344544,
+          "regret": 14.404830596858089
+        },
+        {
+          "culture": "culture_06",
+          "floor": 10.071162235694977,
+          "regret": 40.34023637154404
+        },
+        {
+          "culture": "culture_07",
+          "floor": 34.6661866788852,
+          "regret": 10.335990285784927
+        },
+        {
+          "culture": "culture_08",
+          "floor": 33.827449766013146,
+          "regret": 0.0
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_3",
+        "uptake_2"
+      ],
+      "floor": -3.4619423057990417,
+      "regret": 53.00072323108057,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 48.526402706047215,
+          "regret": 12.16320115169474
+        },
+        {
+          "culture": "culture_02",
+          "floor": 47.633076164694934,
+          "regret": 11.832054523610843
+        },
+        {
+          "culture": "culture_03",
+          "floor": 8.268720111855348,
+          "regret": 27.00278775306297
+        },
+        {
+          "culture": "culture_04",
+          "floor": 7.7895416858339,
+          "regret": 31.84161527265317
+        },
+        {
+          "culture": "culture_05",
+          "floor": 28.74874165741683,
+          "regret": 16.80652951181132
+        },
+        {
+          "culture": "culture_06",
+          "floor": -3.4619423057990417,
+          "regret": 53.00072323108057
+        },
+        {
+          "culture": "culture_07",
+          "floor": 22.63626064595337,
+          "regret": 25.732630476715322
+        },
+        {
+          "culture": "culture_08",
+          "floor": 5.083961617640018,
+          "regret": 39.32634484639939
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_1",
+        "redox_3",
+        "uptake_3"
+      ],
+      "floor": -12.274025297759458,
+      "regret": 62.053456974125275,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 53.468988036283314,
+          "regret": 8.270072009917431
+        },
+        {
+          "culture": "culture_02",
+          "floor": 44.067755245875254,
+          "regret": 5.506739121919841
+        },
+        {
+          "culture": "culture_03",
+          "floor": 6.623152676249582,
+          "regret": 28.80369562503605
+        },
+        {
+          "culture": "culture_04",
+          "floor": 13.98117696127375,
+          "regret": 25.61381286742392
+        },
+        {
+          "culture": "culture_05",
+          "floor": 30.735564010296287,
+          "regret": 14.02848811326179
+        },
+        {
+          "culture": "culture_06",
+          "floor": -12.274025297759458,
+          "regret": 62.053456974125275
+        },
+        {
+          "culture": "culture_07",
+          "floor": 31.383291897116713,
+          "regret": 10.417460396656878
+        },
+        {
+          "culture": "culture_08",
+          "floor": 21.83353036257799,
+          "regret": 19.41044650254131
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_1",
+        "uptake_1"
+      ],
+      "floor": -14.910294137522513,
+      "regret": 59.41252791902877,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 30.430420647535918,
+          "regret": 26.37374173092644
+        },
+        {
+          "culture": "culture_02",
+          "floor": 31.494804518301514,
+          "regret": 28.427199343567302
+        },
+        {
+          "culture": "culture_03",
+          "floor": 20.00710705628005,
+          "regret": 16.035479672148547
+        },
+        {
+          "culture": "culture_04",
+          "floor": -9.655730828601683,
+          "regret": 40.152024739440115
+        },
+        {
+          "culture": "culture_05",
+          "floor": 39.90760363331995,
+          "regret": 12.244228571923665
+        },
+        {
+          "culture": "culture_06",
+          "floor": 11.00389886617993,
+          "regret": 28.55612851603707
+        },
+        {
+          "culture": "culture_07",
+          "floor": 21.624880264556957,
+          "regret": 28.10800361037158
+        },
+        {
+          "culture": "culture_08",
+          "floor": -14.910294137522513,
+          "regret": 59.41252791902877
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_1",
+        "uptake_2"
+      ],
+      "floor": -16.22236640633851,
+      "regret": 60.843275059259966,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 36.42516536531407,
+          "regret": 19.89812197406982
+        },
+        {
+          "culture": "culture_02",
+          "floor": 37.58225311010994,
+          "regret": 29.971660195770525
+        },
+        {
+          "culture": "culture_03",
+          "floor": 20.676299454669714,
+          "regret": 14.902692172438377
+        },
+        {
+          "culture": "culture_04",
+          "floor": -15.604389139929715,
+          "regret": 46.48685195488415
+        },
+        {
+          "culture": "culture_05",
+          "floor": 41.9514009244697,
+          "regret": 9.601160876721197
+        },
+        {
+          "culture": "culture_06",
+          "floor": 13.133740753029713,
+          "regret": 27.732787469894614
+        },
+        {
+          "culture": "culture_07",
+          "floor": 8.590470010109687,
+          "regret": 41.2500985726878
+        },
+        {
+          "culture": "culture_08",
+          "floor": -16.22236640633851,
+          "regret": 60.843275059259966
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_1",
+        "uptake_3"
+      ],
+      "floor": -9.262786638060852,
+      "regret": 40.861128810717055,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 41.71015895350784,
+          "regret": 14.17077955763313
+        },
+        {
+          "culture": "culture_02",
+          "floor": 35.199052820330095,
+          "regret": 18.234439033938685
+        },
+        {
+          "culture": "culture_03",
+          "floor": 22.365666660650064,
+          "regret": 18.248949553034482
+        },
+        {
+          "culture": "culture_04",
+          "floor": -9.262786638060852,
+          "regret": 39.99120320800668
+        },
+        {
+          "culture": "culture_05",
+          "floor": 44.00352726882709,
+          "regret": 3.4834231877913955
+        },
+        {
+          "culture": "culture_06",
+          "floor": 12.106580201642771,
+          "regret": 37.2674285782006
+        },
+        {
+          "culture": "culture_07",
+          "floor": 18.549960986663827,
+          "regret": 26.327999339601973
+        },
+        {
+          "culture": "culture_08",
+          "floor": 3.6549987022157744,
+          "regret": 40.861128810717055
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_2",
+        "uptake_1"
+      ],
+      "floor": 0.751336820326614,
+      "regret": 44.3500463380279,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 22.771342068650135,
+          "regret": 36.86463778765154
+        },
+        {
+          "culture": "culture_02",
+          "floor": 16.711515284633037,
+          "regret": 44.3500463380279
+        },
+        {
+          "culture": "culture_03",
+          "floor": 30.22697622698433,
+          "regret": 3.9546042983095666
+        },
+        {
+          "culture": "culture_04",
+          "floor": 0.751336820326614,
+          "regret": 29.333183644975687
+        },
+        {
+          "culture": "culture_05",
+          "floor": 34.62910299698129,
+          "regret": 10.380794946909184
+        },
+        {
+          "culture": "culture_06",
+          "floor": 21.902601334836802,
+          "regret": 16.716078051611706
+        },
+        {
+          "culture": "culture_07",
+          "floor": 28.168541684925295,
+          "regret": 17.75104333773568
+        },
+        {
+          "culture": "culture_08",
+          "floor": 6.292454945580072,
+          "regret": 37.960224699649025
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_2",
+        "uptake_2"
+      ],
+      "floor": -4.867491436427301,
+      "regret": 45.795387843800775,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 28.371726998544375,
+          "regret": 31.690570012188243
+        },
+        {
+          "culture": "culture_02",
+          "floor": 24.201601114616587,
+          "regret": 45.795387843800775
+        },
+        {
+          "culture": "culture_03",
+          "floor": 30.53934266123284,
+          "regret": 2.9160907617027294
+        },
+        {
+          "culture": "culture_04",
+          "floor": -4.867491436427301,
+          "regret": 37.15173115090386
+        },
+        {
+          "culture": "culture_05",
+          "floor": 34.03524826259018,
+          "regret": 12.955045213079188
+        },
+        {
+          "culture": "culture_06",
+          "floor": 23.992900022162694,
+          "regret": 15.709569821479846
+        },
+        {
+          "culture": "culture_07",
+          "floor": 14.519175100411033,
+          "regret": 30.972184664459185
+        },
+        {
+          "culture": "culture_08",
+          "floor": 4.883491048782361,
+          "regret": 39.329665473163494
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_2",
+        "uptake_3"
+      ],
+      "floor": 1.4116954343301487,
+      "regret": 34.16548812386836,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 34.69211330589578,
+          "regret": 24.622950478285453
+        },
+        {
+          "culture": "culture_02",
+          "floor": 24.208454907840306,
+          "regret": 34.16548812386836
+        },
+        {
+          "culture": "culture_03",
+          "floor": 28.901868885833498,
+          "regret": 9.627862360973154
+        },
+        {
+          "culture": "culture_04",
+          "floor": 1.4116954343301487,
+          "regret": 30.566190682345876
+        },
+        {
+          "culture": "culture_05",
+          "floor": 35.86772114321701,
+          "regret": 8.283866771572876
+        },
+        {
+          "culture": "culture_06",
+          "floor": 22.453721480909856,
+          "regret": 25.340584049507903
+        },
+        {
+          "culture": "culture_07",
+          "floor": 23.08027564792057,
+          "regret": 18.133926163508903
+        },
+        {
+          "culture": "culture_08",
+          "floor": 24.634481084867033,
+          "regret": 19.38419661994983
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_2",
+        "redox_3",
+        "uptake_2"
+      ],
+      "floor": -14.206750437342919,
+      "regret": 58.526128514145164,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 39.09456258849813,
+          "regret": 19.339986553781074
+        },
+        {
+          "culture": "culture_02",
+          "floor": 40.863471966694014,
+          "regret": 26.904436843317168
+        },
+        {
+          "culture": "culture_03",
+          "floor": 12.948477391925355,
+          "regret": 22.495040970855385
+        },
+        {
+          "culture": "culture_04",
+          "floor": 0.5182411448540662,
+          "regret": 32.482072576527145
+        },
+        {
+          "culture": "culture_05",
+          "floor": 34.34101682976488,
+          "regret": 11.481196370069048
+        },
+        {
+          "culture": "culture_06",
+          "floor": 5.175492481564682,
+          "regret": 40.01738601538302
+        },
+        {
+          "culture": "culture_07",
+          "floor": 8.761289267481299,
+          "regret": 41.15651422417023
+        },
+        {
+          "culture": "culture_08",
+          "floor": -14.206750437342919,
+          "regret": 58.526128514145164
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_3",
+        "redox_2",
+        "uptake_1"
+      ],
+      "floor": 12.125632137507395,
+      "regret": 40.583107935507506,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 27.68413649915762,
+          "regret": 33.10941308538708
+        },
+        {
+          "culture": "culture_02",
+          "floor": 18.745121397982743,
+          "regret": 40.583107935507506
+        },
+        {
+          "culture": "culture_03",
+          "floor": 23.074151002534613,
+          "regret": 18.643143887730282
+        },
+        {
+          "culture": "culture_04",
+          "floor": 20.329985578112222,
+          "regret": 0.0
+        },
+        {
+          "culture": "culture_05",
+          "floor": 27.48031534914835,
+          "regret": 16.968207219455827
+        },
+        {
+          "culture": "culture_06",
+          "floor": 32.74515141380324,
+          "regret": 6.597886786568029
+        },
+        {
+          "culture": "culture_07",
+          "floor": 27.802370974396485,
+          "regret": 14.136094419811428
+        },
+        {
+          "culture": "culture_08",
+          "floor": 12.125632137507395,
+          "regret": 31.50781885286954
+        }
+      ]
+    },
+    {
+      "modules": [
+        "export_3",
+        "redox_2",
+        "uptake_2"
+      ],
+      "floor": 11.210289038511267,
+      "regret": 42.172022148614914,
+      "by_culture": [
+        {
+          "culture": "culture_01",
+          "floor": 32.48635422159185,
+          "regret": 28.19162125917304
+        },
+        {
+          "culture": "culture_02",
+          "floor": 23.85470446816163,
+          "regret": 42.172022148614914
+        },
+        {
+          "culture": "culture_03",
+          "floor": 21.878436569856447,
+          "regret": 16.274262853305647
+        },
+        {
+          "culture": "culture_04",
+          "floor": 15.954118605009299,
+          "regret": 12.236796364864432
+        },
+        {
+          "culture": "culture_05",
+          "floor": 27.042448194751785,
+          "regret": 17.416271462421363
+        },
+        {
+          "culture": "culture_06",
+          "floor": 37.13869509741062,
+          "regret": 1.0009203738374781
+        },
+        {
+          "culture": "culture_07",
+          "floor": 14.078059458737535,
+          "regret": 28.212186696052896
+        },
+        {
+          "culture": "culture_08",
+          "floor": 11.210289038511267,
+          "regret": 32.93558698511166
+        }
+      ]
+    }
+  ],
+  "selection": {
+    "status": "selected",
+    "modules": [
+      "export_1",
+      "redox_2",
+      "uptake_1"
+    ],
+    "witness": {
+      "culture": "culture_02",
+      "challenger": [
+        "export_1",
+        "redox_3",
+        "uptake_3"
+      ],
+      "flux": [
+        8.45,
+        16.0,
+        6.260785360447021,
+        9.633564257712916,
+        4.179488912628653,
+        0.0,
+        7.536309273193925,
+        3.6717384724693236,
+        0.017210135588664188,
+        0.3936588038711571,
+        0.029062042203088136,
+        1.3416457854407304,
+        8.60050190055024,
+        2.004952379643796,
+        11.102336478540858,
+        4.951052087070764,
+        2.0883081461269626,
+        1.9142758397188748,
+        3.0896784164223177,
+        6.349378057285487,
+        1.7300135798096945,
+        1.3375708067468834,
+        0.0,
+        11.469228219362673,
+        0.6134617072817208,
+        0.0,
+        4.042086528428757,
+        3.0296846714117622,
+        2.228726962247249,
+        0.0,
+        1.1371603109567636,
+        0.0
+      ],
+      "offsets": [
+        0.1359044152240756,
+        0.011069615993790194,
+        -0.1967632620440773,
+        -0.3537030219798029
+      ],
+      "regret": 31.388735674682387
+    }
+  }
+}

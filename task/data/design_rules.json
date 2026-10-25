@@ -1,0 +1,62 @@
+{
+  "modules": [
+    {
+      "id": "uptake_1",
+      "group": "uptake",
+      "cost": 2
+    },
+    {
+      "id": "uptake_2",
+      "group": "uptake",
+      "cost": 3
+    },
+    {
+      "id": "uptake_3",
+      "group": "uptake",
+      "cost": 4
+    },
+    {
+      "id": "redox_1",
+      "group": "redox",
+      "cost": 2
+    },
+    {
+      "id": "redox_2",
+      "group": "redox",
+      "cost": 3
+    },
+    {
+      "id": "redox_3",
+      "group": "redox",
+      "cost": 4
+    },
+    {
+      "id": "export_1",
+      "group": "export",
+      "cost": 2
+    },
+    {
+      "id": "export_2",
+      "group": "export",
+      "cost": 3
+    },
+    {
+      "id": "export_3",
+      "group": "export",
+      "cost": 4
+    }
+  ],
+  "choose_per_group": 1,
+  "budget": 10,
+  "incompatible_pairs": [
+    [
+      "uptake_1",
+      "redox_3"
+    ],
+    [
+      "redox_1",
+      "export_3"
+    ]
+  ],
+  "safety_floor": 9.0
+}
