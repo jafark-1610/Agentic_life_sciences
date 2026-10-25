@@ -73,4 +73,51 @@ class Tests(unittest.TestCase):
   m=strict_read(HERE.parent/'task/deliverables.json');self.assertEqual({r['path'] for r in m['required_deliverables']},{'run_pipeline.py','requirements.txt','final_answer.json','analysis.md','run_summary.json'})
  def test_21_empty_scientific_content_is_not_format(self):
   a=copy.deepcopy(self.answer);a['chips']=[];self.assertFalse(science(a,DATA)['passed'])
+ def test_22_reported_cross_runtime_values_serialize_identically(self):
+  from artifacts import stable_answer
+  fixture=strict_read(HERE/'tests/fixtures/oracle_runtime_drift.json')
+  got=copy.deepcopy(self.answer);want=copy.deepcopy(self.answer)
+  for row in fixture['rows']:
+   tokens=row['path'].strip('/').split('/')
+   for obj,field in [(got,'observed'),(want,'expected')]:
+    parent=obj
+    for token in tokens[:-1]:parent=parent[int(token)] if isinstance(parent,list) else parent[token]
+    parent[int(tokens[-1])]=row[field]
+  self.assertNotEqual(got,want)
+  self.assertEqual(stable_answer(got),stable_answer(want))
+ def test_23_stable_serialization_is_idempotent_and_nonmutating(self):
+  from artifacts import stable_answer
+  before=copy.deepcopy(self.answer);once=stable_answer(self.answer,self.D)
+  self.assertEqual(before,self.answer);self.assertEqual(once,stable_answer(once,self.D))
+ def test_24_oracle_policy_covers_all_floating_leaves(self):
+  from compare_answers import comparison_policy
+  policy=comparison_policy(self.D['model_spec']['acceptance']);patterns=policy['path_tolerances']
+  def walk(value,path=()):
+   if isinstance(value,dict):
+    for k,v in value.items():yield from walk(v,path+(str(k),))
+   elif isinstance(value,list):
+    for i,v in enumerate(value):yield from walk(v,path+(str(i),))
+   elif isinstance(value,float):yield path
+  for path in walk(self.answer):
+   if path==('selection','peak_witness','time'):
+    self.assertIn('/'+'/'.join(path),policy['semantic_rules']);continue
+   matched=any(len(tokens:=pattern.strip('/').split('/'))==len(path) and all(t=='*' or t==p for t,p in zip(tokens,path)) for pattern in patterns)
+   self.assertTrue(matched,'Unmapped float: /'+'/'.join(path))
+ def test_25_semantic_comparison_accepts_reported_runtime_drift(self):
+  from compare_answers import compare
+  got=copy.deepcopy(self.answer);fixture=strict_read(HERE/'tests/fixtures/oracle_runtime_drift.json')
+  for row in fixture['rows']:
+   tokens=row['path'].strip('/').split('/');parent=got
+   for token in tokens[:-1]:parent=parent[int(token)] if isinstance(parent,list) else parent[token]
+   parent[int(tokens[-1])]=row['observed']
+  self.assertTrue(compare(got,self.answer,DATA)['passed'])
+ def test_26_semantic_comparison_rejects_wrong_physics(self):
+  from compare_answers import compare
+  got=copy.deepcopy(self.answer);got['selection']['peak_witness']['time']=0.
+  self.assertFalse(compare(got,self.answer,DATA)['passed'])
+ def test_27_serialized_witness_matches_physical_value(self):
+  w=self.answer['selection']['peak_witness'];chip=next(c for c in self.D['chips'] if c['id']==w['chip']);p=next(c for c in self.answer['chips'] if c['id']==w['chip'])['models'][w['model_index']]
+  course=next(c for c in self.D['courses'] if c['id']==self.answer['selection']['course']);scenario=next(c for c in self.D['scenarios'] if c['id']==w['scenario'])
+  value=simulate(p,chip['known'],course,[w['time']],scenario['multipliers'],precise=True)['states'][0,2]
+  self.assertLess(abs(value-w['value']),1e-8)
 if __name__=='__main__':unittest.main()

@@ -2,6 +2,6 @@
   "case_id": "ALS_TMDD_PULSE_002",
   "status": "success",
   "input_sha256": "7d255620dbbec60f41061cff9ef496748944d8c62015c30de56835da38b20173",
-  "answer_sha256": "f52d538f966bbe867cf9b9be4558fa62ead15f0dedf226f8662a5c71c6c66860",
-  "elapsed_seconds": 127.24482866399921
+  "answer_sha256": "376e4e441e385e7aa6392ce433e1f45baf9f19f385de57fb872a6869bc7f50b4",
+  "elapsed_seconds": 101.37020853800641
 }

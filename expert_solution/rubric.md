@@ -57,3 +57,65 @@ Delivery deductions: analysis diagnostic block 5; summary hashes/schema 5; requi
   }
 }
 ```
+
+## Oracle execution comparison
+
+The legacy numeric fallback is 1e-8; it does not replace any scientific acceptance rule. Oracle comparison uses the explicit paths and semantic witness checks below. Serialization precision applies only to oracle execution reproducibility, never to solver grading.
+
+```json
+{
+  "command": "python expert_solution/compare_answers.py --actual expert_solution/results/final_answer.json --expected expert_solution/final_answer.json --data task/data",
+  "path_syntax": "JSON Pointer with * matching one array index or object key",
+  "path_tolerances": {
+    "/chips/*/models/*/*": {
+      "absolute": 0.0005,
+      "relative": 0.015
+    },
+    "/chips/*/target_capacity_interval/*": {
+      "absolute": 0.0005,
+      "relative": 0.015
+    },
+    "/chips/*/calibration/*/*": {
+      "absolute": 0.0001,
+      "relative": 0.0
+    },
+    "/chips/*/fit_rmse": {
+      "absolute": 2e-05,
+      "relative": 0.0
+    },
+    "/courses/*/minimum_efficacy": {
+      "absolute": 0.002,
+      "relative": 0.0
+    },
+    "/courses/*/maximum_peak_free": {
+      "absolute": 0.003,
+      "relative": 0.0
+    },
+    "/courses/*/cases/*/efficacy": {
+      "absolute": 0.002,
+      "relative": 0.0
+    },
+    "/courses/*/cases/*/peak_free": {
+      "absolute": 0.003,
+      "relative": 0.0
+    },
+    "/selection/peak_witness/value": {
+      "absolute": 0.003,
+      "relative": 0.0
+    }
+  },
+  "numeric_rule": "abs(actual-expected) <= absolute + relative*abs(expected)",
+  "exact_fields": "Case/schema identity, scientific identifiers, Boolean flags, local rank, and resolved model indices.",
+  "semantic_rules": {
+    "ordering": "Match chips/courses/cases by identifiers and models by parameter-equivalence mapping.",
+    "/selection/peak_witness/time": "Do not compare to a fixed coordinate. Recompute the physical value at the submitted time and check its agreement with the global peak.",
+    "runtime_metadata": "Validate hashes and schema against the current execution; elapsed time and environment versions are not reference-equality fields."
+  },
+  "oracle_serialization": {
+    "float_decimal_places": 8,
+    "peak_time_decimal_places": 3,
+    "peak_value": "Recomputed at the serialized time using the serialized parameter vector.",
+    "scope": "Oracle reproducibility only; solver decimal precision is unrestricted."
+  }
+}
+```

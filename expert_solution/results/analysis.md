@@ -6,61 +6,61 @@
   "chip_diagnostics": [
     {
       "id": "chip_01",
-      "fit_rmse": 1.061386466807673e-12,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.9456830872693298,
-        1.4300683691699096
+        0.94568309,
+        1.43006837
       ],
       "target_capacity_point_identified": false
     },
     {
       "id": "chip_02",
-      "fit_rmse": 9.44035956834048e-13,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.8936508616397215,
-        1.0438487801044531
+        0.89365086,
+        1.04384878
       ],
       "target_capacity_point_identified": false
     },
     {
       "id": "chip_03",
-      "fit_rmse": 9.093204353759814e-13,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.9963780668226313,
-        1.2523155859671788
+        0.99637807,
+        1.25231559
       ],
       "target_capacity_point_identified": false
     },
     {
       "id": "chip_04",
-      "fit_rmse": 8.802671867985405e-13,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.9184727661260207,
-        1.178070532611281
+        0.91847277,
+        1.17807053
       ],
       "target_capacity_point_identified": false
     },
     {
       "id": "chip_05",
-      "fit_rmse": 1.1775205471568263e-12,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.7343778261520598,
-        1.4190189672915738
+        0.73437783,
+        1.41901897
       ],
       "target_capacity_point_identified": false
     },
     {
       "id": "chip_06",
-      "fit_rmse": 8.460505040136185e-13,
+      "fit_rmse": 0.0,
       "local_rank": 10,
       "target_capacity_interval": [
-        0.7413013558377961,
-        1.0555904903563182
+        0.74130136,
+        1.05559049
       ],
       "target_capacity_point_identified": false
     }
@@ -72,8 +72,8 @@
       "chip": "chip_06",
       "model_index": 0,
       "scenario": "slow_clearance",
-      "time": 14.560684948378686,
-      "value": 0.8858309708365496
+      "time": 14.561,
+      "value": 0.88583096
     }
   },
   "decision_limits": {

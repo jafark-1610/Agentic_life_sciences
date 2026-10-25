@@ -1,0 +1,46 @@
+{
+  "role": "oracle_cross_runtime_regression",
+  "status": "success",
+  "runtimes": [
+    {
+      "python": "3.12.14",
+      "dependencies": {
+        "numpy": "2.3.5",
+        "scipy": "1.17.0",
+        "jsonschema": "4.26.0"
+      }
+    },
+    {
+      "python": "3.13.5",
+      "dependencies": {
+        "numpy": "2.2.4",
+        "scipy": "1.15.3",
+        "jsonschema": "4.19.2"
+      }
+    }
+  ],
+  "answer_sha256": "376e4e441e385e7aa6392ce433e1f45baf9f19f385de57fb872a6869bc7f50b4",
+  "leaf_count": 8985,
+  "exact_leaf_mismatches": 0,
+  "byte_identical": true,
+  "reported_platform_drift_rows_tested": 20,
+  "semantic_comparison": {
+    "role": "semantic_oracle_comparison",
+    "passed": true,
+    "metadata_matches": true,
+    "scientific_checks": {
+      "global_identifiability": true,
+      "measurement_fit": true,
+      "counterfactual_predictions": true,
+      "course_decision": true,
+      "continuous_peak_witness": true
+    },
+    "details": {
+      "max_recomputed_fit_rmse": 1.909360418484222e-08,
+      "max_efficacy_error": 0.0,
+      "max_peak_error": 0.0
+    },
+    "presentation_deduction": 0
+  },
+  "platform_revalidation": "pending; the exact platform environment is not available locally"
+}

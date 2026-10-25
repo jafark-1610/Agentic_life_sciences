@@ -5,7 +5,7 @@
     {
       "check": "generation_truth_recovery",
       "observed": {
-        "max_relative_parameter_error": 7.064455687100235e-10
+        "max_relative_parameter_error": 3.939273529596221e-08
       },
       "criterion": "parameter error < 0.001, providing more than threefold tolerance clearance",
       "status": "pass"
@@ -13,9 +13,9 @@
     {
       "check": "independent_radau_and_peak_refinement",
       "observed": {
-        "max_efficacy_difference": 1.706900176756676e-10,
-        "max_peak_difference": 6.800904284176568e-11,
-        "max_mass_error": 7.647216193618078e-13
+        "max_efficacy_difference": 1.7058288115379128e-10,
+        "max_peak_difference": 6.800848773025336e-11,
+        "max_mass_error": 7.640554855470327e-13
       },
       "criterion": "all differences < 1e-6 and mass error < 1e-7",
       "status": "pass"
@@ -49,7 +49,7 @@
           "course_decision": true,
           "continuous_peak_witness": true
         },
-        "max_peak_error": 0.5322596855441022
+        "max_peak_error": 0.5322597093282164
       },
       "criterion": "sampled maxima must fail continuous counterfactual criteria",
       "status": "pass"
@@ -57,8 +57,8 @@
     {
       "check": "reference_gate_clearance",
       "observed": {
-        "efficacy_margin": 0.02297977935383555,
-        "peak_margin": 0.044169029163450446,
+        "efficacy_margin": 0.022979780000000005,
+        "peak_margin": 0.044169030000000054,
         "efficacy_tolerance": 0.002,
         "peak_tolerance": 0.003
       },

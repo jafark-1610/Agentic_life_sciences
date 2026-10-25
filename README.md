@@ -10,6 +10,7 @@ From the package root, with Python 3.11+, numpy, scipy and jsonschema available:
 python task/data/validate_dataset.py
 python expert_solution/run_pipeline.py --data task/data --output-dir expert_solution/results
 python expert_solution/score_rubric.py --answer expert_solution/results/final_answer.json --artifacts-dir expert_solution/results
+python expert_solution/compare_answers.py --actual expert_solution/results/final_answer.json --expected expert_solution/final_answer.json
 python -m unittest discover -s expert_solution/tests -v
 python expert_solution/robustness_checks/run_checks.py
 python expert_solution/build_rubric_md.py --check

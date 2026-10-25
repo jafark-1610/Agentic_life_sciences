@@ -1,0 +1,109 @@
+{
+  "role": "reported cross-runtime regression values, not task inputs",
+  "runtime": {
+    "python": "3.12.3",
+    "numpy": "2.5.3"
+  },
+  "rows": [
+    {
+      "path": "/chips/0/models/0/0",
+      "observed": 1.981503527784332,
+      "expected": 1.9815035277843558
+    },
+    {
+      "path": "/chips/0/models/0/1",
+      "observed": 0.1429938714959706,
+      "expected": 0.14299387149597012
+    },
+    {
+      "path": "/chips/0/models/0/2",
+      "observed": 1.042829990234827,
+      "expected": 1.0428299902347913
+    },
+    {
+      "path": "/chips/0/models/0/3",
+      "observed": 0.724486154174636,
+      "expected": 0.72448615417463
+    },
+    {
+      "path": "/chips/0/models/0/4",
+      "observed": 0.8445744869372769,
+      "expected": 0.8445744869369105
+    },
+    {
+      "path": "/chips/0/models/0/5",
+      "observed": 0.044717960140433444,
+      "expected": 0.0447179601402065
+    },
+    {
+      "path": "/chips/0/models/0/6",
+      "observed": 1.4300683691747977,
+      "expected": 1.4300683691699096
+    },
+    {
+      "path": "/chips/0/models/0/7",
+      "observed": 1.5583805103106982,
+      "expected": 1.5583805103094366
+    },
+    {
+      "path": "/chips/0/models/0/8",
+      "observed": 0.256684678187833,
+      "expected": 0.2566846781873372
+    },
+    {
+      "path": "/chips/0/models/0/9",
+      "observed": 0.9456830872644123,
+      "expected": 0.9456830872693298
+    },
+    {
+      "path": "/chips/0/models/1/0",
+      "observed": 1.981503527784332,
+      "expected": 1.9815035277843558
+    },
+    {
+      "path": "/chips/0/models/1/1",
+      "observed": 0.1429938714959706,
+      "expected": 0.14299387149597012
+    },
+    {
+      "path": "/chips/0/models/1/2",
+      "observed": 1.042829990234827,
+      "expected": 1.0428299902347913
+    },
+    {
+      "path": "/chips/0/models/1/3",
+      "observed": 0.724486154174636,
+      "expected": 0.72448615417463
+    },
+    {
+      "path": "/chips/0/models/1/4",
+      "observed": 1.5583805103106982,
+      "expected": 1.5583805103094366
+    },
+    {
+      "path": "/chips/0/models/1/5",
+      "observed": 0.256684678187833,
+      "expected": 0.2566846781873372
+    },
+    {
+      "path": "/chips/0/models/1/6",
+      "observed": 0.9456830872644123,
+      "expected": 0.9456830872693298
+    },
+    {
+      "path": "/chips/0/models/1/7",
+      "observed": 0.8445744869372769,
+      "expected": 0.8445744869369105
+    },
+    {
+      "path": "/chips/0/models/1/8",
+      "observed": 0.044717960140433444,
+      "expected": 0.0447179601402065
+    },
+    {
+      "path": "/chips/0/models/1/9",
+      "observed": 1.4300683691747977,
+      "expected": 1.4300683691699096
+    }
+  ]
+}

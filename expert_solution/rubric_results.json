@@ -7,7 +7,7 @@
     "continuous_peak_witness": true
   },
   "details": {
-    "max_recomputed_fit_rmse": 1.1775205471568263e-12,
+    "max_recomputed_fit_rmse": 1.909360418484222e-08,
     "max_efficacy_error": 0.0,
     "max_peak_error": 0.0
   },

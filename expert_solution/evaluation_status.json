@@ -3,7 +3,7 @@
   "status": "awaiting_external_evaluation",
   "platform_structure_validation": "not_run",
   "platform_script_validation": "not_run",
-  "platform_oracle": "not_run",
+  "platform_oracle": "failed: exact comparison of unmatched nested floating-point fields; infrastructure compatibility correction prepared for revalidation",
   "prompt_only_model_pilots": "not_run: no model evaluation service available",
   "model_runs": [
     {
@@ -39,5 +39,21 @@
   ],
   "autoreview_score": null,
   "qualification": "unconfirmed until five frozen runs are independently graded; at least three must fail",
-  "evidence_policy": "Local numerical baselines and oracle checks are not counted as model trials. Platform isolation must be checked against the supplied verifier contract."
+  "evidence_policy": "Local numerical baselines and oracle checks are not counted as model trials. Platform isolation must be checked against the supplied verifier contract.",
+  "infrastructure_corrections": [
+    {
+      "scope": "Oracle serialization and execution-comparison metadata; scientific inputs, equations, scoring weights and acceptance thresholds unchanged.",
+      "reported_error": "130 of 8985 leaf values compared unequal despite tiny parameter differences and all 22 package tests passing.",
+      "fix": "Stable computed-output precision, recomputed serialized peak witness, explicit nested tolerance paths, and semantic comparator.",
+      "external_revalidation": "pending"
+    }
+  ],
+  "local_validation": {
+    "package_tests": 28,
+    "cross_runtime_exact_mismatches": 0,
+    "isolated_base_score": 100,
+    "isolated_regenerated_score": 100,
+    "stored_answer_replay_rejected": true,
+    "platform_oracle_rerun": "pending"
+  }
 }

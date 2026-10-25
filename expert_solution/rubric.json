@@ -56,5 +56,62 @@
   "ordering": "IDs and model-equivalence mappings; all array orderings accepted with consistent model indices",
   "caps": "Any failed scientific group caps at 79; execution/input-dependence failure caps at 79; caps precede presentation and delivery deductions. Pass threshold 80 inclusive. Group credit is all-or-nothing. Presentation deduction applies once and never activates a scientific cap. Delivery deductions total at most 10 including requirements.",
   "recovery": "One-element answer-array wrapper and numeric strings are normalized before scientific evaluation. Extra fields and schema/case metadata slips incur presentation only. No arbitrary identifier renaming is accepted.",
-  "ground_truth": "Computed canonical inverse solution, verified against independent integration and generation truth; no typed answer values in rubric."
+  "ground_truth": "Computed canonical inverse solution, verified against independent integration and generation truth; no typed answer values in rubric.",
+  "numeric_tolerance": 1e-08,
+  "numeric_tolerance_scope": "Legacy oracle execution fallback only; scientific solver grading uses the unchanged public thresholds in tolerances and model_spec.json.",
+  "oracle_comparison": {
+    "command": "python expert_solution/compare_answers.py --actual expert_solution/results/final_answer.json --expected expert_solution/final_answer.json --data task/data",
+    "path_syntax": "JSON Pointer with * matching one array index or object key",
+    "path_tolerances": {
+      "/chips/*/models/*/*": {
+        "absolute": 0.0005,
+        "relative": 0.015
+      },
+      "/chips/*/target_capacity_interval/*": {
+        "absolute": 0.0005,
+        "relative": 0.015
+      },
+      "/chips/*/calibration/*/*": {
+        "absolute": 0.0001,
+        "relative": 0.0
+      },
+      "/chips/*/fit_rmse": {
+        "absolute": 2e-05,
+        "relative": 0.0
+      },
+      "/courses/*/minimum_efficacy": {
+        "absolute": 0.002,
+        "relative": 0.0
+      },
+      "/courses/*/maximum_peak_free": {
+        "absolute": 0.003,
+        "relative": 0.0
+      },
+      "/courses/*/cases/*/efficacy": {
+        "absolute": 0.002,
+        "relative": 0.0
+      },
+      "/courses/*/cases/*/peak_free": {
+        "absolute": 0.003,
+        "relative": 0.0
+      },
+      "/selection/peak_witness/value": {
+        "absolute": 0.003,
+        "relative": 0.0
+      }
+    },
+    "numeric_rule": "abs(actual-expected) <= absolute + relative*abs(expected)",
+    "exact_fields": "Case/schema identity, scientific identifiers, Boolean flags, local rank, and resolved model indices.",
+    "semantic_rules": {
+      "ordering": "Match chips/courses/cases by identifiers and models by parameter-equivalence mapping.",
+      "/selection/peak_witness/time": "Do not compare to a fixed coordinate. Recompute the physical value at the submitted time and check its agreement with the global peak.",
+      "runtime_metadata": "Validate hashes and schema against the current execution; elapsed time and environment versions are not reference-equality fields."
+    },
+    "oracle_serialization": {
+      "float_decimal_places": 8,
+      "peak_time_decimal_places": 3,
+      "peak_value": "Recomputed at the serialized time using the serialized parameter vector.",
+      "scope": "Oracle reproducibility only; solver decimal precision is unrestricted."
+    }
+  }
 }

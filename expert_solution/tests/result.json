@@ -1,8 +1,8 @@
 {
   "role": "local_package_tests_not_model_runs",
   "status": "success",
-  "tests_run": 22,
-  "seconds": 7.32,
+  "tests_run": 28,
+  "seconds": 15.091,
   "exit_code": 0,
   "command": "python -m unittest discover -s expert_solution/tests -v",
   "passed_tests": [
@@ -27,7 +27,13 @@
     "test_18_counterfactual_breaks_symmetry",
     "test_19_rubric_regeneration",
     "test_20_deliverable_slots_explicit",
-    "test_21_empty_scientific_content_is_not_format"
+    "test_21_empty_scientific_content_is_not_format",
+    "test_22_reported_cross_runtime_values_serialize_identically",
+    "test_23_stable_serialization_is_idempotent_and_nonmutating",
+    "test_24_oracle_policy_covers_all_floating_leaves",
+    "test_25_semantic_comparison_accepts_reported_runtime_drift",
+    "test_26_semantic_comparison_rejects_wrong_physics",
+    "test_27_serialized_witness_matches_physical_value"
   ],
   "python": "3.12.14",
   "dependencies": {
