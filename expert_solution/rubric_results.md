@@ -1,7 +1,5 @@
 # Canonical submission evaluation
 
-Scientific answer and diagnostic artifact score: 100/100.
+Scientific answer and diagnostic report: 100/100. Isolated original and regenerated submitted-code executions: 100/100 each. Both executions produced exactly the two configured result artifacts. All mounted-source hashes match the published computational source. The stored-answer control was rejected on regenerated tables.
 
-Isolated original and regenerated executions: 100/100 each. Private-file denial, read-only task and offline-network probes passed. A stored-answer pipeline failed regenerated data even after refreshing its hashes. Detailed execution evidence is in results/verification_result.json.
-
-Two Python/NumPy/SciPy runtimes produced byte-identical answers with zero differing leaves across all 8985 fields. The reported platform parameter drift is covered by regression tests. See results/cross_runtime_comparison.json and results/correction_scope.json. External platform revalidation remains pending.
+The compatible point-law control fits every assay table yet chooses a different policy and fails the sharp-bound task. This is a mathematical control, not a solver-model trial. External Meta Muse qualification remains unconfirmed.

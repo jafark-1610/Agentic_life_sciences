@@ -1,76 +1,80 @@
-# ALS_TMDD_PULSE_002: Chemical-site identifiability and pulse-course design
+# Required deliverables
 
-Six synthetic organ-chip systems were studied using three dosing protocols and two optical readouts. Infer the full set of observationally compatible mechanistic models, then choose a course meeting an efficacy floor and a continuous-time safety limit in every chip, compatible model and specified physiological scenario. These are simulated mechanistic experiments, not patient measurements or clinical recommendations.
+Required deliverables: run_pipeline.py, final_answer.json, analysis.md
 
-## State model
+These are the only three solver submission slots. `required_deliverables.json` and `deliverables.json` both contain this exact flat filename list. The dependency list in `task/requirements.txt` is supplied task input, not an additional solver submission.
 
-For each chip, use seven states initially zero: depot amount D, circulating amount C, free tissue amount F, amounts B1 and B2 bound to chemical sites 1 and 2, cumulative target occupancy A, and eliminated amount L. Compartments have equal normalized reference volume; amounts and concentrations share the declared numerical units. Time is hours. Positive parameters, in `model_spec.json` order, are ka, kel, vmax, km, kon1, koff1, q1, kon2, koff2, q2. Site capacities are q1 and q2. Three known rate constants are supplied per chip. Equations between input events are
+# ALS_PAIRED_IMMUNITY_003
 
-    transport = vmax*C/(km+C)
-    net1 = kon1*f1(t)*F*(q1-B1) - koff1*B1
-    net2 = kon2*f2(t)*F*(q2-B2) - koff2*B2
-    D'  = -ka*D
-    C'  = ka*D - kel*C - transport + kreturn*F
-    F'  = transport - kreturn*F - net1 - net2
-    B1' = net1 - kint1*B1
-    B2' = net2 - kint2*B2
-    A'  = B2/q2
-    L'  = kel*C + kint1*B1 + kint2*B2.
+## Paired-clone immune rescue under viability-gated readout
 
-At each pulse time, add its dose to D and change no other state. Blockade windows are half-open [start,end). For each site i, fi(t) is 1/(1 + sum of strengths of active windows that affect site i). A `both` window affects both sites; a `site1` window affects chemical site 1 only. At a window boundary states remain continuous. Blockade changes association rates, not dissociation, internalization or capacity. Every experiment and candidate course starts from zero, not from the final state of another experiment. The conservation identity is D+C+F+B1+B2+L = cumulative administered amount.
+Three synthetic immune-culture cohorts were assayed in two laboratory mixtures under four priming/rescue assignment designs. Choose one assay-adaptive policy for use in every target cohort. The scientific target is a paired-clone contrast among clones that would remain viable under both the proposed policy and the benchmark, with sharp bounds over the entire causal family compatible with the released tables. No patient or clinical efficacy claim is involved.
 
-## Measurements and inference target
+## Biological and measurement model
 
-`chips.json` provides standards and observations. The true concentration represented by channel `plasma` is C; by `tissue_total`, F+B1+B2. Each chip and channel has its own unknown gain g, sensor kd h and offset o:
+For one clone let X be its binary receptor genotype and U its latent biological state. The distribution of U conditional on X can differ between cohorts. Within a cohort it is identical in both laboratories and the target population. The known laboratory and target frequencies of X=1 are in `data/contexts.json`. No other population-transport restriction is imposed.
 
-    signal = o + g*x/(h+x).
+Z is a noisy baseline genotype assay: P(Z=1|X=0) is z_false_positive, and P(Z=0|X=1) is z_false_negative. Conditional on X, its measurement randomness is independent of U and the imaging variable E. E is Bernoulli(image_flip), independent of X,U,Z and assignment randomization. Z and E are clone attributes in the potential-world model below.
 
-`standards` supplies x and signal for calibration. The signal generator rounds to 12 decimal places; there is no additional stochastic noise. Treat calibration and mechanistic estimation as deterministic inverse problems with the parameter bounds in `model_spec.json`. Do not mistake sensor kd for the mechanistic transport km. Protocols are in `protocols.json`. All observations, including the wash protocol, participate.
+A is the initial priming assignment; M is the true early activation state; W is the recorded activation image; B is the later rescue assignment; S is viability; and Y is binary neutralization capacity. Each satisfies
 
-The inference target is the complete set of globally optimal parameter vectors for the joint calibration and concentration-observation fit, not merely a full-rank local optimum. Rounding and numerical integration errors are covered by the published acceptance tolerances. A fitted vector's local differential rank does not define global identification. Chemical-site labels carry physical meaning for the candidate interventions and target efficacy. Do not impose an unreported rate-ordering constraint on chemical names. Return every distinct compatible mechanistic solution within the declared parameter domain; do not repeat numerically equivalent solutions. The supplied deterministic experiments identify isolated solutions rather than a continuous parameter family. Distinct solutions differ beyond the published parameter comparison tolerances. The fitted sensor parameters are shared across protocols of their chip.
+    M = f_M(A,U)
+    W = M XOR E
+    S = f_S(M,B,U)
+    Y = f_Y(M,B,U).
 
-For each chip report `calibration`, `models` (one ten-number vector per distinct solution in model-spec order), `target_capacity_interval` (minimum and maximum q2 across that set), and `target_capacity_point_identified` (true iff its interval width is at most `parameter_absolute`). Report `local_rank` of the concentration-observation Jacobian at any one returned solution: rows are protocol/time/channel observations, columns are derivatives with respect to log parameters, rank uses singular values greater than largest singular value times `local_rank_relative_cutoff`. Sensor parameters are held at their fitted values for this rank. Report `fit_rmse`, the root mean square concentration residual over all protocol/time/channel rows for that same solution. Invert the fitted sensor response to obtain observed concentrations. Any compatible solution gives the same residual/rank within tolerances. Parameter bounds, units and all numerical thresholds are public in `model_spec.json`.
+All arguments and outputs except U are binary. For each fixed U, f_M is nondecreasing in A. f_S is nondecreasing in each of M and B, holding its other argument fixed. For each fixed M,U, f_Y is nondecreasing in B. There is no monotonicity restriction on f_Y in M: early activation can also induce exhaustion. The joint distribution of all biological response functions and natural-assignment functions conditional on X is otherwise unrestricted.
 
-## Counterfactual courses
+Y is recorded only when S=1. When S=0 its table label is NA, and this cell aggregates both possible latent values of Y. S itself is always observed. NA is not a zero response and is not a separate biological outcome. There are no omitted table cells or finite-sample standard errors.
 
-`courses.json` is the entire candidate menu. Each record gives its pulses, blockade, horizon and resource cost. `scenarios.json` supplies physiological multipliers. Multiply each named mechanistic parameter before simulating the course. The same multiplier applies to that chemical parameter in each compatible model; it does not relabel sites or refit observations. Known constants are unchanged. In particular, a scenario may act differently on the two chemical sites. All scenarios apply to all chips.
+Natural assignment obeys A=g_A(U), B=g_B(W,U), with arbitrary binary natural-assignment functions. These functions remain properties of the clone in randomized designs even when assignment is overridden. There is no direct effect of laboratory or assignment-design labels on biological functions or measurement laws.
 
-For every chip, compatible model and scenario, compute
+## Assignment designs and tables
 
-    efficacy = A(horizon)/horizon
-    peak_free = max_{0 <= t <= horizon} F(t).
+In `data/protocols.json`:
 
-Efficacy is target-site-2 occupancy averaged continuously over time. Safety is a continuous-time extremum, including event endpoints, not the largest sampled assay value. For each course give all case rows and their minimum efficacy and maximum peak_free. Acceptable courses satisfy both `decision.efficacy_floor` and `decision.peak_ceiling` simultaneously in every case. Select a qualifying course of minimum supplied cost. Any qualifying course within `cost_slack` of the smallest qualifying cost is accepted; course-ID lexical order is only a convenient tie convention. If no course qualifies, report `no_qualifying_course` with null course and witness.
+* natural: both assignments use their natural functions.
+* priming_trial: A is randomized with P(A=1)=0.45; B uses its natural function.
+* rescue_trial: A uses its natural function; B is randomized with P(B=1|W=0)=0.7 and P(B=1|W=1)=0.35.
+* sequential_trial: both stages use those randomized rules.
 
-For a selected course supply a `peak_witness`: chip ID, zero-based index into that chip's returned models, scenario ID, time, and free-tissue value. At that time the physical model must attain the course's maximum peak_free within `witness_value_absolute`. Any near-maximizing time is valid; tied peaks need not use a fixed time. There is no requirement to reproduce an evaluator's particular peak-time coordinate.
+Each randomized coin is independent of the biological and assay attributes conditional on its stated design variables. All protocols draw from the same cohort/laboratory population law. Table entries are joint probabilities of (Z,A,W,B,S,Y_recorded), conditional on laboratory and protocol. Do not renormalize the table to viable cultures. Each group has 48 mutually exclusive cells, including zero-valued probabilities.
 
-## Required deliverables
+The supplied population probabilities are rounded to 12 decimal places. An admissible causal law must obey all structural, independence and transport assumptions and predict every released cell within the cohort's probability_band, inclusively. The same law must support every protocol and laboratory of its cohort simultaneously. All admissible laws, including those assigning probability to biological response functions not used by a chosen fitted representation, belong to the scientific uncertainty set. No distributional prior or parametric latent-family restriction is supplied.
 
-The machine-readable contract is `../task/deliverables.json`. Work in `solver_solution/`, with read-only `task/` as a sibling. Supply these five files:
+## Policy worlds and target quantities
 
-1. `solver_solution/run_pipeline.py`
-2. `solver_solution/requirements.txt`
-3. `solver_solution/results/final_answer.json`
-4. `solver_solution/results/analysis.md`
-5. `solver_solution/results/run_summary.json`
+`data/policies.json` is the complete menu. Each policy has a two-entry array a indexed by Z and a 2-by-2 array b indexed first by Z and then W. Its counterfactual world sets A^p=a[Z], M^p=f_M(A^p,U), W^p=M^p XOR E, B^p=b[Z][W^p], followed by the biological S^p,Y^p equations. The benchmark in `data/benchmark.json` uses its own arrays in the same equations. In a paired-clone comparison, X,U,Z,E refer to that same clone in both worlds. The target expectations use target_x1 rather than either laboratory's genotype mixture. All policies start at the first assignment; no policy inherits states or natural assignment from another one.
 
-Run the validator and the pipeline offline with Python 3.11+ and numpy, scipy and jsonschema available:
+For policy p, let G_p be the event S^p=1 AND S^benchmark=1. For an admissible target law Q define
 
-    python ../task/data/validate_dataset.py --data ../task/data
+    eligibility_p(Q) = P_Q(G_p)
+    net_gain_p(Q) = E_Q[Y^p - Y^benchmark | G_p]
+    harm_p(Q) = P_Q(Y^p=0, Y^benchmark=1 | G_p)
+    cost_p(Q) = E_Q[A^p + rescue_cost*B^p].
+
+The conditioning event belongs to the same paired-clone law as its numerator. The supplied data guarantee strictly positive lower eligibility for every menu policy, so these conditional quantities are defined throughout each admissible set.
+
+For each cohort and policy, report the infimum and supremum of eligibility, the infimum and supremum of net_gain, the supremum of harm, and the supremum of cost over all admissible causal laws for that cohort. These are sharp population-model bounds. Every endpoint is optimized for its own stated quantity; a single fitted distribution is not the requested answer. `point_identified` is true iff the unrounded net-gain interval width is at most acceptance.identification_width. Any correct inference and optimization method is accepted.
+
+For each policy across cohorts report worst_net_gain as the minimum cohort net_gain_lower; worst_harm as the maximum cohort harm_upper; worst_cost as the maximum cohort cost_upper; and minimum_eligibility as the minimum cohort eligibility_lower.
+
+A policy qualifies when worst_harm <= decision.maximum_harm, worst_cost <= decision.maximum_cost, and minimum_eligibility >= decision.minimum_eligibility. The resource-adjusted policy score is worst_net_gain - decision.resource_penalty*worst_cost; report it as resource_adjusted_score. Among qualifying policies choose one maximizing this score. Any qualifying policy within acceptance.decision_slack of that maximum is accepted. A negative score does not permit abstention when a policy qualifies. Identifier order is only a convenient tie convention. If none qualifies, report no_qualifying_policy with null policy.
+
+## Execution and output
+
+Work in `solver_solution/` with `task/` available as a read-only sibling. Run offline with Python 3.11+, numpy, scipy and jsonschema available. Do not install packages or obtain external data. The exact command is
+
     python run_pipeline.py --data ../task/data --output-dir results
 
-Accept arbitrary input and output paths. Treat task files as immutable. Do not download data, install packages, read evaluator/private paths, copy stored answers, or embed outputs in code. The evaluator reruns the submitted pipeline against a regenerated, physically consistent instrument dataset; results must depend on the actual staged observations. Module helpers in your submission directory are permitted. Submit regular files and directories; symbolic links are not supported by the isolated staging contract. Both initial and regenerated executions use the same model and command contract.
+Accept arbitrary input and output directory paths. Validate input first:
 
-`final_answer.json` follows `data/output_schema.json`. All IDs and model indices must resolve; include each chip, course and chip/model/scenario case exactly once. Order is irrelevant except parameter-vector order and the meaning of model_index. Use finite JSON numbers, never NaN or infinity.
+    python ../task/data/validate_dataset.py --data ../task/data
 
-`run_summary.json` follows `data/run_summary_schema.json`. Record case_id, status `success`, input_sha256, answer_sha256 and nonnegative elapsed_seconds. Compute input_sha256 as SHA-256 of UTF-8 `json.dumps({filename: sha256(raw_file_bytes) for filename in data_manifest['files']}, sort_keys=True, separators=(',', ':'))`. Hash only the files named in the manifest, by basename. answer_sha256 hashes the exact written final_answer.json bytes. A self-written success status is not proof of execution; rerun evidence is generated independently.
+The executable source is the run_pipeline.py submission. Write the final_answer.json and analysis.md submissions to the requested output directory. Recompute from staged scientific input on every execution; the evaluator also executes the submitted code on physically consistent regenerated population tables. Evaluator paths and stored answers are unavailable to the submitted runtime. Regular helper modules are permitted if they accompany the submitted source; symbolic links are unsupported. There is no required package-installation or additional dependency-declaration output.
 
-## Diagnostic evidence
+`data/output_schema.json` defines the answer. Its metadata are schema=paired_immunity/1 and case_id=ALS_PAIRED_IMMUNITY_003. Include every supplied cohort and policy exactly once and each policy once per cohort. Match by IDs; all list orders are accepted. Every numeric endpoint and global envelope must match its scientific target within acceptance.numeric_absolute, except resource_adjusted_score, which uses acceptance.policy_score_absolute to allow propagation of upstream numerical errors. No decimal-place convention is graded. All scientific requirements and input-dependent execution are required for acceptance.
 
-`analysis.md` must contain exactly one fenced `json` block whose object contains `case_id`, `chip_diagnostics`, `selection`, `decision_limits`, and `limitations`. `chip_diagnostics` lists each chip's id, fit_rmse, local_rank, target_capacity_interval and target_capacity_point_identified from the computed answer. `selection` repeats the computed selection object, including witness. `decision_limits` repeats the two public decision limits. `limitations` must list these applicable model qualifications: `synthetic_reduced_system`, `rounded_deterministic_signals`, `counterfactuals_depend_on_model`. Other narrative is optional and not numerically scored. This structured evidence, the summary hashes, and the actual runtime are checked by the executable verifier; they are not deferred to an unspecified prose review.
+`analysis.md` must contain exactly one fenced json block with these fields: case_id; selected_policy (the selected ID or null); selected_policy_metrics (its global_policies object or null); decision_limits (the public decision object); interval_interpretation equal to sharp_bounds_over_compatible_causal_models; and context_diagnostics, listing each cohort's id, point_identified_policy_count, and largest_net_gain_width computed from its reported net-gain bounds. Narrative outside this block is optional. The executable grader validates these computed diagnostics; self-written success claims are not proof of scientific correctness.
 
-## Acceptance and presentation
-
-All reported compatible parameter solutions are checked modulo their output ordering against the full model-equivalence set, using `parameter_absolute + parameter_relative*abs(expected)` per coordinate. Sensor coefficients use calibration_absolute. Every returned model must fit the observations with RMSE no greater than fit_rmse_max; the reported fit_rmse for the representative solution must agree with recomputation within fit_rmse_max. Interval endpoints use parameter tolerances, flags are Boolean, and local_rank must agree with the stated rank definition. Every efficacy and continuous peak uses its respective absolute tolerance. Witness time must be in the course horizon and its recomputed value must match the reported value and global maximum within witness_value_absolute. Conservation error in independent forward checks must not exceed mass_balance_max.
-
-Every scientific group and the input-dependent rerun are required for acceptance. A single readable answer object inside a one-element array is unwrapped for all scientific calculations; numeric strings in numeric fields are recovered. These, extra fields, and incorrect/missing schema metadata incur one presentation deduction, never a scientific failure by themselves. Structural omissions of scientific fields fail their group. Unreadable, absent, duplicate-key or nonfinite JSON receives zero. Missing report/summary/dependency artifacts receive the published delivery deductions; a missing or non-running pipeline cannot satisfy execution. The grader documents numeric scoring separately; no unlisted formatting rule affects science.
+Unreadable, absent, duplicate-key or nonfinite JSON receives zero. A readable answer object wrapped in a one-element array is recovered before numerical scoring. Numeric strings in numeric fields are recovered. Wrapper recovery, numeric strings, extra fields and missing/incorrect schema metadata incur only the single published presentation deduction; they do not cause a scientific failure by themselves. Missing scientific content fails its group. A missing report or inconsistent diagnostic block receives a delivery deduction. A missing or non-running pipeline cannot satisfy execution. The numeric rubric specifies all scores, caps and deductions; there are no hidden formatting or annotation rules.

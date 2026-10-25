@@ -1,49 +1,38 @@
-"""Original synthetic target-mediated disposition experiments."""
+"""Deterministic synthetic population distributions for paired-clone causal analysis."""
 from pathlib import Path
-import sys,json,hashlib
+import json,sys,csv,hashlib
 import numpy as np
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'expert_solution'))
-from mechanism import simulate,NAMES
+from causal_model import observation,prior,policies,REF
+PROTOCOLS=['natural','priming_trial','rescue_trial','sequential_trial']
+def save(p,o):p.write_text(json.dumps(o,indent=2,allow_nan=False)+'\n')
+def update_manifest(data):
+ names=['study_metadata.json','contexts.json','protocols.json','policies.json','benchmark.json','tables.csv','source_provenance.json']
+ save(data/'data_manifest.json',{'files':{f:{'bytes':(data/f).stat().st_size,'sha256':hashlib.sha256((data/f).read_bytes()).hexdigest()} for f in names}})
+def cells():
+ for z in range(2):
+  for a in range(2):
+   for w in range(2):
+    for b in range(2):
+     for s,y in [(0,'NA'),(1,'0'),(1,'1')]:yield z,a,w,b,s,y
 
-def save(p,x):p.write_text(json.dumps(x,indent=2,allow_nan=False)+'\n')
+def write_tables(data,contexts,truth):
+ with (data/'tables.csv').open('w',newline='') as f:
+  writer=csv.writer(f);writer.writerow(['context','lab','protocol','Z','A','W','B','S','Y','probability'])
+  for c in contexts:
+   for lab in c['labs']:
+    for protocol in PROTOCOLS:
+     probs=observation(c,lab,protocol)@np.array(truth[c['id']])
+     for cell,p in zip(cells(),probs):writer.writerow([c['id'],lab['id'],protocol,*cell,format(float(p),'.12f')])
+
 def generate(root=ROOT):
- d=root/'task/data';rng=np.random.default_rng(618420)
- times=[.06,.13,.27,.5,.85,1.3,2.,2.8,4.,5.5,7.,8.5,10.,12.,16.,20.,26.,34.,42.,48.]
- protocols=[{'id':'low','horizon':48.,'pulses':[[0.,.8]],'blockade':[]},{'id':'high','horizon':48.,'pulses':[[0.,5.5]],'blockade':[]},{'id':'wash','horizon':48.,'pulses':[[0.,3.],[10.,2.]],'blockade':[{'start':2.,'end':8.,'strength':12.,'site':'both'}]}]
- bounds=[[.3,4.],[.04,.45],[.3,2.],[.15,2.5],[.2,3.],[.008,.8],[.2,3.],[.2,3.],[.008,.8],[.2,3.]]
- spec={'case_id':'ALS_TMDD_PULSE_002','schema':'tmdd_pulse/1','parameters':NAMES,'parameter_bounds':bounds,'channels':['plasma','tissue_total'],'standards':[0.,.1,.4,1.5,4.,12.], 'calibration_bounds':{'gain':[.5,4.],'kd':[.3,8.],'offset':[-.1,.2]},'horizon':36.,'local_rank_relative_cutoff':1e-7,'acceptance':{'parameter_relative':.015,'parameter_absolute':.0005,'calibration_absolute':.0001,'fit_rmse_max':.00002,'efficacy_absolute':.002,'peak_absolute':.003,'witness_value_absolute':.003,'mass_balance_max':.00002,'cost_slack':.000001},'decision':{'efficacy_floor':.4,'peak_ceiling':.93}}
- save(d/'model_spec.json',spec);save(d/'protocols.json',protocols)
- chips=[];truth={}
- for j in range(6):
-  cid=f'chip_{j+1:02d}'
-  p=np.array([rng.uniform(1.2,2.5),rng.uniform(.11,.23),rng.uniform(.65,1.3),rng.uniform(.45,1.05),rng.uniform(.45,1.0),rng.uniform(.025,.055),rng.uniform(1.0,1.8),rng.uniform(.9,1.8),rng.uniform(.19,.45),rng.uniform(.5,1.0)])
-  # Chemical identity is generated arbitrarily. Observations are invariant to this swap.
-  if j%2:p[[4,5,6,7,8,9]]=p[[7,8,9,4,5,6]]
-  known={'kreturn':float(rng.uniform(.12,.23)),'kint1':.02,'kint2':.02}
-  sensors={c:{'gain':float(rng.uniform(1.2,2.5)),'kd':float(rng.uniform(1.2,3.2)),'offset':float(rng.uniform(.01,.06))} for c in spec['channels']}
-  def detect(channel,x):
-   k=sensors[channel];return round(float(k['offset']+k['gain']*x/(k['kd']+x)),12)
-  standards=[{'channel':c,'concentration':v,'signal':detect(c,v)} for c in spec['channels'] for v in spec['standards']]
-  observations=[]
-  for proto in protocols:
-   Y=simulate(p,known,proto,times,precise=True)['states']
-   for t,y in zip(times,Y):
-    for c,x in [('plasma',y[1]),('tissue_total',y[2]+y[3]+y[4])]:observations.append({'protocol':proto['id'],'time':t,'channel':c,'signal':detect(c,x)})
-  chips.append({'id':cid,'known':known,'standards':standards,'observations':observations})
-  truth[cid]={'parameters':p.tolist(),'calibration':sensors}
- save(d/'chips.json',chips)
- scenarios=[{'id':'baseline','multipliers':{}},{'id':'slow_clearance','multipliers':{'kel':.65,'vmax':1.15}},{'id':'acid_shift','multipliers':{'koff1':1.8,'koff2':.7,'kel':1.15}}]
- save(d/'scenarios.json',scenarios)
- timings=[[[0.,1.],[8.,1.],[16.,1.]],[[0.,1.5],[12.,1.5]],[[0.,1.],[6.,.5],[18.,1.5]],[[0.,.7],[4.,.8],[12.,.8],[24.,.7]]]
- candidates=[]
- for k,weights in enumerate(timings):
-  for block in [False,True]:
-   for q,scale in enumerate([.65,1.,1.5,2.2,3.1,4.3]):
-    candidates.append({'id':f'course_{len(candidates)+1:03d}','horizon':36.,'pulses':[[t,w*scale] for t,w in weights],'blockade':[{'start':3.,'end':11.,'strength':10.,'site':'site1'}] if block else [],'cost':round(3*scale+.12*len(weights)+(.22 if block else 0),8)})
- save(d/'courses.json',candidates);save(root/'expert_solution/private/generation_truth.json',truth)
- save(d/'source_provenance.json',{'origin':'Original synthetic organ-chip experiments, no human or animal measurements','seed':618420,'method':'Numerical integration of the declared mass-conserving two-site disposition system; sensor signals rounded to 12 decimals','generator':'expert_solution/source_archive/generate_data.py','rights':'CC0-1.0 for synthetic fixtures; MIT for code; see SOURCE_RIGHTS.md'})
- manifest(d)
-def manifest(d):
- names=['model_spec.json','protocols.json','chips.json','scenarios.json','courses.json','source_provenance.json']
- save(d/'data_manifest.json',{'files':{f:{'sha256':hashlib.sha256((d/f).read_bytes()).hexdigest(),'bytes':(d/f).stat().st_size} for f in names}})
+ data=root/'task/data';contexts=[];truth={}
+ for k,x in enumerate([.44,.52,.60]):
+  c={'id':f'cohort_{k+1:02d}','z_false_positive':.08+.01*k,'z_false_negative':.14+.02*k,'image_flip':.09+.02*k,'target_x1':x,'rescue_cost':.65,'probability_band':1e-7,'labs':[{'id':'lab_L','x1':.2},{'id':'lab_H','x1':.8}]}
+  contexts.append(c);truth[c['id']]=prior(c,62914+k*31).tolist()
+ save(data/'contexts.json',contexts);save(data/'policies.json',policies());save(data/'benchmark.json',REF)
+ save(data/'protocols.json',{'natural':{'A':'natural','B':'natural'},'priming_trial':{'A':'randomized','B':'natural'},'rescue_trial':{'A':'natural','B':'randomized'},'sequential_trial':{'A':'randomized','B':'randomized'},'randomization':{'P_A1':.45,'P_B1_given_W':[.7,.35]}})
+ save(data/'study_metadata.json',{'case_id':'ALS_PAIRED_IMMUNITY_003','schema':'paired_immunity/1','acceptance':{'numeric_absolute':.001,'policy_score_absolute':.002,'decision_slack':.001,'identification_width':.0001},'decision':{'maximum_harm':.22,'maximum_cost':1.30,'minimum_eligibility':.80,'resource_penalty':.215},'units':{'gain':'probability difference','harm':'probability','eligibility':'probability','cost':'resource units'}})
+ save(data/'source_provenance.json',{'origin':'Entirely synthetic population-limit assay distributions; no patient, donor, animal or external experimental data','seed':62914,'generator':'expert_solution/source_archive/generate_data.py','rounding':'Cell probabilities rounded to 12 decimal places; admissibility uses the public probability band','rights':'Original fixtures CC0-1.0 and source code MIT; see SOURCE_RIGHTS.md'})
+ save(root/'expert_solution/private/generation_laws.json',truth);write_tables(data,contexts,truth);update_manifest(data)
 if __name__=='__main__':generate()

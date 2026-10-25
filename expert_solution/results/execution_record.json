@@ -1,0 +1,33 @@
+{
+  "role": "evaluator_generated_execution_record_not_a_solver_deliverable",
+  "case_id": "ALS_PAIRED_IMMUNITY_003",
+  "status": "success",
+  "answer_sha256": "3843d4c4d82b0ddb8aac73426bc2ed00d8a83cc6eb3fc0471da4caca2197bbeb",
+  "data_manifest_sha256": "5be0ec9d36189d368c0a0aa7e1b90e5002cbd72fe8c9d194d0368fe8eb5876ca",
+  "elapsed_seconds": 140.382,
+  "runtime": {
+    "python": "3.12.14",
+    "dependencies": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "jsonschema": "4.26.0"
+    }
+  },
+  "required_deliverables": [
+    "run_pipeline.py",
+    "final_answer.json",
+    "analysis.md"
+  ],
+  "isolated_runs": [
+    {
+      "dataset": "base",
+      "exit_code": 0,
+      "score": 100
+    },
+    {
+      "dataset": "regenerated",
+      "exit_code": 0,
+      "score": 100
+    }
+  ]
+}

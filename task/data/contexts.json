@@ -1,0 +1,59 @@
+[
+  {
+    "id": "cohort_01",
+    "z_false_positive": 0.08,
+    "z_false_negative": 0.14,
+    "image_flip": 0.09,
+    "target_x1": 0.44,
+    "rescue_cost": 0.65,
+    "probability_band": 1e-07,
+    "labs": [
+      {
+        "id": "lab_L",
+        "x1": 0.2
+      },
+      {
+        "id": "lab_H",
+        "x1": 0.8
+      }
+    ]
+  },
+  {
+    "id": "cohort_02",
+    "z_false_positive": 0.09,
+    "z_false_negative": 0.16,
+    "image_flip": 0.11,
+    "target_x1": 0.52,
+    "rescue_cost": 0.65,
+    "probability_band": 1e-07,
+    "labs": [
+      {
+        "id": "lab_L",
+        "x1": 0.2
+      },
+      {
+        "id": "lab_H",
+        "x1": 0.8
+      }
+    ]
+  },
+  {
+    "id": "cohort_03",
+    "z_false_positive": 0.1,
+    "z_false_negative": 0.18000000000000002,
+    "image_flip": 0.13,
+    "target_x1": 0.6,
+    "rescue_cost": 0.65,
+    "probability_band": 1e-07,
+    "labs": [
+      {
+        "id": "lab_L",
+        "x1": 0.2
+      },
+      {
+        "id": "lab_H",
+        "x1": 0.8
+      }
+    ]
+  }
+]

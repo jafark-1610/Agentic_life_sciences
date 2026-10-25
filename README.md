@@ -1,26 +1,29 @@
-# Chemical-site disposition and pulse-course pipeline
+# Paired-clone immune policy pipeline
 
-The pipeline calibrates saturable optical sensors, infers all compatible two-site disposition models, and evaluates pulse courses across physiological scenarios. The decision combines target-site occupancy with continuous free-tissue safety limits.
+The pipeline infers sharp same-clone causal bounds from genotype-mixture assay tables, then selects a resource-adjusted immune rescue policy under viability and harm constraints.
 
-`task/` contains the problem, scientific inputs, schemas and explicit deliverable contract. `expert_solution/` contains the inverse analysis, canonical output, numerical grader, independent checks and isolated submission verifier.
+`task/` contains the scientific model, population tables, policy menu, schemas, input validator and flat three-file submission contract. `expert_solution/` contains the executable oracle, canonical answer, grader, independent calculations, scientific controls and isolated submitted-code verifier.
 
-From the package root, with Python 3.11+, numpy, scipy and jsonschema available:
+From the package root with Python 3.11+, numpy, scipy and jsonschema available:
 
 ```bash
+export PYTHONDONTWRITEBYTECODE=1
 python task/data/validate_dataset.py
+python expert_solution/validate_package.py
 python expert_solution/run_pipeline.py --data task/data --output-dir expert_solution/results
 python expert_solution/score_rubric.py --answer expert_solution/results/final_answer.json --artifacts-dir expert_solution/results
-python expert_solution/compare_answers.py --actual expert_solution/results/final_answer.json --expected expert_solution/final_answer.json
 python -m unittest discover -s expert_solution/tests -v
 python expert_solution/robustness_checks/run_checks.py
 python expert_solution/build_rubric_md.py --check
 python expert_solution/freeze_package.py --check
 ```
 
-For full runtime and input-dependence verification on a Linux host with bubblewrap and unprivileged namespaces:
+The solver submission slots are exactly `run_pipeline.py`, `final_answer.json` and `analysis.md`. The pipeline writes the latter two in its requested output directory. Task dependency files are provided inputs.
+
+For complete source execution and regenerated-input verification on Linux with bubblewrap and user/network namespaces:
 
 ```bash
-python expert_solution/verify_submission.py --solver expert_solution --data task/data --output-dir /tmp/tmdd-verification --replay-control
+python expert_solution/verify_submission.py --solver expert_solution --data task/data --output-dir /tmp/paired-immunity-verification --replay-control
 ```
 
-A solver submission can replace the `--solver` path. The verifier stages public task files, hides evaluator files, disables network access, reruns the submitted code on original and physically regenerated measurements, and assesses structured diagnostic evidence and output hashes. An unavailable namespace capability is reported as blocked rather than a scientific failure. The numerical JSON grader reports its limited scope separately from complete submission verification.
+Replace the solver path to evaluate another submission. The verifier mounts only public task and submitted source files, checks private-file and network isolation, and evaluates original and physically regenerated population tables. Missing namespace capability is reported as blocked. The verifier records execution metadata separately from solver deliverables.

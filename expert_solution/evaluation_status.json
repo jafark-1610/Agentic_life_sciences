@@ -1,10 +1,10 @@
 {
-  "case_id": "ALS_TMDD_PULSE_002",
-  "status": "awaiting_external_evaluation",
+  "case_id": "ALS_PAIRED_IMMUNITY_003",
+  "status": "candidate_awaiting_external_pilots",
   "platform_structure_validation": "not_run",
-  "platform_script_validation": "not_run",
-  "platform_oracle": "failed: exact comparison of unmatched nested floating-point fields; infrastructure compatibility correction prepared for revalidation",
-  "prompt_only_model_pilots": "not_run: no model evaluation service available",
+  "platform_oracle": "not_run",
+  "platform_output_ingestion": "unverified; package requests only the three existing slots",
+  "prompt_only_model_pilots": "not_run: no model-evaluation service callable here",
   "model_runs": [
     {
       "run": 1,
@@ -38,22 +38,14 @@
     }
   ],
   "autoreview_score": null,
-  "qualification": "unconfirmed until five frozen runs are independently graded; at least three must fail",
-  "evidence_policy": "Local numerical baselines and oracle checks are not counted as model trials. Platform isolation must be checked against the supplied verifier contract.",
-  "infrastructure_corrections": [
-    {
-      "scope": "Oracle serialization and execution-comparison metadata; scientific inputs, equations, scoring weights and acceptance thresholds unchanged.",
-      "reported_error": "130 of 8985 leaf values compared unequal despite tiny parameter differences and all 22 package tests passing.",
-      "fix": "Stable computed-output precision, recomputed serialized peak witness, explicit nested tolerance paths, and semantic comparator.",
-      "external_revalidation": "pending"
-    }
-  ],
+  "qualification": "unconfirmed; at least three genuine FAIL verdicts among five frozen model runs are required",
+  "evidence_policy": "Compatible-law and independent-world controls are mathematical baselines, not Meta Muse runs. No model failure rate or autoreview score is claimed.",
   "local_validation": {
-    "package_tests": 28,
-    "cross_runtime_exact_mismatches": 0,
     "isolated_base_score": 100,
     "isolated_regenerated_score": 100,
-    "stored_answer_replay_rejected": true,
-    "platform_oracle_rerun": "pending"
+    "stored_answer_rejected": true,
+    "source_hashes_verified": true,
+    "exact_cross_runtime_mismatches": 0,
+    "three_slot_contract_validated": true
   }
 }

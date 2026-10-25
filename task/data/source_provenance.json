@@ -1,7 +1,7 @@
 {
-  "origin": "Original synthetic organ-chip experiments, no human or animal measurements",
-  "seed": 618420,
-  "method": "Numerical integration of the declared mass-conserving two-site disposition system; sensor signals rounded to 12 decimals",
+  "origin": "Entirely synthetic population-limit assay distributions; no patient, donor, animal or external experimental data",
+  "seed": 62914,
   "generator": "expert_solution/source_archive/generate_data.py",
-  "rights": "CC0-1.0 for synthetic fixtures; MIT for code; see SOURCE_RIGHTS.md"
+  "rounding": "Cell probabilities rounded to 12 decimal places; admissibility uses the public probability band",
+  "rights": "Original fixtures CC0-1.0 and source code MIT; see SOURCE_RIGHTS.md"
 }

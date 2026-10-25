@@ -1,7 +1,13 @@
 {
   "role": "full_submission_verification",
-  "case_id": "ALS_TMDD_PULSE_002",
-  "seed": 49173,
+  "status": "success",
+  "passed": true,
+  "seed": 92031,
+  "required_deliverables": [
+    "run_pipeline.py",
+    "final_answer.json",
+    "analysis.md"
+  ],
   "runtime": {
     "python": "3.12.14",
     "dependencies": {
@@ -10,125 +16,129 @@
       "jsonschema": "4.26.0"
     }
   },
-  "status": "success",
-  "isolation": {
-    "uid": 1000,
-    "private_paths_denied": true,
-    "task_readable": true,
-    "task_read_only": true,
-    "network_connection_blocked": true,
-    "mounts": {
-      "/task": "read-only task data only",
-      "/solver": "submitted source/config only, writable",
-      "/results": "writable fresh output",
-      "/tmp": "fresh tmpfs",
-      "runtime": "read-only Python prefix and system libraries",
-      "network": "separate namespace, no external interface"
-    },
-    "command": "python /solver/run_pipeline.py --data /task/data --output-dir /results"
-  },
   "runs": [
     {
       "dataset": "base",
       "exit_code": 0,
-      "elapsed_seconds": 117.095,
+      "elapsed_seconds": 140.382,
       "grade": {
+        "role": "scientific_answer_evaluation",
         "checks": {
-          "global_identifiability": true,
-          "measurement_fit": true,
-          "counterfactual_predictions": true,
-          "course_decision": true,
-          "continuous_peak_witness": true
+          "sharp_bounds": true,
+          "identification": true,
+          "global_envelopes": true,
+          "policy_decision": true
         },
         "details": {
-          "max_recomputed_fit_rmse": 1.909360418484222e-08,
-          "max_efficacy_error": 0.0,
-          "max_peak_error": 0.0
+          "max_bound_error": 0.0
         },
         "raw_score": 100,
-        "final_score": 100,
         "scientific_cap_applied": false,
         "presentation_deduction": 0,
+        "final_score": 100,
         "passed": true,
-        "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+        "scope": "Complete submission also requires actual isolated input-dependent execution.",
         "schema_errors": [],
         "delivery": {
           "errors": [],
           "deduction": 0
-        },
-        "requirements_errors": []
+        }
       },
-      "output_files": [
+      "source_sha256": {
+        "artifacts.py": "48d512ae68e8e3724edd8a93a78ed91c3de4e699ec0a738a10c218d33d84eb6a",
+        "causal_model.py": "271ac0675f1caf0848913c3252fe8534fff87858bafd7e880ee934cfb09c5267",
+        "expert_solution.py": "f20b0c34ac8c4ce169d8fa158b801294ce50f1b259ac5aace362f0ce03955c88",
+        "run_pipeline.py": "a6f9122c3bbc8351d29083c0271a25c4e681422c7240aa16177a22813e3b61c3",
+        "config/parameters.yaml": "628b0d8185d4d8bad3f84594637191581aeabb6deaaeaba90642fe2beb2b24a8"
+      },
+      "outputs": [
         "analysis.md",
-        "final_answer.json",
-        "run_summary.json"
+        "final_answer.json"
       ],
-      "stdout_stderr": "{\"status\": \"success\", \"chips\": 6, \"protocols\": 3, \"courses\": 48, \"observations\": 720}\n{\"status\": \"success\", \"chips\": 6, \"courses\": 48, \"seconds\": 115.02}\n"
+      "command": "python /solver/run_pipeline.py --data /task/data --output-dir /results",
+      "stdout_stderr": "{\"status\": \"success\", \"contexts\": 3, \"policies\": 24, \"table_rows\": 1152, \"required_slots\": [\"run_pipeline.py\", \"final_answer.json\", \"analysis.md\"]}\n{\"status\": \"success\", \"case_id\": \"ALS_PAIRED_IMMUNITY_003\", \"elapsed_seconds\": 139.495, \"outputs\": [\"final_answer.json\", \"analysis.md\"]}\n"
     },
     {
       "dataset": "regenerated",
       "exit_code": 0,
-      "elapsed_seconds": 119.482,
+      "elapsed_seconds": 143.6,
       "grade": {
+        "role": "scientific_answer_evaluation",
         "checks": {
-          "global_identifiability": true,
-          "measurement_fit": true,
-          "counterfactual_predictions": true,
-          "course_decision": true,
-          "continuous_peak_witness": true
+          "sharp_bounds": true,
+          "identification": true,
+          "global_envelopes": true,
+          "policy_decision": true
         },
         "details": {
-          "max_recomputed_fit_rmse": 1.8670517519161194e-08,
-          "max_efficacy_error": 5.013646386942128e-09,
-          "max_peak_error": 5.0089941083797385e-09
+          "max_bound_error": 0.0
         },
         "raw_score": 100,
-        "final_score": 100,
         "scientific_cap_applied": false,
         "presentation_deduction": 0,
+        "final_score": 100,
         "passed": true,
-        "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+        "scope": "Complete submission also requires actual isolated input-dependent execution.",
         "schema_errors": [],
         "delivery": {
           "errors": [],
           "deduction": 0
-        },
-        "requirements_errors": []
+        }
       },
-      "output_files": [
+      "source_sha256": {
+        "artifacts.py": "48d512ae68e8e3724edd8a93a78ed91c3de4e699ec0a738a10c218d33d84eb6a",
+        "causal_model.py": "271ac0675f1caf0848913c3252fe8534fff87858bafd7e880ee934cfb09c5267",
+        "expert_solution.py": "f20b0c34ac8c4ce169d8fa158b801294ce50f1b259ac5aace362f0ce03955c88",
+        "run_pipeline.py": "a6f9122c3bbc8351d29083c0271a25c4e681422c7240aa16177a22813e3b61c3",
+        "config/parameters.yaml": "628b0d8185d4d8bad3f84594637191581aeabb6deaaeaba90642fe2beb2b24a8"
+      },
+      "outputs": [
         "analysis.md",
-        "final_answer.json",
-        "run_summary.json"
+        "final_answer.json"
       ],
-      "stdout_stderr": "{\"status\": \"success\", \"chips\": 6, \"protocols\": 3, \"courses\": 48, \"observations\": 720}\n{\"status\": \"success\", \"chips\": 6, \"courses\": 48, \"seconds\": 117.84}\n"
+      "command": "python /solver/run_pipeline.py --data /task/data --output-dir /results",
+      "stdout_stderr": "{\"status\": \"success\", \"contexts\": 3, \"policies\": 24, \"table_rows\": 1152, \"required_slots\": [\"run_pipeline.py\", \"final_answer.json\", \"analysis.md\"]}\n{\"status\": \"success\", \"case_id\": \"ALS_PAIRED_IMMUNITY_003\", \"elapsed_seconds\": 142.564, \"outputs\": [\"final_answer.json\", \"analysis.md\"]}\n"
     }
   ],
-  "passed": true,
+  "isolation": {
+    "uid": 1000,
+    "private_reads_denied": true,
+    "task_read_only": true,
+    "network_blocked": true,
+    "task_readable": true,
+    "mounts": {
+      "/task": "read-only public task",
+      "/solver": "submitted computational source only",
+      "/results": "writable output",
+      "/tmp": "fresh tmpfs",
+      "runtime": "read-only Python prefix and system libraries",
+      "network": "isolated namespace"
+    }
+  },
   "final_score": 100,
-  "stored_answer_replay_control": {
+  "stored_answer_control": {
+    "isolated_execution": true,
     "runs": [
       {
         "dataset": "base",
         "exit_code": 0,
         "grade": {
+          "role": "scientific_answer_evaluation",
           "checks": {
-            "global_identifiability": true,
-            "measurement_fit": true,
-            "counterfactual_predictions": true,
-            "course_decision": true,
-            "continuous_peak_witness": true
+            "sharp_bounds": true,
+            "identification": true,
+            "global_envelopes": true,
+            "policy_decision": true
           },
           "details": {
-            "max_recomputed_fit_rmse": 1.909360418484222e-08,
-            "max_efficacy_error": 0.0,
-            "max_peak_error": 0.0
+            "max_bound_error": 0.0
           },
           "raw_score": 100,
-          "final_score": 100,
           "scientific_cap_applied": false,
           "presentation_deduction": 0,
+          "final_score": 100,
           "passed": true,
-          "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+          "scope": "Complete submission also requires actual isolated input-dependent execution.",
           "schema_errors": [],
           "delivery": {
             "errors": [],
@@ -140,22 +150,22 @@
         "dataset": "regenerated",
         "exit_code": 0,
         "grade": {
+          "role": "scientific_answer_evaluation",
           "checks": {
-            "global_identifiability": false,
-            "measurement_fit": false,
-            "counterfactual_predictions": false,
-            "course_decision": true,
-            "continuous_peak_witness": false
+            "sharp_bounds": false,
+            "identification": true,
+            "global_envelopes": false,
+            "policy_decision": true
           },
           "details": {
-            "max_recomputed_fit_rmse": 0.15471875145948863
+            "max_bound_error": 0.08157
           },
-          "raw_score": 40,
-          "final_score": 40,
+          "raw_score": 50,
           "scientific_cap_applied": true,
           "presentation_deduction": 0,
+          "final_score": 50,
           "passed": false,
-          "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+          "scope": "Complete submission also requires actual isolated input-dependent execution.",
           "schema_errors": [],
           "delivery": {
             "errors": [],
@@ -164,8 +174,6 @@
         }
       }
     ],
-    "rejected": true,
-    "hashes_refreshed": true,
-    "isolated_execution": true
+    "rejected": true
   }
 }

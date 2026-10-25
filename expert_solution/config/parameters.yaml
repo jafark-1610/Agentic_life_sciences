@@ -1,12 +1,10 @@
 {
-  "case_id": "ALS_TMDD_PULSE_002",
-  "method": "global_equivalence_and_continuous_extrema",
+  "case_id": "ALS_PAIRED_IMMUNITY_003",
+  "method": "full_response_family_sharp_fractional_optimization",
   "required_deliverables": [
     "run_pipeline.py",
-    "requirements.txt",
     "final_answer.json",
-    "analysis.md",
-    "run_summary.json"
+    "analysis.md"
   ],
   "network": "none"
 }

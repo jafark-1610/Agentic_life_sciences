@@ -1,5 +1,5 @@
 {
-  "role": "oracle_cross_runtime_regression",
+  "role": "oracle_cross_runtime_validation",
   "status": "success",
   "runtimes": [
     {
@@ -19,28 +19,8 @@
       }
     }
   ],
-  "answer_sha256": "376e4e441e385e7aa6392ce433e1f45baf9f19f385de57fb872a6869bc7f50b4",
-  "leaf_count": 8985,
-  "exact_leaf_mismatches": 0,
+  "answer_sha256": "3843d4c4d82b0ddb8aac73426bc2ed00d8a83cc6eb3fc0471da4caca2197bbeb",
   "byte_identical": true,
-  "reported_platform_drift_rows_tested": 20,
-  "semantic_comparison": {
-    "role": "semantic_oracle_comparison",
-    "passed": true,
-    "metadata_matches": true,
-    "scientific_checks": {
-      "global_identifiability": true,
-      "measurement_fit": true,
-      "counterfactual_predictions": true,
-      "course_decision": true,
-      "continuous_peak_witness": true
-    },
-    "details": {
-      "max_recomputed_fit_rmse": 1.909360418484222e-08,
-      "max_efficacy_error": 0.0,
-      "max_peak_error": 0.0
-    },
-    "presentation_deduction": 0
-  },
-  "platform_revalidation": "pending; the exact platform environment is not available locally"
+  "exact_leaf_mismatches": 0,
+  "scope": "Final pipeline outputs, including resource-adjusted scores, from two Python/NumPy/SciPy environments"
 }

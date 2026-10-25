@@ -1,121 +1,79 @@
 # Rubric
 
-Full submitted-code grading: `python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control`.
+* policy_decision: 40 points.
+* sharp_bounds: 35 points.
+* global_envelopes: 15 points.
+* identification: 10 points.
 
-* course_decision: 40 points; all published fields in that group must pass.
-* counterfactual_predictions: 25 points; all published fields in that group must pass.
-* global_identifiability: 20 points; all published fields in that group must pass.
-* continuous_peak_witness: 10 points; all published fields in that group must pass.
-* measurement_fit: 5 points; all published fields in that group must pass.
+All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.
 
-Any failed scientific group caps at 79; execution/input-dependence failure caps at 79; caps precede presentation and delivery deductions. Pass threshold 80 inclusive. Group credit is all-or-nothing. Presentation deduction applies once and never activates a scientific cap. Delivery deductions total at most 10 including requirements.
+Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.
 
-Submitted pipeline must execute in staged offline isolation and pass both base and physically regenerated data. A failed or non-running pipeline or failed regenerated scientific result prevents acceptance and caps overall score at 79; missing/non-running pipeline is zero.
+Automatic zero: absent/unreadable/duplicate-key/nonfinite answer JSON; missing or non-running pipeline during full verification.
 
-requirements.txt must exist and list numpy, scipy and jsonschema if imported by submitted code; missing/incorrect declaration deducts 2, within delivery cap 10.
+Required deliverables: run_pipeline.py, final_answer.json, analysis.md.
 
-Automatic zeros: absent/unreadable/duplicate-key/nonfinite JSON; missing or non-running pipeline in full submission verification.
+Full grading: `python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control`.
 
-Recovery: One-element answer-array wrapper and numeric strings are normalized before scientific evaluation. Extra fields and schema/case metadata slips incur presentation only. No arbitrary identifier renaming is accepted.
-
-Delivery deductions: analysis diagnostic block 5; summary hashes/schema 5; requirements 2; combined cap 10.
-
-## Public tolerances and data-derived dimensions
+## Machine-readable policy
 
 ```json
 {
+  "case_id": "ALS_PAIRED_IMMUNITY_003",
+  "version": "1.0",
+  "weights": {
+    "policy_decision": 40,
+    "sharp_bounds": 35,
+    "global_envelopes": 15,
+    "identification": 10
+  },
+  "pass_threshold": 80,
+  "scientific_failure_cap": 79,
+  "presentation_deduction": 5,
+  "delivery_deduction": 5,
+  "automatic_zero": [
+    "absent/unreadable/duplicate-key/nonfinite answer JSON",
+    "missing or non-running pipeline during full verification"
+  ],
+  "execution_gate": "Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.",
+  "required_deliverables": [
+    "run_pipeline.py",
+    "final_answer.json",
+    "analysis.md"
+  ],
   "tolerances": {
-    "parameter_relative": 0.015,
-    "parameter_absolute": 0.0005,
-    "calibration_absolute": 0.0001,
-    "fit_rmse_max": 2e-05,
-    "efficacy_absolute": 0.002,
-    "peak_absolute": 0.003,
-    "witness_value_absolute": 0.003,
-    "mass_balance_max": 2e-05,
-    "cost_slack": 1e-06
+    "numeric_absolute": 0.001,
+    "decision_slack": 0.001,
+    "identification_width": 0.0001,
+    "policy_score_absolute": 0.002
+  },
+  "numeric_tolerance": 1e-05,
+  "numeric_tolerance_scope": "Oracle cross-runtime comparison fallback only; scientific solver tolerance remains the public numeric_absolute.",
+  "path_tolerances": {
+    "/contexts/*/policies/*/eligibility_lower": 0.001,
+    "/contexts/*/policies/*/eligibility_upper": 0.001,
+    "/contexts/*/policies/*/net_gain_lower": 0.001,
+    "/contexts/*/policies/*/net_gain_upper": 0.001,
+    "/contexts/*/policies/*/harm_upper": 0.001,
+    "/contexts/*/policies/*/cost_upper": 0.001,
+    "/global_policies/*/worst_net_gain": 0.001,
+    "/global_policies/*/worst_harm": 0.001,
+    "/global_policies/*/worst_cost": 0.001,
+    "/global_policies/*/minimum_eligibility": 0.001,
+    "/global_policies/*/resource_adjusted_score": 0.002
   },
   "dimensions": {
-    "chips": 6,
-    "courses": 48,
-    "model_counts": {
-      "chip_01": 2,
-      "chip_02": 2,
-      "chip_03": 2,
-      "chip_04": 2,
-      "chip_05": 2,
-      "chip_06": 2
-    }
+    "contexts": 3,
+    "policies": 24
   },
   "field_contract": {
-    "course_decision": "prompt.md: Counterfactual courses",
-    "counterfactual_predictions": "prompt.md: Counterfactual courses",
-    "global_identifiability": "prompt.md: Measurements and inference target",
-    "continuous_peak_witness": "prompt.md: Counterfactual courses",
-    "measurement_fit": "prompt.md: Measurements and inference target",
-    "delivery": "prompt.md: Diagnostic evidence and Required deliverables"
-  }
-}
-```
-
-## Oracle execution comparison
-
-The legacy numeric fallback is 1e-8; it does not replace any scientific acceptance rule. Oracle comparison uses the explicit paths and semantic witness checks below. Serialization precision applies only to oracle execution reproducibility, never to solver grading.
-
-```json
-{
-  "command": "python expert_solution/compare_answers.py --actual expert_solution/results/final_answer.json --expected expert_solution/final_answer.json --data task/data",
-  "path_syntax": "JSON Pointer with * matching one array index or object key",
-  "path_tolerances": {
-    "/chips/*/models/*/*": {
-      "absolute": 0.0005,
-      "relative": 0.015
-    },
-    "/chips/*/target_capacity_interval/*": {
-      "absolute": 0.0005,
-      "relative": 0.015
-    },
-    "/chips/*/calibration/*/*": {
-      "absolute": 0.0001,
-      "relative": 0.0
-    },
-    "/chips/*/fit_rmse": {
-      "absolute": 2e-05,
-      "relative": 0.0
-    },
-    "/courses/*/minimum_efficacy": {
-      "absolute": 0.002,
-      "relative": 0.0
-    },
-    "/courses/*/maximum_peak_free": {
-      "absolute": 0.003,
-      "relative": 0.0
-    },
-    "/courses/*/cases/*/efficacy": {
-      "absolute": 0.002,
-      "relative": 0.0
-    },
-    "/courses/*/cases/*/peak_free": {
-      "absolute": 0.003,
-      "relative": 0.0
-    },
-    "/selection/peak_witness/value": {
-      "absolute": 0.003,
-      "relative": 0.0
-    }
+    "sharp_bounds": "prompt.md: Policy worlds and target quantities",
+    "identification": "prompt.md: Policy worlds and target quantities",
+    "policy_decision": "prompt.md: Policy worlds and target quantities",
+    "global_envelopes": "prompt.md: Policy worlds and target quantities",
+    "delivery": "prompt.md: Execution and output"
   },
-  "numeric_rule": "abs(actual-expected) <= absolute + relative*abs(expected)",
-  "exact_fields": "Case/schema identity, scientific identifiers, Boolean flags, local rank, and resolved model indices.",
-  "semantic_rules": {
-    "ordering": "Match chips/courses/cases by identifiers and models by parameter-equivalence mapping.",
-    "/selection/peak_witness/time": "Do not compare to a fixed coordinate. Recompute the physical value at the submitted time and check its agreement with the global peak.",
-    "runtime_metadata": "Validate hashes and schema against the current execution; elapsed time and environment versions are not reference-equality fields."
-  },
-  "oracle_serialization": {
-    "float_decimal_places": 8,
-    "peak_time_decimal_places": 3,
-    "peak_value": "Recomputed at the serialized time using the serialized parameter vector.",
-    "scope": "Oracle reproducibility only; solver decimal precision is unrestricted."
-  }
+  "policy": "All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.",
+  "full_grading_command": "python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control"
 }
 ```

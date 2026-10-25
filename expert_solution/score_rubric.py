@@ -1,11 +1,8 @@
-"""Scientific scoring plus executable delivery coverage. Read rubric for caps and deductions."""
-import json,re,math,argparse,hashlib,sys
+import json,re,math,argparse,sys
 from pathlib import Path
-import numpy as np
 import jsonschema
-from expert_solution import load,select
-from mechanism import simulate
-from artifacts import input_hash,evidence
+from expert_solution import load
+from artifacts import evidence
 HERE=Path(__file__).resolve().parent
 
 def strict_read(path):
@@ -17,122 +14,86 @@ def strict_read(path):
   return out
  def number(x):
   v=float(x)
-  if not math.isfinite(v):raise ValueError('nonfinite JSON')
+  if not math.isfinite(v):raise ValueError('nonfinite JSON number')
   return v
- def invalid(x):raise ValueError('nonfinite JSON')
+ def invalid(x):raise ValueError('nonfinite JSON number')
  return json.loads(Path(path).read_text(),object_pairs_hook=pair,parse_float=number,parse_constant=invalid)
 
 def normalize(raw):
  changed=False
  if isinstance(raw,list) and len(raw)==1 and isinstance(raw[0],dict):raw=raw[0];changed=True
- def recover(o,key=None):
+ def convert(v,key=None):
   nonlocal changed
-  if isinstance(o,dict):return {k:recover(v,k) for k,v in o.items()}
-  if isinstance(o,list):return [recover(v,key) for v in o]
-  if isinstance(o,str) and re.fullmatch(r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?',o) and key not in ['id','course','chip','scenario','case_id','schema','status']:
-   v=float(o)
-   if math.isfinite(v):changed=True;return int(v) if key in ['model_index','local_rank'] else v
-  return o
- return recover(raw),changed
+  if isinstance(v,dict):return {k:convert(x,k) for k,x in v.items()}
+  if isinstance(v,list):return [convert(x,key) for x in v]
+  if isinstance(v,str) and key not in ['id','case_id','schema','policy','status'] and re.fullmatch(r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?',v):
+   x=float(v)
+   if math.isfinite(x):changed=True;return x
+  return v
+ return convert(raw),changed
 
-def unique(rows,key):
- result={}
+def keyed(rows):
+ out={}
  for row in rows:
-  k=key(row)
-  if k in result:raise ValueError('duplicate scientific ID')
-  result[k]=row
- return result
+  if row['id'] in out:raise ValueError('duplicate ID')
+  out[row['id']]=row
+ return out
 
 def science(raw,data,reference=None):
- D=load(data);ref=reference or strict_read(HERE/'final_answer.json');a=D['model_spec']['acceptance'];rub=strict_read(HERE/'rubric.json');ans,format_issue=normalize(raw)
- schema=strict_read(Path(data)/'output_schema.json');errors=list(jsonschema.Draft202012Validator(schema).iter_errors(ans));format_issue |=bool(errors)
- checks={};details={};mapping={};rchip={c['id']:c for c in ref['chips']};chips={}
- def close(x,y,tol):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=tol
+ D=load(data);a=D['study_metadata']['acceptance'];tol=a['numeric_absolute'];ref=reference or strict_read(HERE/'final_answer.json');rub=strict_read(HERE/'rubric.json');answer,presentation=normalize(raw)
+ errors=list(jsonschema.Draft202012Validator(strict_read(Path(data)/'output_schema.json')).iter_errors(answer));presentation|=bool(errors);checks={};details={}
+ def close(x,y):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=tol
  try:
-  chips=unique(ans['chips'],lambda c:c['id']);ok=set(chips)==set(rchip)
-  for cid,r in rchip.items():
-   c=chips[cid];models=c['models'];expected=r['models'];ok &=len(models)==len(expected);matched=set();mapping[cid]={}
-   for i,p in enumerate(models):
-    pp=np.asarray(p,float);dist=[bool(pp.shape==(10,) and np.all(np.abs(pp-np.asarray(q))<=a['parameter_absolute']+a['parameter_relative']*np.abs(q))) for q in expected]
-    if sum(dist)!=1:ok=False;continue
-    k=dist.index(True);ok &=k not in matched;matched.add(k);mapping[cid][i]=k
-   ok &=len(matched)==len(expected)
-   for x,y in zip(c['target_capacity_interval'],r['target_capacity_interval']):ok &=close(x,y,a['parameter_absolute']+a['parameter_relative']*abs(y))
-   ok &=len(c['target_capacity_interval'])==2 and type(c['target_capacity_point_identified']) is bool and c['target_capacity_point_identified']==r['target_capacity_point_identified']
-   ok &=type(c['local_rank']) is int and c['local_rank']==r['local_rank']
-  checks['global_identifiability']=bool(ok)
- except (KeyError,TypeError,ValueError,OverflowError):checks['global_identifiability']=False
+  cs=keyed(answer['contexts']);rc=keyed(ref['contexts']);ok=set(cs)==set(rc);maxerr=0.
+  for cid,r in rc.items():
+   actual=keyed(cs[cid]['policies']);expected=keyed(r['policies']);ok &=set(actual)==set(expected)
+   for pid,p in expected.items():
+    for k in ['eligibility_lower','eligibility_upper','net_gain_lower','net_gain_upper','harm_upper','cost_upper']:
+     x=actual[pid][k];ok &=close(x,p[k]);maxerr=max(maxerr,abs(x-p[k]))
+  checks['sharp_bounds']=bool(ok);details['max_bound_error']=maxerr
+ except (KeyError,TypeError,ValueError,OverflowError):checks['sharp_bounds']=False
  try:
-  ok=True;max_rmse=0.
-  for cid,r in rchip.items():
-   c=chips[cid];chip=next(ch for ch in D['chips'] if ch['id']==cid)
-   for channel in D['model_spec']['channels']:
-    for field in ['gain','kd','offset']:ok &=close(c['calibration'][channel][field],r['calibration'][channel][field],a['calibration_absolute'])
-   for p in c['models']:
-    bounds=np.asarray(D['model_spec']['parameter_bounds']);p=np.asarray(p,float)
-    if p.shape!=(10,) or not np.isfinite(p).all() or np.any(p<bounds[:,0]) or np.any(p>bounds[:,1]):raise ValueError('parameters outside model domain')
-    res=[]
-    for proto in D['protocols']:
-     times=sorted({o['time'] for o in chip['observations'] if o['protocol']==proto['id']});Y=simulate(p,chip['known'],proto,times,precise=True)['states']
-     for t,y in zip(times,Y):
-      for channel,x in [('plasma',y[1]),('tissue_total',y[2]+y[3]+y[4])]:
-       s=c['calibration'][channel];obs=next(o for o in chip['observations'] if o['protocol']==proto['id'] and o['time']==t and o['channel']==channel)['signal'];z=obs-s['offset'];observed=s['kd']*z/(s['gain']-z);res.append(x-observed)
-    rmse=float(np.sqrt(np.mean(np.square(res))));max_rmse=max(max_rmse,rmse);ok &=rmse<=a['fit_rmse_max'] and close(c['fit_rmse'],rmse,a['fit_rmse_max'])
-  checks['measurement_fit']=bool(ok);details['max_recomputed_fit_rmse']=max_rmse
- except (KeyError,TypeError,ValueError,OverflowError,StopIteration,ZeroDivisionError):checks['measurement_fit']=False
+  ok=True
+  for cid,r in rc.items():
+   actual=keyed(cs[cid]['policies'])
+   for p in r['policies']:
+    v=actual[p['id']]['point_identified'];ok &=type(v) is bool and v==p['point_identified']
+  checks['identification']=bool(ok)
+ except (KeyError,TypeError,ValueError,UnboundLocalError):checks['identification']=False
  try:
-  courses=unique(ans['courses'],lambda c:c['id']);wanted={c['id']:c for c in ref['courses']};ok=set(courses)==set(wanted);err_e=0.;err_p=0.
-  for cid,r in wanted.items():
-   c=courses[cid];cases=unique(c['cases'],lambda x:(x['chip'],mapping[x['chip']][x['model_index']],x['scenario']));rc=unique(r['cases'],lambda x:(x['chip'],x['model_index'],x['scenario']));ok &=set(cases)==set(rc)
-   for key,x in rc.items():
-    for field,tol in [('efficacy',a['efficacy_absolute']),('peak_free',a['peak_absolute'])]:
-     value=cases[key][field];ok &=close(value,x[field],tol)
-     if field=='efficacy':err_e=max(err_e,abs(value-x[field]))
-     else:err_p=max(err_p,abs(value-x[field]))
-   ok &=close(c['minimum_efficacy'],r['minimum_efficacy'],a['efficacy_absolute']) and close(c['maximum_peak_free'],r['maximum_peak_free'],a['peak_absolute'])
-  checks['counterfactual_predictions']=bool(ok);details.update(max_efficacy_error=err_e,max_peak_error=err_p)
- except (KeyError,TypeError,ValueError,OverflowError):checks['counterfactual_predictions']=False
+  global_=keyed(answer['global_policies']);rg=keyed(ref['global_policies']);ok=set(global_)==set(rg)
+  for pid,r in rg.items():
+   for k in ['worst_net_gain','worst_harm','worst_cost','minimum_eligibility']:ok &=close(global_[pid][k],r[k])
+   x=global_[pid]['resource_adjusted_score'];ok &=isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-r['resource_adjusted_score'])<=a['policy_score_absolute']
+  checks['global_envelopes']=bool(ok)
+ except (KeyError,TypeError,ValueError):checks['global_envelopes']=False
  try:
-  sel=ans['selection'];raw_courses={c['id']:c for c in D['courses']};limits=D['model_spec']['decision'];safe=[c for c in ref['courses'] if c['minimum_efficacy']>=limits['efficacy_floor'] and c['maximum_peak_free']<=limits['peak_ceiling']]
-  if not safe:ok=sel['status']=='no_qualifying_course' and sel['course'] is None
-  else:ok=sel['status']=='selected' and sel['course'] in {c['id'] for c in safe} and raw_courses[sel['course']]['cost']<=min(raw_courses[c['id']]['cost'] for c in safe)+a['cost_slack']
-  checks['course_decision']=bool(ok)
- except (KeyError,TypeError,ValueError):checks['course_decision']=False
- try:
-  sel=ans['selection'];w=sel['peak_witness']
-  if ref['selection']['status']=='no_qualifying_course':ok=w is None
+  limits=D['study_metadata']['decision'];eligible=[p for p in ref['global_policies'] if p['worst_harm']<=limits['maximum_harm'] and p['worst_cost']<=limits['maximum_cost'] and p['minimum_eligibility']>=limits['minimum_eligibility']];s=answer['selection']
+  if not eligible:ok=s['status']=='no_qualifying_policy' and s['policy'] is None
   else:
-   course=next(c for c in D['courses'] if c['id']==sel['course']);chip=next(c for c in D['chips'] if c['id']==w['chip']);scenario=next(c for c in D['scenarios'] if c['id']==w['scenario']);p=rchip[chip['id']]['models'][mapping[chip['id']][w['model_index']]];t=w['time'];Y=simulate(p,chip['known'],course,[t],scenario['multipliers'],precise=True);peak=next(c['maximum_peak_free'] for c in ref['courses'] if c['id']==course['id'])
-   ok=0<=t<=course['horizon'] and close(w['value'],Y['states'][0,2],a['witness_value_absolute']) and close(w['value'],peak,a['witness_value_absolute']) and Y['mass_error']<=a['mass_balance_max']
-  checks['continuous_peak_witness']=bool(ok)
- except (KeyError,TypeError,ValueError,IndexError,OverflowError,StopIteration):checks['continuous_peak_witness']=False
- rawscore=sum(rub['weights'][k] for k,v in checks.items() if v);score=min(rawscore,rub['scientific_failure_cap']) if not all(checks.values()) else rawscore
- if format_issue:score-=rub['presentation_deduction']
- return {'checks':checks,'details':details,'raw_score':rawscore,'final_score':max(0,score),'scientific_cap_applied':not all(checks.values()),'presentation_deduction':rub['presentation_deduction'] if format_issue else 0,'passed':score>=rub['pass_threshold'],'scope':'scientific_answer_only; full submission additionally requires delivery checks and isolated rerun','schema_errors':[e.message for e in errors]}
+   best=max(p['resource_adjusted_score'] for p in eligible);valid={p['id'] for p in eligible if p['resource_adjusted_score']>=best-a['decision_slack']};ok=s['status']=='selected' and s['policy'] in valid
+  checks['policy_decision']=bool(ok)
+ except (KeyError,TypeError,ValueError):checks['policy_decision']=False
+ rawscore=sum(rub['weights'][k] for k,v in checks.items() if v);capped=not all(checks.values());score=min(rawscore,rub['scientific_failure_cap']) if capped else rawscore
+ if presentation:score-=rub['presentation_deduction']
+ return {'role':'scientific_answer_evaluation','checks':checks,'details':details,'raw_score':rawscore,'scientific_cap_applied':capped,'presentation_deduction':rub['presentation_deduction'] if presentation else 0,'final_score':max(0,score),'passed':score>=rub['pass_threshold'],'scope':'Complete submission also requires actual isolated input-dependent execution.','schema_errors':[e.message for e in errors]}
 
-def delivery(raw,data,artifacts):
- ans,_=normalize(raw);D=load(data);out=Path(artifacts);errors=[]
+def delivery(raw,data,folder):
+ answer,_=normalize(raw);D=load(data);errors=[]
  try:
-  text=(out/'analysis.md').read_text();blocks=re.findall(r'```json\s*\n(.*?)\n```',text,re.S);assert len(blocks)==1
-  actual=json.loads(blocks[0]);wanted=evidence(ans,D)
-  def compatible(x,y,key=''):
-   if isinstance(y,dict):return isinstance(x,dict) and all(k in x and compatible(x[k],v,k) for k,v in y.items())
+  text=(Path(folder)/'analysis.md').read_text();blocks=re.findall(r'```json\s*\n(.*?)\n```',text,re.S);assert len(blocks)==1;got=json.loads(blocks[0]);want=evidence(answer,D)
+  def eq(x,y,key=''):
+   if isinstance(y,dict):return isinstance(x,dict) and all(k in x and eq(x[k],v,k) for k,v in y.items())
    if isinstance(y,list):
-    if key=='chip_diagnostics':
-     xx=unique(x,lambda r:r['id']);yy=unique(y,lambda r:r['id']);return set(xx)==set(yy) and all(compatible(xx[k],yy[k]) for k in yy)
-    if key=='limitations':return isinstance(x,list) and set(y)<=set(x)
-    return isinstance(x,list) and len(x)==len(y) and all(compatible(a,b,key) for a,b in zip(x,y))
+    if key=='context_diagnostics':
+     xx=keyed(x);yy=keyed(y);return set(xx)==set(yy) and all(eq(xx[k],yy[k]) for k in yy)
+    return isinstance(x,list) and len(x)==len(y) and all(eq(xx,yy,key) for xx,yy in zip(x,y))
    if isinstance(y,bool):return type(x) is bool and x==y
-   if isinstance(y,(int,float)):
-    tolerance=D['model_spec']['acceptance']['fit_rmse_max'] if key=='fit_rmse' else D['model_spec']['acceptance']['parameter_absolute'] if key=='target_capacity_interval' else 1e-8
-    return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=tolerance
+   if isinstance(y,(int,float)):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=D['study_metadata']['acceptance']['numeric_absolute']
    return x==y
-  assert compatible(actual,wanted)
- except (OSError,ValueError,KeyError,TypeError,AssertionError):errors.append('analysis diagnostic evidence missing or inconsistent')
- try:
-  summary=strict_read(out/'run_summary.json');jsonschema.validate(summary,strict_read(Path(data)/'run_summary_schema.json'));assert summary['input_sha256']==input_hash(data);assert summary['answer_sha256']==hashlib.sha256((out/'final_answer.json').read_bytes()).hexdigest()
- except (OSError,ValueError,KeyError,TypeError,AssertionError,jsonschema.ValidationError):errors.append('run summary invalid or hashes incorrect')
- return {'errors':errors,'deduction':min(10,5*len(errors))}
+  assert eq(got,want)
+ except (OSError,KeyError,TypeError,ValueError,AssertionError):errors.append('Required analysis diagnostic block missing or inconsistent')
+ return {'errors':errors,'deduction':5 if errors else 0}
 
 def evaluate(path,data,artifacts=None,reference=None):
  try:raw=strict_read(path);r=science(raw,data,reference)
@@ -141,6 +102,6 @@ def evaluate(path,data,artifacts=None,reference=None):
   d=delivery(raw,data,artifacts);r['delivery']=d;r['final_score']=max(0,r['final_score']-d['deduction']);r['passed']=r['final_score']>=80
  return r
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--answer',type=Path,required=True);p.add_argument('--data',type=Path,default=HERE.parent/'task/data');p.add_argument('--artifacts-dir',type=Path);p.add_argument('--output',type=Path);a=p.parse_args();r=evaluate(a.answer,a.data,a.artifacts_dir);s=json.dumps(r,indent=2,allow_nan=False)+'\n'
- if a.output:a.output.write_text(s)
- print(s);sys.exit(0 if r['passed'] else 1)
+ p=argparse.ArgumentParser();p.add_argument('--answer',type=Path,required=True);p.add_argument('--data',type=Path,default=HERE.parent/'task/data');p.add_argument('--artifacts-dir',type=Path);p.add_argument('--output',type=Path);a=p.parse_args();r=evaluate(a.answer,a.data,a.artifacts_dir);text=json.dumps(r,indent=2,allow_nan=False)+'\n'
+ if a.output:a.output.write_text(text)
+ print(text);sys.exit(0 if r['passed'] else 1)

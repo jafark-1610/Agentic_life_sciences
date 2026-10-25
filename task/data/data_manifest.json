@@ -1,28 +1,32 @@
 {
   "files": {
-    "model_spec.json": {
-      "sha256": "9473e0d6123184097d2f7add4480aeb35255b76e079568d61037f05ff6c1af23",
-      "bytes": 1299
+    "study_metadata.json": {
+      "bytes": 510,
+      "sha256": "38e37d8ea6c9564cdbb23471bc919025066561fe6b8245de61c1cbef8460e29b"
+    },
+    "contexts.json": {
+      "bytes": 1006,
+      "sha256": "2560e5c0da730d677910fa32ddcb2402ad0a6c7b0f80e314287ccf2d9486da7d"
     },
     "protocols.json": {
-      "sha256": "523ab1071b483ab972425ab18e8694bcf8cef65fe21e24be54bbbde58b5c3e02",
-      "bytes": 550
+      "bytes": 365,
+      "sha256": "82480688bb4c411b0999c7fdc69f623f025d864c3be0dda071c9f374cf06f38a"
     },
-    "chips.json": {
-      "sha256": "c402e740e070a2251f265e377771d64e1562c48ddb9e570b9233efe5c94bbd31",
-      "bytes": 103607
+    "policies.json": {
+      "bytes": 3819,
+      "sha256": "da7b795a27c5cdc53df294649ad99efd9fe4238412b7134317274bb57dde7b9a"
     },
-    "scenarios.json": {
-      "sha256": "78dcf85f051d432f53e8629212486e0b166241bc844389422f99b1f86b7bba5e",
-      "bytes": 276
+    "benchmark.json": {
+      "bytes": 103,
+      "sha256": "bb89068eabea500b2b9dab342f9643b0ced4f4a3c00087fbd7296c88f3b45111"
     },
-    "courses.json": {
-      "sha256": "e92d4ae93f177697c5e758c2c4ad2566208627894676327f7bcab39eb2221fb9",
-      "bytes": 14893
+    "tables.csv": {
+      "bytes": 66094,
+      "sha256": "0680ccec4667581bfd1a8715c96b0d2d81bf5be26f7033127a3f5a94bce6f1a0"
     },
     "source_provenance.json": {
-      "sha256": "88aa1d9817ac67a67313db91c39f9b20941465b17dffcbdf7e69c80c15b00ef0",
-      "bytes": 395
+      "bytes": 410,
+      "sha256": "e903a5dde5296e12566cf3dbe4ccb100ca8e68f7f829304459b39324ca02cf59"
     }
   }
 }

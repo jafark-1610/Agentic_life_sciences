@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "required_slots": [
+    "run_pipeline.py",
+    "final_answer.json",
+    "analysis.md"
+  ],
+  "checked_against": "user-reported existing three slots",
+  "platform_ingestion_and_UI_state": "not accessible from this package; not claimed verified"
+}

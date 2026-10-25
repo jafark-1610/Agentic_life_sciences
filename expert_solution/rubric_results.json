@@ -1,22 +1,20 @@
 {
+  "role": "scientific_answer_evaluation",
   "checks": {
-    "global_identifiability": true,
-    "measurement_fit": true,
-    "counterfactual_predictions": true,
-    "course_decision": true,
-    "continuous_peak_witness": true
+    "sharp_bounds": true,
+    "identification": true,
+    "global_envelopes": true,
+    "policy_decision": true
   },
   "details": {
-    "max_recomputed_fit_rmse": 1.909360418484222e-08,
-    "max_efficacy_error": 0.0,
-    "max_peak_error": 0.0
+    "max_bound_error": 0.0
   },
   "raw_score": 100,
-  "final_score": 100,
   "scientific_cap_applied": false,
   "presentation_deduction": 0,
+  "final_score": 100,
   "passed": true,
-  "scope": "scientific_answer_only; full submission additionally requires delivery checks and isolated rerun",
+  "scope": "Complete submission also requires actual isolated input-dependent execution.",
   "schema_errors": [],
   "delivery": {
     "errors": [],
