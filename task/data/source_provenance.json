@@ -1,8 +1,7 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
-  "origin": "Original synthetic equilibrium and binomial capture simulation",
-  "system": "Nonclinical, dimensionless protein mutation library; no patient or external sequence data",
-  "model": "Four-state competitive binding with genotype-dependent denaturation and quadratic sequence energies",
-  "randomization": "Independent binomial capture draws conditional on sequence, condition, and control fraction",
-  "inference_inputs": "Only task/data; simulation parameters and generator are expert-only"
+  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "origin": "Original synthetic population experiments",
+  "measurements": "Exact three-replicate reset-outcome population laws stored in float64",
+  "system": "Persistent enzyme subtypes with exchange-coupled mechanochemical cycles",
+  "scope": "Nonclinical method simulation with no external data or annotations"
 }

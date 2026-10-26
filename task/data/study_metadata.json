@@ -1,321 +1,594 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
-  "positions": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "modules": 6,
+  "phases_per_module": 3,
+  "states": 18,
+  "subtypes": 3,
+  "frame_time": 1.0,
+  "outcome_dimension": 108,
+  "preparations": [
+    {
+      "id": "prep_485fd8f9",
+      "file": "prep_485fd8f9_moments.npz"
+    },
+    {
+      "id": "prep_c2319704",
+      "file": "prep_c2319704_moments.npz"
+    },
+    {
+      "id": "prep_22eeb6a4",
+      "file": "prep_22eeb6a4_moments.npz"
+    },
+    {
+      "id": "prep_19d92d34",
+      "file": "prep_19d92d34_moments.npz"
+    },
+    {
+      "id": "prep_ca1a8bb6",
+      "file": "prep_ca1a8bb6_moments.npz"
+    },
+    {
+      "id": "prep_07dfaec7",
+      "file": "prep_07dfaec7_moments.npz"
+    },
+    {
+      "id": "prep_ad8c8bd5",
+      "file": "prep_ad8c8bd5_moments.npz"
+    },
+    {
+      "id": "prep_8edfed11",
+      "file": "prep_8edfed11_moments.npz"
+    }
   ],
-  "energy_columns": [
-    "fold",
-    "bind_a",
-    "bind_b"
-  ],
-  "urea_baseline_molar": 1.0,
-  "n_variants": 16384,
-  "n_screen": 1400,
-  "proteins": [
+  "policies": [
     {
-      "id": "binder_0b8c50c7",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        0.0237,
-        0.01345,
-        -0.019874,
-        -0.026221,
-        -0.008745,
-        0.017772,
-        0.016463,
-        -0.006098,
-        0.010145,
-        0.022694,
-        -0.03036,
-        0.002681,
-        0.017911,
-        0.022773,
-        -0.019662,
-        -0.001125,
-        -0.009372,
-        -0.016426,
-        0.020883,
-        0.004211
+      "id": "p00",
+      "actions": [
+        0,
+        0,
+        0
       ]
     },
     {
-      "id": "binder_0cf797f3",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        0.028573,
-        -0.019036,
-        0.022616,
-        -0.021673,
-        -0.005684,
-        -0.025535,
-        -0.002619,
-        -0.028408,
-        -0.00805,
-        0.032726,
-        0.027859,
-        0.007539,
-        -0.003475,
-        0.024952,
-        0.027986,
-        0.030819,
-        -0.00422,
-        -0.017604,
-        0.010059,
-        0.02499
+      "id": "p01",
+      "actions": [
+        0,
+        0,
+        1
       ]
     },
     {
-      "id": "binder_82ef5504",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        -0.030934,
-        -0.013941,
-        -0.024583,
-        0.025171,
-        0.032885,
-        0.024425,
-        0.033656,
-        -0.033633,
-        -0.034164,
-        0.004713,
-        -0.019053,
-        0.031125,
-        -0.005865,
-        -0.027276,
-        0.000879,
-        -0.023045,
-        -0.01058,
-        -0.010009,
-        -0.025836,
-        -0.021362
+      "id": "p02",
+      "actions": [
+        0,
+        0,
+        2
       ]
     },
     {
-      "id": "binder_41646adf",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        -0.023805,
-        -0.017058,
-        0.033729,
-        -0.000315,
-        -0.030012,
-        -0.014803,
-        0.010506,
-        0.023442,
-        -0.021605,
-        -0.004941,
-        0.016431,
-        0.031314,
-        0.0311,
-        0.006345,
-        0.006501,
-        -0.029922,
-        -0.007615,
-        -0.016809,
-        0.02979,
-        -0.005171
+      "id": "p03",
+      "actions": [
+        0,
+        0,
+        3
       ]
     },
     {
-      "id": "binder_e059740b",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        0.02421,
-        -0.019659,
-        0.030518,
-        -0.02439,
-        -0.012596,
-        0.002199,
-        0.030162,
-        -0.005573,
-        -0.006042,
-        -0.02959,
-        -0.009688,
-        0.020875,
-        -0.015063,
-        -0.028779,
-        -0.029181,
-        0.01621,
-        -0.018711,
-        0.030284,
-        -0.01507,
-        0.022207
+      "id": "p04",
+      "actions": [
+        0,
+        1,
+        0
       ]
     },
     {
-      "id": "binder_8352f9d7",
-      "m0": 1.08,
-      "mutation_m_shift": [
-        0.014432,
-        -0.024565,
-        0.006122,
-        -0.002336,
-        0.022293,
-        -0.034744,
-        -0.005293,
-        0.002685,
-        -0.017928,
-        0.027839,
-        0.016674,
-        -0.014633,
-        -0.007187,
-        -0.020453,
-        0.030405,
-        -0.022356,
-        0.018963,
-        -0.006215,
-        0.028227,
-        0.025414
+      "id": "p05",
+      "actions": [
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "p06",
+      "actions": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "p07",
+      "actions": [
+        0,
+        1,
+        3
+      ]
+    },
+    {
+      "id": "p08",
+      "actions": [
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "p09",
+      "actions": [
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "p10",
+      "actions": [
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "p11",
+      "actions": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "p12",
+      "actions": [
+        0,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "p13",
+      "actions": [
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "p14",
+      "actions": [
+        0,
+        3,
+        2
+      ]
+    },
+    {
+      "id": "p15",
+      "actions": [
+        0,
+        3,
+        3
+      ]
+    },
+    {
+      "id": "p16",
+      "actions": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "p17",
+      "actions": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "p18",
+      "actions": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "p19",
+      "actions": [
+        1,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "p20",
+      "actions": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "p21",
+      "actions": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "p22",
+      "actions": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "p23",
+      "actions": [
+        1,
+        1,
+        3
+      ]
+    },
+    {
+      "id": "p24",
+      "actions": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "p25",
+      "actions": [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "p26",
+      "actions": [
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "p27",
+      "actions": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "p28",
+      "actions": [
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "p29",
+      "actions": [
+        1,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "p30",
+      "actions": [
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "id": "p31",
+      "actions": [
+        1,
+        3,
+        3
+      ]
+    },
+    {
+      "id": "p32",
+      "actions": [
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "p33",
+      "actions": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "p34",
+      "actions": [
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "p35",
+      "actions": [
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "p36",
+      "actions": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "p37",
+      "actions": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "p38",
+      "actions": [
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "p39",
+      "actions": [
+        2,
+        1,
+        3
+      ]
+    },
+    {
+      "id": "p40",
+      "actions": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "p41",
+      "actions": [
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "p42",
+      "actions": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "p43",
+      "actions": [
+        2,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "p44",
+      "actions": [
+        2,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "p45",
+      "actions": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "p46",
+      "actions": [
+        2,
+        3,
+        2
+      ]
+    },
+    {
+      "id": "p47",
+      "actions": [
+        2,
+        3,
+        3
+      ]
+    },
+    {
+      "id": "p48",
+      "actions": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "p49",
+      "actions": [
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "p50",
+      "actions": [
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "p51",
+      "actions": [
+        3,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "p52",
+      "actions": [
+        3,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "p53",
+      "actions": [
+        3,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "p54",
+      "actions": [
+        3,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "p55",
+      "actions": [
+        3,
+        1,
+        3
+      ]
+    },
+    {
+      "id": "p56",
+      "actions": [
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "p57",
+      "actions": [
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "p58",
+      "actions": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "p59",
+      "actions": [
+        3,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "p60",
+      "actions": [
+        3,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "p61",
+      "actions": [
+        3,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "p62",
+      "actions": [
+        3,
+        3,
+        2
+      ]
+    },
+    {
+      "id": "p63",
+      "actions": [
+        3,
+        3,
+        3
       ]
     }
   ],
-  "screen_conditions": [
-    {
-      "id": "s00",
-      "urea": 0.0,
-      "ligand_a": 0.15,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s01",
-      "urea": 0.0,
-      "ligand_a": 2.0,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s02",
-      "urea": 0.0,
-      "ligand_a": 0.0,
-      "ligand_b": 0.15,
-      "reporter": "B"
-    },
-    {
-      "id": "s03",
-      "urea": 0.0,
-      "ligand_a": 0.0,
-      "ligand_b": 2.0,
-      "reporter": "B"
-    },
-    {
-      "id": "s04",
-      "urea": 0.7,
-      "ligand_a": 0.15,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s05",
-      "urea": 0.7,
-      "ligand_a": 2.0,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s06",
-      "urea": 0.7,
-      "ligand_a": 0.0,
-      "ligand_b": 0.15,
-      "reporter": "B"
-    },
-    {
-      "id": "s07",
-      "urea": 0.7,
-      "ligand_a": 0.0,
-      "ligand_b": 2.0,
-      "reporter": "B"
-    },
-    {
-      "id": "s08",
-      "urea": 1.4,
-      "ligand_a": 0.15,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s09",
-      "urea": 1.4,
-      "ligand_a": 2.0,
-      "ligand_b": 0.0,
-      "reporter": "A"
-    },
-    {
-      "id": "s10",
-      "urea": 1.4,
-      "ligand_a": 0.0,
-      "ligand_b": 0.15,
-      "reporter": "B"
-    },
-    {
-      "id": "s11",
-      "urea": 1.4,
-      "ligand_a": 0.0,
-      "ligand_b": 2.0,
-      "reporter": "B"
-    }
-  ],
-  "challenge_conditions": [
-    {
-      "id": "q0",
-      "urea": -0.7,
-      "ligand_a": 0.4,
-      "ligand_b": 0.7
-    },
-    {
-      "id": "q1",
-      "urea": -0.2,
-      "ligand_a": 1.0,
-      "ligand_b": 3.0
-    },
-    {
-      "id": "q2",
-      "urea": 0.4,
-      "ligand_a": 2.0,
-      "ligand_b": 10.0
-    },
-    {
-      "id": "q3",
-      "urea": 1.0,
-      "ligand_a": 5.0,
-      "ligand_b": 20.0
-    }
-  ],
-  "design": {
-    "mutation_cost": 0.003,
-    "utility": "apo_folded * min(challenge_a) - mutation_cost * mutation_count"
+  "rate_bounds": {
+    "cycle_rate": [
+      0.1,
+      9.6
+    ],
+    "cycle_sum": [
+      8.0,
+      9.8
+    ],
+    "exchange_offdiag": [
+      0.0001,
+      0.7
+    ],
+    "exchange_exit_max": 1.2
   },
-  "acceptance_thresholds": {
-    "energy_rmse_max": 0.3,
-    "energy_p95_max": 0.6,
-    "apo_rmse_max": 0.025,
-    "challenge_rmse_max": 0.02,
-    "challenge_max_abs_max": 0.12,
-    "design_regret_max": 0.03
+  "tolerances": {
+    "mixture": 5e-05,
+    "exchange": 5e-05,
+    "cycle_bounds": 0.003,
+    "retention": 0.0015,
+    "epr": 0.02,
+    "probability_bounds": 0.0015,
+    "gain_bounds": 0.002,
+    "net_bounds": 0.002,
+    "choice_regret": 0.003,
+    "witness_rates": 0.003,
+    "witness_endpoint": 0.003,
+    "witness_turnover": 1e-05
   },
   "report_tolerances": {
-    "capture_deviance_per_observation": 0.05,
-    "capture_rmse": 1e-06,
-    "mean_apo_folded": 1e-06,
-    "mean_worst_a": 1e-06
+    "moment2_max_abs_error": 1e-07,
+    "moment3_max_abs_error": 1e-07,
+    "lower_net_witness_value": 1e-06,
+    "upper_net_witness_value": 1e-06,
+    "lower_selection_probability": 1e-06,
+    "upper_selection_probability": 1e-06
   }
 }

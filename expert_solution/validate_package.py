@@ -15,7 +15,7 @@ def validate(root):
     for name in ['deliverables.json', 'required_deliverables.json']:
         assert json.loads((task/name).read_text()) == slots
     assert 'Required deliverables: '+', '.join(slots) in (task/'prompt.md').read_text()
-    assert not any('run_summary' in p.read_text() for p in task.rglob('*') if p.is_file())
+    assert not any('run_summary' in p.read_text() for p in task.rglob('*') if p.is_file() and p.suffix != '.npz')
     required = ['run_pipeline.py', 'expert_solution.py', 'final_answer.json', 'rubric.json', 'rubric.md',
                 'score_rubric.py', 'config/parameters.yaml', 'results/run_summary.json', 'results/final_answer.json',
                 'results/analysis.md', 'tests/test_package.py', 'robustness_checks/run_checks.py']

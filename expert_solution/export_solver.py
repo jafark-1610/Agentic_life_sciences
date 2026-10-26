@@ -7,12 +7,12 @@ HERE = Path(__file__).resolve().parent
 
 
 def export(destination):
-    modules = ['model.py', 'expert_solution.py', 'artifacts.py', 'run_pipeline.py']
+    modules = ['kinetics.py', 'envelopes.py', 'expert_solution.py', 'artifacts.py', 'run_pipeline.py']
     statements = []
     for name in modules:
         tree = ast.parse((HERE/name).read_text())
         for node in tree.body:
-            if isinstance(node, ast.ImportFrom) and node.module in ['model', 'expert_solution', 'artifacts']:
+            if isinstance(node, ast.ImportFrom) and node.module in ['kinetics', 'envelopes', 'expert_solution', 'artifacts']:
                 continue
             if name == 'run_pipeline.py' and isinstance(node, ast.FunctionDef) and node.name == 'main':
                 class ConfigTransform(ast.NodeTransformer):
@@ -25,7 +25,7 @@ def export(destination):
                     def visit_Assign(self, item):
                         self.generic_visit(item)
                         if len(item.targets) == 1 and isinstance(item.targets[0], ast.Name) and item.targets[0].id == 'config':
-                            item.value = ast.parse('json.loads(args.config.read_text()) if args.config else DEFAULT_CONFIG', mode='eval').body
+                            item.value = ast.parse('json.loads(a.config.read_text()) if a.config else DEFAULT_CONFIG', mode='eval').body
                         return item
                 node = ConfigTransform().visit(node)
             statements.append(node)

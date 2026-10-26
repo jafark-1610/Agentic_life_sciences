@@ -1,7 +1,10 @@
-# Scientific controls
+# Scientific wrong-method controls
 
-Run `python robustness_checks/run_checks.py` from `expert_solution/`. The workflow checks numerical clearance, the binding-equivalent baseline energy reflection, two-stage latent-energy extrapolation, evidence calculations, presentation recovery, and an independent transformed-energy estimator. Denaturant conditions are signed offsets from a positive baseline concentration.
+Run the independent estimator and then the control workflow:
 
-`baselines.py` implements the two-stage control. The measured-variant diagnostics are recorded before sequence projection; the final projected outputs are graded separately. `result.json` records metrics and interpretations, and `result.md` indexes the check outcomes.
+    python tests/independent_oracle.py --data ../task/data --output-dir /tmp/cycle-independent
+    python robustness_checks/run_checks.py --independent-output /tmp/cycle-independent
 
-The isolated runtime and regenerated-input experiment is executed by `verify_submission.py`. Artifact grading, scientific controls, and isolated execution have distinct records.
+The controls evaluate a single bulk-compatible microscopic fit, independent extrema used as outer intervals, endpoint occupancy in place of first passage, and a convex relaxation that allows extra microscopic heterogeneity. Every control is scored by the package grader. The single-model record also checks its full reset moment fit and bulk turnover compatibility.
+
+The independent estimator must pass. Presentation and report controls verify that correct science keeps credit. The convexification audit records its numerical gap without assuming it exceeds the scientific tolerance. These are numerical experiments, separate from external model evaluation.

@@ -1,11 +1,13 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
-  "required_deliverables": ["run_pipeline.py", "final_answer.json", "analysis.md"],
-  "initial_fold_min": -5.0,
-  "initial_fold_max": 12.0,
-  "initial_fold_grid": 241,
-  "starts": ["profile", 2.0, -1.0],
-  "initial_damping": 0.001,
-  "max_iterations": 100,
-  "step_tolerance": 0.0000001
+  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "required_deliverables": [
+    "run_pipeline.py",
+    "final_answer.json",
+    "analysis.md"
+  ],
+  "tensor_contraction": [
+    0.431,
+    -0.217,
+    0.733
+  ]
 }

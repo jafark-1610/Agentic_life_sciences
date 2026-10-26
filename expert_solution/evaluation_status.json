@@ -1,10 +1,12 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "case_id": "ALS_HIDDEN_CYCLE_005",
   "status": "awaiting_external_model_evaluation",
-  "scientific_snapshot_policy": "Freeze before external model attempts; do not alter scientific inputs, thresholds, or weighting after observing responses without a new task version.",
+  "qualification_claim": false,
+  "autoreview_score": null,
+  "scientific_snapshot_policy": "Freeze science and grading before external model runs. Changes after responses require a new version, except documented infrastructure repairs.",
   "prompt_only_pilots": {
     "status": "not_run",
-    "reason": "This environment exposes no external model evaluation API. Independent numerical estimators and baseline experiments are not substitutes for model attempts."
+    "reason": "No external model evaluation API is available in this environment. Scientific controls are not model attempts."
   },
   "model_runs": [
     {
@@ -33,39 +35,50 @@
       "verdict": null
     }
   ],
-  "qualification_rule": "At least three of five fresh ModelEvaluate graders must explicitly return FAIL; local scientific controls do not establish this.",
-  "qualification_claim": false,
-  "autoreview_score": null,
+  "qualification_rule": "At least three of five fresh ModelEvaluate graders must explicitly return FAIL. Local controls do not establish qualification.",
   "required_solver_slots": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
-  "platform_structure_validation": "Pending external upload; exact expert config and results/run_summary.json paths are checked locally.",
+  "platform_import_status": "Pending external upload; package-side exact path, slot, schema, and hash preflight only.",
   "local_checks": {
-    "package_tests": {
+    "tests": {
       "status": "success",
-      "tests_run": 22,
+      "tests_run": 28,
       "failures": 0,
       "errors": 0,
-      "seconds": 18.698,
-      "test_module_sha256": "1f49f7c05c12a9a01293c9bcb1fe181a51386544e82cc528e76eaddff0a51e5e"
+      "seconds": 7.876,
+      "source_sha256": "8525694b4bf21f17b9c42933617d865641d589a86a355002af718296b73d9363"
     },
-    "scientific_controls": {
+    "scientific_controls": 8,
+    "independent_implementation_score": 100,
+    "cross_runtime": {
       "status": "success",
-      "count": 7
+      "role": "cross_runtime_scientific_check",
+      "maximum_nonwitness_numeric_difference": 1.000000082740371e-08,
+      "scientific_score": 100.0,
+      "runtime": {
+        "python": "3.13.5",
+        "dependencies": {
+          "numpy": "2.2.4",
+          "scipy": "1.15.3",
+          "jsonschema": "4.19.2"
+        }
+      },
+      "note": "Attaining witnesses and choices may differ when they meet the physical endpoint and regret limits."
     },
-    "independent_estimator_score": 100,
-    "cross_runtime_scientific_score": 100,
-    "isolated_original_score": 100,
-    "isolated_regenerated_score": 100,
+    "isolated_scores": [
+      100.0,
+      100.0
+    ],
     "stored_answer_rejected": true,
-    "data_regeneration": {
+    "generation": {
       "status": "success",
-      "method": "Default generator in a clean staged copy reproduces every public data file byte-for-byte",
-      "public_data_files": 11
+      "public_data_files": 17,
+      "method": "Default generator reproduces every public data file byte-for-byte in a clean staged copy."
     }
   },
-  "scientific_snapshot_sha256": "e163ecfe419cedacc05f1ff0fc91774ed9768024cc1978b4d2e49aaa191bc3ab",
-  "verified_standalone_source_sha256": "cd2a61d8b845d23e201ed9726feaf4d4257e38cd5b406f64acf21b9c3fa9e387"
+  "verified_standalone_source_sha256": "2cd89166444263e5ed3c1386b4f79833c6492aa82b513e50f4f7e3491af00a13",
+  "scientific_snapshot_sha256": "f6ecee0804087ac2c33571fb8aed530eb418293d4be627b2eee088d6fe64f6ad"
 }

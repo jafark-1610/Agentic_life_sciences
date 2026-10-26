@@ -1,70 +1,52 @@
-"""Validate input hashes, every count, and all cross-file keys."""
+"""Check every population array, protocol, foreign key, and integrity hash."""
 import argparse
-import csv
 import hashlib
 import json
 from pathlib import Path
+import numpy as np
 
 
 def validate(data):
-    data = Path(data)
-    meta = json.loads((data/'study_metadata.json').read_text())
+    data = Path(data); meta = json.loads((data/'study_metadata.json').read_text())
     manifest = json.loads((data/'data_manifest.json').read_text())
     for name, info in manifest['files'].items():
         raw = (data/name).read_bytes()
         assert len(raw) == info['bytes'] and hashlib.sha256(raw).hexdigest() == info['sha256'], name+' integrity mismatch'
-    assert meta['case_id'] == 'ALS_THERMODYNAMIC_DESIGN_004'
-    with (data/'variants.csv').open() as f:
-        reader = csv.DictReader(f); assert reader.fieldnames == ['variant_id', 'mutations', 'role']; rows = list(reader)
-    assert len(rows) == meta['n_variants']
-    ids, screen = set(), set()
-    for r in rows:
-        assert r['variant_id'] not in ids
-        ids.add(r['variant_id'])
-        assert len(r['mutations']) == len(meta['positions']) and set(r['mutations']) <= {'0', '1'}
-        code = sum(int(b) << i for i, b in enumerate(r['mutations']))
-        assert r['variant_id'] == 'v'+format(code, '05x')
-        assert r['role'] in ['screen', 'candidate']
-        if r['role'] == 'screen': screen.add(r['variant_id'])
-    assert len(screen) == meta['n_screen']
-    proteins = {p['id'] for p in meta['proteins']}
-    assert len(proteins) == len(meta['proteins'])
-    for p in meta['proteins']:
-        assert p['m0']-sum(abs(x) for x in p['mutation_m_shift']) > 0
-        assert len(p['mutation_m_shift']) == len(meta['positions'])
-    conditions = {c['id'] for c in meta['screen_conditions']}
-    assert len(conditions) == len(meta['screen_conditions'])
-    for c in meta['screen_conditions']:
-        assert c['reporter'] in ['A', 'B']
-        assert c['ligand_a' if c['reporter'] == 'A' else 'ligand_b'] > 0
-        assert c['ligand_b' if c['reporter'] == 'A' else 'ligand_a'] == 0
-    seen = set()
-    with (data/'capture_counts.csv').open() as f:
-        reader = csv.DictReader(f)
-        assert reader.fieldnames == ['protein_id', 'variant_id', 'condition_id', 'trials', 'captured']
-        for r in reader:
-            key = r['protein_id'], r['variant_id'], r['condition_id']
-            assert key not in seen and key[0] in proteins and key[1] in screen and key[2] in conditions
-            seen.add(key)
-            n, k = int(r['trials']), int(r['captured']); assert n > 0 and 0 <= k <= n
-    assert len(seen) == len(proteins)*len(screen)*len(conditions)
-    seen = set(); control_fractions = {c: set() for c in conditions}
-    with (data/'calibration_counts.csv').open() as f:
-        reader = csv.DictReader(f)
-        assert reader.fieldnames == ['condition_id', 'control_id', 'bound_fraction', 'trials', 'captured']
-        for r in reader:
-            key = r['condition_id'], r['control_id']
-            assert key not in seen and key[0] in conditions
-            seen.add(key)
-            n, k = int(r['trials']), int(r['captured']); t = float(r['bound_fraction'])
-            assert n > 0 and 0 <= k <= n and 0 <= t <= 1
-            control_fractions[key[0]].add(t)
-    assert all(0 in t and 1 in t and len(t) >= 3 for t in control_fractions.values())
-    assert len({c['id'] for c in meta['challenge_conditions']}) == len(meta['challenge_conditions'])
-    for c in meta['challenge_conditions']:
-        assert c['ligand_a'] > 0 and c['ligand_b'] > 0
-        assert meta['urea_baseline_molar']+c['urea'] >= 0
-    print('Input validation passed: complete variants, assays, calibration controls and integrity manifest.')
+    assert meta['case_id'] == 'ALS_HIDDEN_CYCLE_005'
+    n, m, rank, d = meta['states'], meta['modules'], meta['subtypes'], meta['outcome_dimension']
+    assert n == 3*m and d == m*n and rank == 3 and meta['frame_time'] > 0
+    protocols = json.loads((data/'protocols.json').read_text())
+    assert set(protocols) == {p['id'] for p in meta['preparations']}
+    for p in meta['preparations']:
+        with np.load(data/p['file'], allow_pickle=False) as z:
+            assert set(z.files) == {'moment1', 'moment2', 'moment3', 'response'}
+            one, two, three, C = [z[k] for k in ['moment1', 'moment2', 'moment3', 'response']]
+            assert one.shape == (d,) and two.shape == (d,d) and three.shape == (d,d,d) and C.shape == (n,n)
+            assert all(np.isfinite(a).all() and a.min() >= 0 for a in [one,two,three,C])
+            assert abs(one.sum()-1) < 1e-12 and np.max(np.abs(C.sum(axis=1)-1)) < 1e-12
+            assert np.linalg.cond(C) < 20
+            assert np.max(np.abs(two.sum(axis=1)-one)) < 1e-12
+            assert np.max(np.abs(three.sum(axis=2)-two)) < 1e-12
+            assert np.max(np.abs(two-two.T)) < 1e-12
+            assert np.max(np.abs(three-three.transpose(1,0,2))) < 1e-12
+            assert np.max(np.abs(three-three.transpose(0,2,1))) < 1e-12
+            ev = np.linalg.eigvalsh(two)
+            assert ev[-rank] > 1e-9 and abs(ev[-rank-1]) < 1e-12
+        e = protocols[p['id']]
+        rho=np.array(e['initial_distribution']); H=np.array(e['observation']); selection=np.array(e['selection_probability'])
+        assert rho.shape == (n,) and rho.min() >= 0 and abs(rho.sum()-1) < 1e-12
+        assert H.shape == (n,3) and H.min() >= 0 and np.max(np.abs(H.sum(axis=1)-1)) < 1e-12
+        assert selection.shape == (n,) and selection.min() > 0 and selection.max() <= 1
+        assert len(e['pre_loss_rate']) == n and min(e['pre_loss_rate']) >= 0
+        assert e['screen_time'] > 0 and e['followup_time'] > 0
+        assert len(set(e['target_states'])) == len(e['target_states']) and all(0 <= i < n for i in e['target_states'])
+        assert e['bulk_turnover']['lower'] < e['bulk_turnover']['upper']
+        for a in e['actions']:
+            M=np.array(a['multiplier']); assert M.shape == (n,n) and np.isfinite(M).all() and M.min() >= 0
+            assert len(a['loss_rate']) == n and min(a['loss_rate']) > 0 and a['resource_cost'] >= 0
+    assert len({p['id'] for p in meta['policies']}) == len(meta['policies'])
+    assert all(len(p['actions']) == 3 and all(0 <= a < 4 for a in p['actions']) for p in meta['policies'])
+    print('Input validation passed: complete population tensors, consistent protocols, and pinned files.')
     return True
 
 

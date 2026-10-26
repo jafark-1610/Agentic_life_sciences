@@ -1,5 +1,5 @@
 {
   "status": "success",
-  "method": "Default generator in a clean staged copy reproduces every public data file byte-for-byte",
-  "public_data_files": 11
+  "public_data_files": 17,
+  "method": "Default generator reproduces every public data file byte-for-byte in a clean staged copy."
 }

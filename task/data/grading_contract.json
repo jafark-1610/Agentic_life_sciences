@@ -1,56 +1,69 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
-  "total_points": 100,
+  "case_id": "ALS_HIDDEN_CYCLE_005",
   "pass_threshold": 80,
   "scientific_gate_cap": 79,
+  "total_points": 100,
   "groups": [
     {
-      "metric": "energy_rmse",
-      "threshold": "energy_rmse_max",
+      "id": "identification",
       "points": 10,
-      "field": "proteins[].energy",
-      "prompt_section": "Scientific acceptance"
+      "fields": [
+        "mixture_weights",
+        "exchange_generators",
+        "forward_bounds",
+        "backward_bounds",
+        "candidate_counts",
+        "retention_bounds"
+      ],
+      "prompt_section": "Answer structure and Retention, rate, and entropy ranges"
     },
     {
-      "metric": "energy_p95",
-      "threshold": "energy_p95_max",
+      "id": "retained_entropy",
       "points": 10,
-      "field": "proteins[].energy",
-      "prompt_section": "Scientific acceptance"
+      "fields": [
+        "retained_epr_bounds"
+      ],
+      "prompt_section": "Retention, rate, and entropy ranges"
     },
     {
-      "metric": "apo_rmse",
-      "threshold": "apo_rmse_max",
-      "points": 20,
-      "field": "proteins[].apo_folded",
-      "prompt_section": "Scientific acceptance"
-    },
-    {
-      "metric": "challenge_rmse",
-      "threshold": "challenge_rmse_max",
+      "id": "policy_probabilities",
       "points": 15,
-      "field": "proteins[].challenge_a",
-      "prompt_section": "Scientific acceptance"
+      "fields": [
+        "policies[].success_bounds",
+        "policies[].loss_bounds",
+        "policies[].cost_bounds"
+      ],
+      "prompt_section": "Screening and intervention"
     },
     {
-      "metric": "challenge_max_abs",
-      "threshold": "challenge_max_abs_max",
-      "points": 10,
-      "field": "proteins[].challenge_a",
-      "prompt_section": "Scientific acceptance"
+      "id": "joint_gain_and_net",
+      "points": 25,
+      "fields": [
+        "policies[].gain_bounds",
+        "policies[].net_bounds"
+      ],
+      "prompt_section": "Screening and intervention"
     },
     {
-      "metric": "design_regret",
-      "threshold": "design_regret_max",
+      "id": "robust_choice",
       "points": 30,
-      "field": "proteins[].selected_variant",
-      "prompt_section": "Design objective and Scientific acceptance"
+      "fields": [
+        "selected_policy"
+      ],
+      "prompt_section": "Screening and intervention"
+    },
+    {
+      "id": "attaining_witnesses",
+      "points": 5,
+      "fields": [
+        "net_witnesses"
+      ],
+      "prompt_section": "Answer structure and attaining witnesses"
     }
   ],
-  "scientific_weights": "Each group divided equally across binders; every validity/accuracy gate mandatory. An invalid or unreadable binder block earns no scientific credit for that binder.",
+  "group_division": "Each group divided equally across preparations. All scientific requirements are mandatory.",
   "report_points": 5,
-  "report_evidence": "Computed analysis evidence section and report_tolerances",
   "presentation_deduction": 5,
-  "presentation_policy": "Execution section; one deduction for any number of recoverable deviations",
-  "automatic_zero": "Missing/non-running pipeline, missing/unparseable answer, or demonstrated cached/external answers under isolated replay."
+  "numeric_policy": "Absolute endpoint error; candidate counts exact; allowed choices determined by true lower-net regret; arbitrary valid attaining witnesses accepted.",
+  "execution_policy": "Artifact grading does not establish execution. Full isolated original and regenerated runs are required; infrastructure failures are BLOCKED."
 }

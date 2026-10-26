@@ -1,33 +1,37 @@
-# Thermodynamic protein design rubric
+# Persistent-cycle intervention rubric
 
-Generated from `rubric.json`, the public contract, metadata, and canonical answer.
+Generated from `rubric.json`, public metadata, and exact simulation-derived targets.
 
-The answer covers 6 binders and 16384 variants per binder, with 1400 measured variants, 12 screen conditions, and 4 competitive challenges. Arrays follow the staged variant order.
+8 preparations; 64 policies per preparation. Every scientific requirement is mandatory.
 
-Each scientific group is divided equally among binders. Every validity and accuracy requirement is mandatory. An invalid binder block earns no scientific credit for that binder. Any failed scientific gate caps the score at 79. Passing requires 80 points, inclusive.
+| Group | Package points | Fields |
+|---|---:|---|
+|identification|10|mixture_weights, exchange_generators, forward_bounds, backward_bounds, candidate_counts, retention_bounds|
+|retained_entropy|10|retained_epr_bounds|
+|policy_probabilities|15|policies[].success_bounds, policies[].loss_bounds, policies[].cost_bounds|
+|joint_gain_and_net|25|policies[].gain_bounds, policies[].net_bounds|
+|robust_choice|30|selected_policy|
+|attaining_witnesses|5|net_witnesses|
 
-| Metric | Answer field | Package points | Maximum error |
-|---|---|---:|---:|
-|energy_rmse|`proteins[].energy`|10|0.3|
-|energy_p95|`proteins[].energy`|10|0.6|
-|apo_rmse|`proteins[].apo_folded`|20|0.025|
-|challenge_rmse|`proteins[].challenge_a`|15|0.02|
-|challenge_max_abs|`proteins[].challenge_a`|10|0.12|
-|design_regret|`proteins[].selected_variant`|30|0.03|
+Each group is divided equally across preparations and earns credit when all its requirements pass. The calculated report earns 5 further points.
 
-Error definitions and utility are in the public prompt. The private simulation coefficients generate the scoring truth. A selection within the regret limit receives full decision credit, regardless of tie order or estimator.
+A scientific failure caps the score at 79. Passing is 80 or greater. Recoverable presentation deviations cost 5 once after any cap and never activate a scientific cap.
 
-The 5 report points require the complete calculated JSON evidence block. An absent or inconsistent block withholds those points and never activates the scientific cap.
-
-| Computed report field | Absolute comparison tolerance |
+| Quantity | Absolute tolerance |
 |---|---:|
-|capture_deviance_per_observation|0.05|
-|capture_rmse|1e-06|
-|mean_apo_folded|1e-06|
-|mean_worst_a|1e-06|
+|mixture|5e-05|
+|exchange|5e-05|
+|cycle_bounds|0.003|
+|retention|0.0015|
+|epr|0.02|
+|probability_bounds|0.0015|
+|gain_bounds|0.002|
+|net_bounds|0.002|
+|choice_regret|0.003|
+|witness_rates|0.003|
+|witness_endpoint|0.003|
+|witness_turnover|1e-05|
 
-Recoverable presentation deviations listed in the public Execution section cost 5 points once, after any scientific cap. They never activate the cap. Missing or unreadable answers and missing or non-running pipelines receive zero. Stored answers and external evidence require documented isolated-execution evidence.
+`comparison_items` contains every fixed expected value, field path, group and tolerance. Policy choices are accepted from computed regret sets, rather than one canonical identifier. Witnesses are checked physically and may differ from the canonical witnesses. Candidate counts are exact integers.
 
-Artifact grading establishes numerical results only. `verify_submission.py` executes the single source file against the published and regenerated inputs with private files inaccessible. Infrastructure failures are blocked checks, not model failures. The generic numeric comparison tolerance is 0.0001; the named scientific limits above are the authoritative accuracy gates.
-
-Canonical answer SHA-256: `9e3b8f9b13b82bb27f84bedee9af893f7c04fc01272715b913b900e3e0cc0cf1`.
+The report evidence is recomputed from submitted physical rates and public arrays. Artifact grading does not establish execution. The isolated verifier runs original and regenerated experiments with private files inaccessible. Missing/non-running code, unreadable answers, or demonstrated stored/external answers receive zero; infrastructure failures are BLOCKED.

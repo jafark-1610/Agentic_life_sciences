@@ -1,8 +1,8 @@
 {
   "status": "success",
-  "tests_run": 22,
+  "tests_run": 28,
   "failures": 0,
   "errors": 0,
-  "seconds": 18.698,
-  "test_module_sha256": "1f49f7c05c12a9a01293c9bcb1fe181a51386544e82cc528e76eaddff0a51e5e"
+  "seconds": 7.876,
+  "source_sha256": "8525694b4bf21f17b9c42933617d865641d589a86a355002af718296b73d9363"
 }

@@ -1,7 +1,9 @@
 {
   "status": "success",
-  "role": "independent_runtime_compatibility",
-  "alternate_runtime": {
+  "role": "cross_runtime_scientific_check",
+  "maximum_nonwitness_numeric_difference": 1.000000082740371e-08,
+  "scientific_score": 100.0,
+  "runtime": {
     "python": "3.13.5",
     "dependencies": {
       "numpy": "2.2.4",
@@ -9,13 +11,5 @@
       "jsonschema": "4.19.2"
     }
   },
-  "maximum_absolute_field_differences": {
-    "energy": 5.600000001493299e-06,
-    "apo_folded": 3.999999999837467e-07,
-    "challenge_a": 1.0000000005838672e-07
-  },
-  "all_selections_identical": true,
-  "alternate_scientific_score": 100.0,
-  "comparison_tolerance": 1e-05,
-  "public_error_thresholds": "study_metadata.json; acceptance is against physical truth, not byte equality with one optimizer"
+  "note": "Attaining witnesses and choices may differ when they meet the physical endpoint and regret limits."
 }

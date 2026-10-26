@@ -1,11 +1,9 @@
-# Input tables
+# Population and protocol inputs
 
-`variants.csv`: variant_id (unique key), mutations (20 binary characters in position order), role (`screen` has measurements; `candidate` has none). Both roles are design candidates. CSV row order defines all answer-array rows. Bit string is authoritative; identifiers encode the same binary vector with the first character as bit 0.
+Each preparation's NPZ file is a standard numpy archive without pickled objects. `moment1` has shape [108], `moment2` [108,108], `moment3` [108,108,108], and `response` [18,18]. Outcome u=18*g+o joins the independently assigned initial module g to the observed endpoint class o. Axis order is the replicate-outcome order stated in the prompt. Probabilities are population laws stored as float64.
 
-`capture_counts.csv`: protein_id, variant_id, condition_id (foreign keys), trials (positive integer), captured (integer from zero through trials). Complete Cartesian product of binders, screen variants, and screen conditions. Count-row order is arbitrary.
+`study_metadata.json` lists dimensions, preparation IDs, archive filenames, local kinetic bounds, policies, numerical tolerances, and report tolerances. Physical state i=3*g+p. Rates have inverse-frame units. Policy actions are indexed by observation category.
 
-`calibration_counts.csv`: condition_id, control_id (joint key), bound_fraction (known occupancy, zero to one), trials, captured. The linear capture calibration is shared by all binders in that condition. Fractions are independent physical controls, not protein variants.
+`protocols.json` maps preparation IDs to initial probabilities, pre-screen loss, selection, the separate intervention observation sensor, target states, time durations, action multipliers, action loss rates, resource costs, penalties, and the shared unselected-population bulk turnover interval. Multipliers affect off-diagonal rates; reconstruct action diagonals. Loss is a distinct absorbing outcome. The turnover interval uses the stationary signed current specified in the prompt.
 
-`study_metadata.json`: binder identifiers and known denaturation slopes; screen/challenge conditions, energy ordering, utility, acceptance thresholds and report tolerances. Ligand activities are dimensionless; energies use kBT. The condition field `urea` is a molar offset from `urea_baseline_molar` = 1.0 M. Actual concentration is baseline plus offset, so all supplied absolute concentrations are positive. The energy origin and requested apo fraction use zero offset, at the baseline concentration. Missing values are not used.
-
-`output_schema.json` defines answer structure. `grading_contract.json` maps every compared science field to the task and publishes weights. `source_provenance.json` and `SOURCE_RIGHTS.md` describe the simulation. `data_manifest.json` pins every other data file; `validate_dataset.py` checks hashes, table completeness and types.
+`output_schema.json` and `grading_contract.json` define the answer and scoring fields. `data_manifest.json` pins every other data file. `validate_dataset.py` checks normalization, symmetry, marginal consistency, ranks, generators' public bounds, protocols, and every file hash. No missing values or external annotations are used.

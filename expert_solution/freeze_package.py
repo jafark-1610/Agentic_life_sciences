@@ -19,7 +19,7 @@ def snapshot():
             continue
         assert '__pycache__' not in p.parts and p.suffix not in ['.pyc', '.pyo']
         files[rel] = hashlib.sha256(p.read_bytes()).hexdigest()
-    return dict(case_id='ALS_THERMODYNAMIC_DESIGN_004', role='scientific_snapshot_before_external_model_runs',
+    return dict(case_id='ALS_HIDDEN_CYCLE_005', role='scientific_snapshot_before_external_model_runs',
                 files=files, excluded_generated_records='results/, test results, robustness results, rubric results, evaluation status; these do not define science or grading')
 
 

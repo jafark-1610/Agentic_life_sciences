@@ -1,103 +1,121 @@
-# ALS_THERMODYNAMIC_DESIGN_004
+# ALS_HIDDEN_CYCLE_005
 
 Required deliverables: run_pipeline.py, final_answer.json, analysis.md
 
-## Protein engineering from selection assays
+## Persistent enzyme subtypes and intervention design
 
-Recover the thermodynamic landscapes of six synthetic protein binders and select a variant for each binder that retains useful binding in competition. The supplied mutation library contains 20 binary mutation positions and 16,384 variants. Only variants labelled `screen` have capture measurements. Predict every supplied variant, including those with no capture measurements. Every supplied variant is eligible for selection.
+For each of eight simulated enzyme preparations, recover the compatible microscopic kinetics from the supplied population observations, quantify the requested ranges, and choose an observation-dependent intervention. The experiments are synthetic and nonclinical. Use only `data/`.
 
-The files under `data/` are the complete experimental inputs. These are simulated equilibrium experiments, not clinical observations. The six binders have different unknown landscapes. The capture apparatus calibration is shared across binders at each screen condition. Do not transfer a binder's sequence coefficients to another binder.
+## Microscopic family
 
-## Physical model
+There are six modules and three phases per module, giving 18 resolved physical states. State i = 3*g+p has module g and phase p, both zero-based. Each preparation is a mixture of three immutable molecular subtypes with unknown positive weights summing to one. A molecule keeps its subtype throughout every reset experiment, screen, observation, intervention, and follow-up. Conditional on that subtype, its physical state follows a continuous-time Markov chain.
 
-A variant is the binary vector x in the `mutations` column of `variants.csv`. Character i is position i in `study_metadata.json -> positions`; the first character is the first position. The mutation labels have no external sequence or structural annotation.
+For subtype h, module exchange has a six-by-six generator R_h. For g != d, R_h[g,d] is positive; its diagonal is minus the row's off-diagonal sum. From any phase of g, exchange to each of the three phases of d occurs at rate R_h[g,d]/3.
 
-At the baseline denaturant concentration of 1.0 M, its folding free energy F(x), ligand-A binding free energy A(x), and ligand-B binding free energy B(x) each belong to the full quadratic family
+Within module g, clockwise transitions p -> (p+1) mod 3 occur at unknown rate f_h,g, and counterclockwise transitions p -> (p-1) mod 3 at unknown rate b_h,g. These rates do not depend on phase. The microscopic generator Q_h has no other transitions, and its diagonal makes every row sum zero. Row probability vectors evolve as rho*exp(Q_h*t).
 
-    E(x) = beta_0 + sum_i beta_i*x_i + sum_{i<j} beta_ij*x_i*x_j.
+All candidate microscopic models must satisfy the public `rate_bounds`: individual cycle-rate bounds, their sum bounds, positive exchange bounds, and the maximum total exchange exit rate per module. Time is measured in acquisition-frame units. The common frame interval is `frame_time`.
 
-All coefficients are unknown, real, and binder-specific. No sparsity, sign restriction, common contact graph, or higher order terms are assumed. Energies are dimensionless in units of kBT. This is a constraint on energies, not on occupancies or capture probabilities.
+## Reset observations
 
-The denaturation slope is known from an independent characterization:
+Each `<preparation>_moments.npz` contains `response`, `moment1`, `moment2`, and `moment3`, loaded with `numpy.load(..., allow_pickle=False)`. `response` is a known row-stochastic 18-by-18 classification matrix C: row i gives the distribution of the observed class when the true endpoint state is i. It applies only to these reset experiments.
 
-    m(x) = m0 + sum_i mutation_m_shift[i]*x_i
-    F_u(x) = F(x) + m(x)*urea.
+In one reset experiment, choose module G uniformly from 0 through 5, clamp the molecule to phase 0 of that module, release it for one frame, and classify its endpoint O through C. Record U = 18*G+O, an outcome from 0 through 107. The clamp and wash preserve subtype.
 
-Use the binder's values in `study_metadata.json`. The condition field `urea` is the signed molar offset from `urea_baseline_molar`, not an absolute concentration: actual concentration is 1.0 M plus that field. Thus a challenge offset of -0.7 means 0.3 M absolute denaturant. Ligand activities a and b are dimensionless and share a fixed standard state. Binding energies do not change with denaturant. Both ligands bind only the folded state, competitively at the same site. There are four states with weights
+Perform three independent reset experiments on the same persistent molecular subtype. Conditional on subtype h, the three outcomes are independent and have one common distribution a_h. The released population arrays are
 
-    unfolded:                  1
-    folded, unoccupied:        exp(-F_u)
-    folded, bound to A:        a*exp(-F_u-A)
-    folded, bound to B:        b*exp(-F_u-B).
+    moment1[u]       = P(U1=u)
+    moment2[u,v]     = P(U1=u, U2=v)
+    moment3[u,v,w]   = P(U1=u, U2=v, U3=w).
 
-Their sum is the partition function Z. Occupancy of A is its state weight divided by Z, and likewise for B. The apo folded fraction requested below is the probability of the folded state at offset urea=0 (the 1.0 M baseline) with neither ligand present. There are no kinetic, aggregation, multimerization, or direct unfolded-state binding effects.
+They are exact population probabilities up to float64 storage rounding, not empirical frequencies or independent draws of subtype between replicates. The source family has three linearly independent subtype outcome distributions. No generator, subtype distribution, or mixture weight is provided. No smaller time-interval observations are provided. Do not interpret binary storage rounding as an additional statistical confidence set. Accuracy is judged with the published tolerances.
 
-## Measurements
+To name identifiable subtypes consistently, order them by increasing probability that a reset experiment's observed class is in {0,1,2}, averaging over its randomized initial module. These three ordering scores are distinct. This convention applies to every subtype-indexed output.
 
-`capture_counts.csv` has one row per binder, screen variant, and screen condition. The `trials` molecules in that row are independent Bernoulli trials; `captured` is their observed success count. The relevant true binding occupancy p is A or B according to the condition's `reporter`. Under that condition the success probability is
+## Bulk turnover calibration
 
-    q = background*(1-p) + ceiling*p.
+`protocols.json` also gives one `bulk_turnover` closed interval for each preparation. This is a constraint on the same, unselected preparation measured at unperturbed steady state. It is not a separate rate fit for each subtype.
 
-`background` and `ceiling` are unknown and condition-specific, with 0 < background < ceiling < 1. They are shared across all variants and binders in that condition. `calibration_counts.csv` contains independent binomial measurements on controls with known exact `bound_fraction`, following the same q model. Control trials are independent of the protein measurements. Counts are draws, not rounded probabilities. All incubation activities, reporters, denaturant values, and challenge conditions are in the metadata. There are no other assay covariates or external calibrations.
+Let pi_h be the stationary row distribution of Q_h. The subtype's signed turnover reporter is the sum, over modules, of the stationary net current through the phase-0-to-phase-1 edge:
 
-## Design objective
+    J_h = sum_g [pi_h[3*g]*f_h,g - pi_h[3*g+1]*b_h,g].
 
-For a variant, let p_A,j be its true A occupancy in challenge condition j. Its manufacturing and binding utility is
+The weighted preparation value sum_h weight_h*J_h must lie in that preparation's supplied interval. The admissible set consists of all subtype weights and microscopic generators that reproduce all reset population observations and satisfy this calibration and all rate bounds. This is the common admissible set for every requested result.
 
-    U(x) = apo_folded(x) * min_j p_A,j(x) - mutation_cost * sum_i x_i.
+## Screening and intervention
 
-The published `design.mutation_cost` applies to every binder. Select one supplied variant per binder. Design regret is the maximum true utility among the supplied variants minus the true utility of your selection. Any selection within the published regret tolerance is accepted; no particular tie-break is required.
+The remaining protocol arrays specify the following experiment, separately for each preparation.
 
-## Answer contract
+1. Draw a molecule with the preparation's original subtype weights and the given `initial_distribution` over physical states. Evolve its unperturbed Q_h for `screen_time`, with competing irreversible loss at `pre_loss_rate[i]` in state i. A lost molecule does not enter the screen.
+2. At the screen, a surviving molecule passes with the given `selection_probability[i]`. The screen does not change its state. Among passing molecules, draw one observation Y in {0,1,2} using row i of `observation`. This sensor has the specified state-dependent error and is distinct from the reset classifier C.
+3. A supplied policy assigns one action to each Y. Apply that action for `followup_time`. For off-diagonal entries, its kinetic generator is Q_action[i,j] = Q_h[i,j]*multiplier[i,j]; rebuild its diagonal from the modified off-diagonal row sum. Its irreversible competing loss rates are `loss_rate`. The molecule's subtype does not change.
+4. Success is the first entry into any `target_states` during follow-up, before irreversible loss and by the deadline. A molecule already in a target state at follow-up time zero succeeds immediately. Success and loss are absorbing competing events. A molecule that reaches neither by the deadline is censored. Resource cost is the action's `resource_cost`, charged to every passing molecule assigned that action, including an immediate success.
 
-Write finite JSON to `results/final_answer.json`. Use `schema` = `thermodynamic_design/1`, `case_id` = `ALS_THERMODYNAMIC_DESIGN_004`, and the arrays `calibration` and `proteins`.
+All probabilities and expected costs below are conditional on passing this screen. Recompute the retained subtype distribution under each admissible model. The benchmark uses action 0 for all observations on the same selected population. Policy actions are listed in observation order in `study_metadata.json -> policies`; every listed policy is eligible.
 
-For each screen condition, `calibration` has one object with `id`, `background`, and `ceiling`. For each binder, `proteins` has one object with:
+For an admissible model and policy p, define
 
-- `id`: its published binder identifier.
-- `energy`: a 16,384 by 3 array in the exact row order of `variants.csv`; columns are F, A, B at the baseline denaturant concentration in that order. These are the latent physical energies, not apparent dissociation energies or capture logits.
-- `apo_folded`: a 16,384-element array in that same variant order, containing the apo folded fractions.
-- `challenge_a`: a 16,384 by 4 array in that same variant order; columns follow the published challenge-condition order and contain A occupancies in the simultaneous presence of both ligands.
-- `selected_variant`: one supplied variant identifier.
+    S_p = probability of success
+    L_p = probability of follow-up loss
+    C_p = mean resource cost
+    G_p = (S_p - S_benchmark) - loss_penalty*(L_p - L_benchmark)
+    N_p = G_p - resource_penalty*C_p.
 
-Binder and calibration object order is immaterial. Probabilities must be between 0 and 1. The output schema is `data/output_schema.json`. Coefficients are not required and no particular estimation method is required. Decimal precision is unrestricted.
+The benchmark and intervention in these differences use the same microscopic model, initial population, and screen. For each model, a subtype's one generator is fixed throughout the entire protocol, including every observation branch. Different extrema may be attained by different admissible models.
 
-## Scientific acceptance
+For every policy, report the sharp lower and upper bounds of S_p, L_p, C_p, G_p, and N_p over that common admissible set. A conservative outer interval is not a sharp bound. Choose a policy maximizing the sharp lower bound of N_p, accepting the published `choice_regret` slack. There is no additional resource-budget feasibility threshold.
 
-Each binder must satisfy all six error requirements in `study_metadata.json -> acceptance_thresholds`, measured against the generating physical system:
+## Retention, rate, and entropy ranges
 
-- `energy_rmse_max`: root mean squared error over all entries of `energy`.
-- `energy_p95_max`: 95th percentile of absolute error over all entries of `energy`, using linear interpolation between order statistics.
-- `apo_rmse_max`: root mean squared error of `apo_folded` over all variants.
-- `challenge_rmse_max`: root mean squared error over all entries of `challenge_a`.
-- `challenge_max_abs_max`: maximum absolute error over all entries of `challenge_a`.
-- `design_regret_max`: the design regret defined above.
+Report the sharp unconditional probability of passing the screen, over the same admissible set. For every subtype and module, report the sharp ranges of its forward and backward rates among models that can be extended to a complete admissible preparation.
 
-The simulation coefficients are withheld. They are used for evaluation and never available during solver execution. The energy family, observation model, candidate panel, conditions, objective, error definitions, and tolerances given here fully specify the inference problem. A capture residual is a diagnostic and is not a replacement for latent-energy or design accuracy.
+Also report `candidate_counts`: the number of distinct unperturbed microscopic generators per subtype compatible with the reset data and local rate bounds BEFORE applying the bulk turnover constraint. This counts generators, not observed transition matrices or label permutations. Subtype ordering above fixes labels.
 
-Every binder must have finite energies, valid probability arrays, and a supplied selection. An invalid or unreadable binder block earns no scientific credit for that binder. Each calibration must satisfy 0 <= background < ceiling <= 1. Any failed scientific requirement caps the score at 79; passing requires at least 80. `data/grading_contract.json` publishes weights and the field-to-requirement mapping. A correct alternative estimator receives the same credit.
+For a subtype with unperturbed stationary distribution pi_h, its entropy-production rate is
 
-## Computed analysis evidence
+    sigma_h = sum_{i<j} (pi_h[i]*Q_h[i,j] - pi_h[j]*Q_h[j,i])
+                       * log((pi_h[i]*Q_h[i,j])/(pi_h[j]*Q_h[j,i])).
 
-Write `results/analysis.md` describing the calibration, inference, variant extrapolation, selection, and limitations. Include exactly one fenced block labelled `json` containing `{"proteins": [...]}`. Each binder object in that block has `id` and four numbers computed from the answer you actually serialized:
+Rates are positive on every edge in the stated family. The requested `retained_epr_bounds` describe the sharp range of the average unperturbed stationary sigma_h under the subtype weights AFTER the screen. This corresponds to retaining the selected subtypes, then letting their unperturbed processes reach steady state. It is not the entropy production of an averaged generator or of the drug-modified dynamics.
 
-- `capture_deviance_per_observation`: mean binomial deviance over all its capture rows, using its reported screen-variant energies, known m(x), reported calibration, and the physical model above. Deviance for n trials, k successes, and predicted q is 2*[k*log((k/n)/q) + (n-k)*log((1-k/n)/(1-q))], with a zero-count term defined as zero. Clip q to [1e-15, 1-1e-15] only for this diagnostic.
-- `capture_rmse`: root mean squared error between those predicted q values and observed k/n.
-- `mean_apo_folded`: arithmetic mean of its reported `apo_folded` array.
-- `mean_worst_a`: mean, over variants, of the minimum entry in each row of its reported `challenge_a` array.
+## Answer structure and attaining witnesses
 
-Diagnostic tolerances are in `report_tolerances`. The five report points are awarded for a complete, numerically consistent calculated evidence block; otherwise they are withheld. Report evidence cannot activate the scientific cap. No claim about an unobserved truth metric is required. The report must describe computations actually performed.
+Write finite JSON with `schema` = `persistent_cycle/1`, `case_id` = `ALS_HIDDEN_CYCLE_005`, and `preparations`. Include each preparation once. Object order is immaterial. In each preparation report:
 
-## Execution
+- `id`.
+- `mixture_weights`: three numbers in the subtype order defined above.
+- `exchange_generators`: three six-by-six R_h matrices, including their negative diagonals.
+- `forward_bounds`, `backward_bounds`: arrays of shape [3,6,2], subtype, module, lower/upper endpoint.
+- `candidate_counts`: three positive integers with the local meaning above.
+- `retention_bounds`, `retained_epr_bounds`: lower/upper pairs.
+- `policies`: one object per policy, with `id` and five endpoint pairs: `success_bounds`, `loss_bounds`, `cost_bounds`, `gain_bounds`, `net_bounds`.
+- `selected_policy`: an eligible policy identifier within `choice_regret` of the best sharp lower net value.
+- `net_witnesses`: `lower` and `upper`, each an array of shape [3,6,2]. For the selected policy, each entry is a subtype/module's forward and backward rates in that endpoint's attaining model. These are physical rates, not a stochastic matrix or integer branch labels.
 
-Work in your own directory with `task/` as a read-only sibling. Validate inputs using:
+Witnesses must match compatible local generators within `witness_rates`. The grader snaps each subtype to its uniquely nearest compatible generator, then checks that the joint model satisfies the bulk interval within `witness_turnover` and attains the selected net endpoint within `witness_endpoint`. This permits numerical approximations while requiring attainable sharp endpoints. Any attaining model is accepted.
+
+All scalar and endpoint tolerances are in `study_metadata.json -> tolerances`. The weights, R_h, rate intervals, retention, entropy, all policy intervals, choice, and both attaining witnesses are scientific requirements in every preparation. Every failed scientific requirement caps the score at 79; passing requires at least 80. The public grading contract maps fields to criteria. Any correct method is accepted. Do not submit a single fitted generator's output as a population uncertainty range unless the data actually identify it uniquely.
+
+## Calculated report
+
+Write `results/analysis.md` describing subtype inference, compatible kinetics, bulk calibration, first passage, conditional optimization, and limitations. Include exactly one fenced `json` block with `{"preparations": [...]}`. For each preparation include its `id` and these calculations from your serialized answer:
+
+- `moment2_max_abs_error`, `moment3_max_abs_error`: rebuild the reset outcome distributions from the LOWER net witness rates, reported exchange generators and weights; report the maximum absolute differences of the reconstructed population arrays from the supplied arrays.
+- `lower_net_witness_value`, `upper_net_witness_value`: evaluate the selected policy's conditional N_p under the corresponding reported physical witness, reported weights and R_h, and public protocol. Use those physical rates without snapping for these diagnostics.
+- `lower_selection_probability`, `upper_selection_probability`: unconditional screen-pass probabilities under those same two physical witnesses.
+
+Report tolerances are in `report_tolerances`. The five report points require the complete, consistent computed block; otherwise those points are withheld. Report evidence never activates the scientific cap. No unobserved correctness claim is required.
+
+## Execution and delivery
+
+Work in your own directory, with `task/` as a read-only sibling. First run
 
     python ../task/data/validate_dataset.py
 
-Create one self-contained `run_pipeline.py` and run:
+Your submitted code is one self-contained `run_pipeline.py`. Run
 
     python run_pipeline.py --data ../task/data --output-dir results
 
-Accept arbitrary paths for both arguments. The entry point must contain all submitted computational code: there are no helper-code output slots. The three submission slots are `run_pipeline.py`, `final_answer.json`, and `analysis.md`; the last two are collected from `results/`. No extra solver deliverables are required. The environment supplies Python 3.11 or newer and numpy, pandas, scipy, scikit-learn, statsmodels, and jsonschema. No network access or package installation is available during execution. Derive results from the input files each time. Submitted code is rerun in isolation, with only task inputs visible, including a freshly simulated instance from the same model family. An input-dependent solution is required; cached answers do not meet the task.
+Accept arbitrary input and output paths. Write `results/final_answer.json` and `results/analysis.md`. Submit exactly the three configured slots: `run_pipeline.py`, `final_answer.json`, `analysis.md`. No helper-code slots or additional solver deliverables are required. Python 3.11 or newer supplies numpy, pandas, scipy, scikit-learn, statsmodels, and jsonschema. No network or installation is available. Compute from the supplied inputs at runtime. The source is rerun in isolation on the published inputs and a freshly generated experiment from the same family; private expert files are unavailable. Stored-answer substitution and demonstrated external evidence receive zero. Infrastructure failures are recorded as blocked checks, not model failures.
 
-Recoverable presentation deviations cost five points once, and do not activate the scientific cap: a one-object list wrapper, numeric strings, transposed or row-major flattened matrices, missing or incorrect schema/case_id, duplicate keys (last value used), repeated binder/condition ids (first occurrence used), or extra metadata. Standard field names and array shapes are authoritative; unrelated aliases are not guessed. Unreadable numeric blocks fail only their binder's scientific requirements. Missing/unparseable JSON or a missing/non-running pipeline receives zero. Invalid numeric values are scientific failures, never an exception in grading. External evidence and stored-answer substitution require documented isolated-execution evidence. Infrastructure failures are recorded as blocked, not counted as model failures.
+Missing or unreadable JSON and a missing or non-running pipeline receive zero. Unreadable numeric blocks fail their preparation's scientific requirements. Recoverable presentation deviations cost five points once and never activate the scientific cap: a one-object list wrapper, numeric strings, missing or incorrect schema/case_id, extra metadata, duplicate keys (last value used), repeated preparation or policy identifiers (first occurrence used), and a consistent subtype permutation uniquely recoverable by matching the reported exchange generators. All subtype-indexed fields and witnesses are reordered together when recovering that permutation. Fixed field names and published array shapes are authoritative. Decimal precision is unrestricted. A missing report costs only its report points.

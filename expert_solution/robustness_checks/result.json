@@ -1,124 +1,89 @@
 {
-  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "case_id": "ALS_HIDDEN_CYCLE_005",
   "status": "success",
   "checks": [
     {
-      "name": "expert_scientific_gate_clearance",
+      "name": "expert_gate_clearance",
       "passed": true,
       "details": {
-        "max_error_to_limit_ratio": 0.15280195006394653,
-        "score": 100.0
+        "score": 100.0,
+        "maximum_error_to_tolerance_ratio": 6.666666626150193e-06
       }
     },
     {
-      "name": "binding_fit_alone_does_not_identify_apo_folding",
+      "name": "exactly_fitting_single_model_fails_science",
       "passed": true,
       "details": {
-        "maximum_zero_offset_occupancy_difference": 9.992007221626409e-16,
-        "minimum_apo_rmse_between_reflections": 0.5879713948552866,
-        "scope": "A baseline-offset-only mathematical control. Additional supplied denaturation measurements distinguish the states; no claim that both fit the full task."
-      }
-    },
-    {
-      "name": "two_stage_latent_estimation_control",
-      "passed": true,
-      "details": {
-        "score": 45.833333,
-        "failed_gates": [
-          "binder_0cf797f3:energy_rmse",
-          "binder_0cf797f3:energy_p95",
-          "binder_0cf797f3:apo_rmse",
-          "binder_0cf797f3:challenge_max_abs",
-          "binder_82ef5504:energy_rmse",
-          "binder_82ef5504:energy_p95",
-          "binder_82ef5504:apo_rmse",
-          "binder_82ef5504:challenge_max_abs",
-          "binder_41646adf:energy_rmse",
-          "binder_41646adf:energy_p95",
-          "binder_41646adf:apo_rmse",
-          "binder_41646adf:challenge_max_abs",
-          "binder_e059740b:energy_rmse",
-          "binder_e059740b:energy_p95",
-          "binder_e059740b:apo_rmse",
-          "binder_e059740b:challenge_max_abs",
-          "binder_e059740b:design_regret",
-          "binder_8352f9d7:energy_rmse",
-          "binder_8352f9d7:energy_p95",
-          "binder_8352f9d7:apo_rmse",
-          "binder_8352f9d7:challenge_rmse",
-          "binder_8352f9d7:challenge_max_abs"
+        "score": 5.0,
+        "maximum_reset_moment_error": 1.5395670849294163e-17,
+        "all_bulk_intervals_satisfied": true,
+        "true_robust_choice_regrets": [
+          0.031732079999999996,
+          0.05390234,
+          0.032014230000000005,
+          0.06050788,
+          0.06958004000000001,
+          0.06127212,
+          0.05904775,
+          0.038671989999999996
         ],
-        "per_variant_fits_before_sequence_projection": [
-          {
-            "id": "binder_0b8c50c7",
-            "measured_variant_deviance_per_observation": 0.7869582707857832,
-            "measured_variant_capture_rmse": 3.1781764655758694e-05
-          },
-          {
-            "id": "binder_0cf797f3",
-            "measured_variant_deviance_per_observation": 0.8741790870053635,
-            "measured_variant_capture_rmse": 1.8167623181502845e-05
-          },
-          {
-            "id": "binder_82ef5504",
-            "measured_variant_deviance_per_observation": 0.7618429640235698,
-            "measured_variant_capture_rmse": 2.1763396930796674e-05
-          },
-          {
-            "id": "binder_41646adf",
-            "measured_variant_deviance_per_observation": 0.7583182939132257,
-            "measured_variant_capture_rmse": 2.0740734156186356e-05
-          },
-          {
-            "id": "binder_e059740b",
-            "measured_variant_deviance_per_observation": 0.7822535288955749,
-            "measured_variant_capture_rmse": 2.10477395181614e-05
-          },
-          {
-            "id": "binder_8352f9d7",
-            "measured_variant_deviance_per_observation": 0.7484108658119265,
-            "measured_variant_capture_rmse": 2.8648576631744484e-05
-          }
-        ],
-        "interpretation": "Individual measured-variant fits can look adequate while extrapolated sequence landscapes fail. These fit diagnostics precede sequence projection; they are not claims about the final projected capture residual."
+        "maximum_choice_regret": 0.06958004000000001,
+        "failed_gate_count": 2248
       }
     },
     {
-      "name": "correct_science_presentation_recovery",
+      "name": "outer_bounds_do_not_receive_sharpness_credit",
+      "passed": true,
+      "details": {
+        "score": 67.5,
+        "failed_gate_count": 1026
+      }
+    },
+    {
+      "name": "endpoint_occupancy_is_not_first_passage",
+      "passed": true,
+      "details": {
+        "score": 30.0,
+        "failed_gate_count": 2040
+      }
+    },
+    {
+      "name": "independent_pencil_and_joint_enumeration",
+      "passed": true,
+      "details": {
+        "score": 100.0,
+        "failed_gate_count": 0
+      }
+    },
+    {
+      "name": "convexification_audit",
+      "passed": true,
+      "details": {
+        "integer_lower_net": 0.0722831080286474,
+        "relaxed_lower_net": 0.07126680122192823,
+        "gap": 0.0010163068067191722,
+        "active_microscopic_models_per_subtype": [
+          1,
+          1,
+          2
+        ],
+        "interpretation": "Relaxing one generator per physical subtype to a mixture enlarges the admissible class. This audit does not require the gap to exceed a scientific tolerance and is not counted as model difficulty evidence."
+      }
+    },
+    {
+      "name": "correct_science_format_recovery",
       "passed": true,
       "details": {
         "score": 95.0
       }
     },
     {
-      "name": "computed_report_evidence_enforcement",
+      "name": "uncomputed_report_withholds_only_report_credit",
       "passed": true,
       "details": {
-        "score": 95.0,
-        "report_points": 0
-      }
-    },
-    {
-      "name": "independent_correct_estimator",
-      "passed": true,
-      "details": {
-        "score": 100.0,
-        "failed_gates": [],
-        "method": "Independent feature order, endpoint calibration, transformed-energy criterion, Levenberg-Marquardt, direct state arithmetic"
-      }
-    },
-    {
-      "name": "three_solver_slots_and_expert_metadata",
-      "passed": true,
-      "details": {
-        "slots": [
-          "run_pipeline.py",
-          "final_answer.json",
-          "analysis.md"
-        ],
-        "expert_summary_present": true
+        "score": 95.0
       }
     }
   ],
-  "model_evaluation": "not performed by these scientific controls; fresh external runs required"
+  "qualification": "Scientific controls are not Meta Muse attempts. External model qualification remains unverified."
 }

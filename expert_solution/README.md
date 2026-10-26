@@ -1,19 +1,16 @@
-# Thermodynamic inference pipeline
+# Population kinetics and sharp policy envelopes
 
-The pipeline calibrates capture background and ceiling, jointly estimates quadratic sequence energies by count likelihood, evaluates the four-state partition sum, and maximizes the manufacturing and occupancy utility.
+The pipeline separates the persistent subtype distributions, reconstructs all locally compatible continuous-time cycles, applies the shared bulk turnover calibration, and computes conditional intervention envelopes over the surviving joint models.
 
-    python run_pipeline.py --data ../task/data --output-dir results
     python run_pipeline.py --data ../task/data --output-dir results --config config/parameters.yaml
 
-`config/parameters.yaml` is JSON-compatible YAML and is consumed by the optimizer. `model.py` implements inputs and physical probabilities; `expert_solution.py` fits the landscapes; `artifacts.py` serializes predictions and computes the report evidence. `results/run_summary.json` records the expert execution, configuration, hashes, optimizer traces, and runtime. This is expert metadata and is outside the three solver submission slots.
+`kinetics.py` handles the state model, observation law, and competing first passage. `envelopes.py` filters joint microscopic models and computes sharp extrema. `expert_solution.py` builds the answer. `artifacts.py` computes the witness diagnostics. The configuration file is JSON-compatible YAML and is consumed at runtime. `results/run_summary.json` records the expert execution, hashes, versions, and candidate telemetry; it is outside the solver slots.
 
-`score_rubric.py` evaluates predictions against `private/truth.json`. `build_rubric_md.py` generates both rubric files using the public grading contract, metadata, and canonical answer. `source_archive/generate_data.py` deterministically regenerates the experiments. The inference code never reads the simulation coefficients.
-
-`analysis.md` contains the calculated output evidence; `method_notes.md` explains identifiability, optimization, sequence extrapolation, and the statistical controls.
+`private/truth.json` stores the simulation invariants. `private/expected_answer.json` is independently computed from them by `compute_truth.py`. The inference pipeline does not read either file. `build_rubric_md.py` generates the machine rubric, explicit numerical comparison items, and human rubric. `score_rubric.py` accepts any method meeting the public limits and checks arbitrary attaining witnesses.
 
     PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v
     python robustness_checks/run_checks.py
     python validate_package.py
     python freeze_package.py --check
 
-`tests/independent_oracle.py` checks the inference by an independent transformed-count route. `export_solver.py` bundles the computational implementation into a temporary single entry point for the isolated-execution verifier. `verify_submission.py` accepts a submitted directory, executes it with only read-only task inputs and runtime libraries mounted, and reruns it on freshly generated measurements. Its results include source hashes and isolation probes. `evaluation_status.json` records which external evaluations remain outstanding.
+`tests/independent_oracle.py` checks tensor recovery and the filtered uncertainty set by a different numerical route. `source_archive/generate_data.py` recreates the simulated observations and protocols. `export_solver.py` produces a temporary self-contained computational entry point for `verify_submission.py`, which executes original and regenerated inputs with private files and network access unavailable. `evaluation_status.json` records external model evaluation status.
