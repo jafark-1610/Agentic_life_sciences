@@ -1,18 +1,36 @@
-import json,copy
+"""Portable numeric serialization and calculated report evidence."""
+import json
 from pathlib import Path
+from model import evidence
 
-def stable(answer):
- if isinstance(answer,dict):return {k:stable(v) for k,v in answer.items()}
- if isinstance(answer,list):return [stable(v) for v in answer]
- if isinstance(answer,float):
-  value=round(answer,5);return 0.0 if value==0 else value
- return answer
 
-def evidence(a,D):
- selected=a['selection']['policy'];row=next((r for r in a['global_policies'] if r['id']==selected),None)
- return {'case_id':a['case_id'],'selected_policy':selected,'selected_policy_metrics':row,'decision_limits':D['study_metadata']['decision'],'interval_interpretation':'sharp_bounds_over_compatible_causal_models','context_diagnostics':[{'id':c['id'],'point_identified_policy_count':sum(r['point_identified'] for r in c['policies']),'largest_net_gain_width':max(r['net_gain_upper']-r['net_gain_lower'] for r in c['policies'])} for c in a['contexts']]}
+def rounded(obj):
+    if isinstance(obj, float):
+        return round(obj, 7)
+    if isinstance(obj, list):
+        return [rounded(x) for x in obj]
+    if isinstance(obj, dict):
+        return {k: rounded(v) for k, v in obj.items()}
+    return obj
 
-def write_outputs(a,D,out):
- out=Path(out);out.mkdir(parents=True,exist_ok=True);a=stable(a)
- (out/'final_answer.json').write_text(json.dumps(a,indent=2,allow_nan=False)+'\n')
- (out/'analysis.md').write_text('# Paired-clone policy analysis\n\n```json\n'+json.dumps(evidence(a,D),indent=2)+'\n```\n\nThe compatible family preserves the same latent clone and instrument variables across potential worlds. Survival-conditioned target comparisons retain their joint conditioning event. The intervals are population-limit causal bounds under the stipulated model and measurement bands. They are not sampling confidence intervals or clinical findings.\n')
+
+def write_outputs(answer, D, out, method_description=None):
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    answer = rounded(answer)
+    (out/'final_answer.json').write_text(json.dumps(answer, separators=(',', ':'), allow_nan=False)+'\n')
+    ev = rounded(evidence(answer, D))
+    method_description = method_description or ('Capture controls calibrate the background and ceiling independently for each assay. '
+            'The four-state partition model is fitted jointly to all screen counts using quadratic genotype energies.')
+    text = ('# Protein design analysis\n\n'+method_description+' '
+            'Predictions retain competitive ligand binding and the measured '
+            'genotype dependence of denaturation. The selected variant maximizes the published '
+            'manufacturing and occupancy utility over the supplied candidate panel.\n\n'
+            'The following diagnostics are calculated from the serialized answer and staged counts.\n\n'
+            '```json\n'+json.dumps({'proteins': ev}, indent=2)+'\n```\n\n'
+            'The assays are synthetic equilibrium measurements. The genotype model restricts '
+            'energies to second order; conclusions do not establish clinical efficacy, dynamics, '
+            'or behavior outside the specified mutation panel and thermodynamic conditions. '
+            'A low capture residual does not independently validate latent energies or extrapolated designs.\n')
+    (out/'analysis.md').write_text(text)
+    return answer

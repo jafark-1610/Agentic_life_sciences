@@ -1,58 +1,86 @@
-import json,sys,copy,time
+"""Scientific margins, independent inference, symmetry, and weaker-estimator controls."""
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+import sys
+sys.dont_write_bytecode = True
 from pathlib import Path
+HERE = Path(__file__).resolve().parent; EXPERT = HERE.parent
+sys.path.insert(0, str(EXPERT)); sys.path.insert(0, str(EXPERT/'tests'))
+import argparse
+import copy
+import json
+import tempfile
 import numpy as np
-HERE=Path(__file__).resolve().parents[1];sys.path.insert(0,str(HERE));sys.path.insert(0,str(HERE/'tests'))
-from expert_solution import load,summarize,observed_vector
-from causal_model import poly,coefficients,observation,solve,mp,sp,yp,I,N,pz,REF
-from score_rubric import strict_read,science
-from independent_oracle import build,fractional_bisection,support
+from scipy.special import expit
+from model import load_data, read_json, features, slope, occupancy, evidence
+from score_rubric import assess
+from artifacts import write_outputs
+from baselines import two_stage
 
-def run():
- data=HERE.parent/'task/data';D=load(data);ref=strict_read(HERE/'final_answer.json');truth=strict_read(HERE/'private/generation_laws.json');checks=[]
- def add(name,observed,criterion,ok):checks.append({'check':name,'observed':observed,'criterion':criterion,'status':'pass' if ok else 'fail'})
- selected=next(p for p in D['policies'] if p['id']==ref['selection']['policy']);largest=0.
- for c in D['contexts']:
-  P,n,d=build(data,c['id'],selected);lo=fractional_bisection(P,n,d);hi=fractional_bisection(P,n,d,True);glo=support(P,d);ghi=-support(P,-d);row=next(p for ctx in ref['contexts'] if ctx['id']==c['id'] for p in ctx['policies'] if p['id']==selected['id']);largest=max(largest,abs(lo-row['net_gain_lower']),abs(hi-row['net_gain_upper']),abs(glo-row['eligibility_lower']),abs(ghi-row['eligibility_upper']))
- add('independent_family_assembly_and_fractional_bisection',{'max_bound_difference':largest},'independent enumeration and bisection agree within 0.0001',largest<.0001)
- # A single completely compatible law reproduces every assay table yet makes the wrong decision.
- point=copy.deepcopy(ref);max_residual=0.
- for c in D['contexts']:
-  law=np.array(truth[c['id']]);P=poly(c,observed_vector(D,c));max_residual=max(max_residual,float(np.max(P['A_ub']@law-P['b_ub'])))
-  out=next(x for x in point['contexts'] if x['id']==c['id'])
-  for p in D['policies']:
-   v=coefficients(c,p);g=float(v['eligibility']@law);n=float(v['gain']@law)/g;h=float(v['harm']@law)/g;cost=float(v['cost']@law)
-   row=next(r for r in out['policies'] if r['id']==p['id']);row.update(eligibility_lower=g,eligibility_upper=g,net_gain_lower=n,net_gain_upper=n,harm_upper=h,cost_upper=cost,point_identified=True)
- point['global_policies'],point['selection']=summarize(D,point['contexts']);r=science(point,data)
- add('compatible_point_law_baseline',{'table_band_violation':max(0.,max_residual),'selected':point['selection'],'score':r['final_score'],'checks':r['checks']},'a perfectly compatible point-law decision differs from the sharp robust decision and fails',max_residual<=1e-9 and point['selection']!=ref['selection'] and not r['passed'])
- # An independent-world approximation can preserve every single-world marginal and the benchmark identity.
- independent=copy.deepcopy(ref)
- def marginals(c,p,law):
-  survival=coefficients(c,p)['survival']@law;success=0.
-  for x in [0,1]:
-   for z in [0,1]:
-    for e in [0,1]:
-     wt=(c['target_x1'] if x else 1-c['target_x1'])*pz(c,x,z)*(c['image_flip'] if e else 1-c['image_flip']);a=p['a'][z];m=mp[:,a];w=m^e;b=np.asarray(p['b'][z])[w];value=sp[I,m,b]*yp[I,m,b];success+=wt*(value@law[x*N:(x+1)*N])
-  return float(survival),float(success)
- for c in D['contexts']:
-  law=np.array(truth[c['id']]);sr,yr=marginals(c,REF,law);out=next(ctx for ctx in independent['contexts'] if ctx['id']==c['id'])
-  for p in D['policies']:
-   sp_,yp_=marginals(c,p,law);g=sp_*sr;n=yp_/sp_-yr/sr;h=(1-yp_/sp_)*(yr/sr)
-   if p['a']==REF['a'] and p['b']==REF['b']:g=sr;n=0.;h=0.
-   row=next(x for x in out['policies'] if x['id']==p['id']);row.update(eligibility_lower=g,eligibility_upper=g,net_gain_lower=n,net_gain_upper=n,harm_upper=h,cost_upper=float(coefficients(c,p)['cost']@law),point_identified=True)
- independent['global_policies'],independent['selection']=summarize(D,independent['contexts']);ir=science(independent,data)
- add('independent_world_baseline',{'score':ir['final_score'],'checks':ir['checks'],'selected':independent['selection'],'single_world_marginals_used_exactly':True,'benchmark_identity_preserved':True},'marginal fit and benchmark identity do not validate independent-world paired-clone quantities; baseline must fail',not ir['passed'])
- # Numerator/denominator corner division is not sharp optimization of a conditional quantity.
- differences=[]
- for c in D['contexts']:
-  P=poly(c,observed_vector(D,c));cr=next(x for x in ref['contexts'] if x['id']==c['id'])
-  for p in [x for x in D['policies'] if x['id'] in ['policy_02','policy_08','policy_14']]:
-   v=coefficients(c,p);nl=solve(P,v['gain'])[0];nu=-solve(P,-v['gain'])[0];row=next(r for r in cr['policies'] if r['id']==p['id']);glo=row['eligibility_lower'];ghi=row['eligibility_upper'];corners=[n/g for n in [nl,nu] for g in [glo,ghi]];differences.append({'context':c['id'],'policy':p['id'],'outer_lower':min(corners),'sharp_lower':row['net_gain_lower'],'outer_upper':max(corners),'sharp_upper':row['net_gain_upper'],'max_error':max(abs(min(corners)-row['net_gain_lower']),abs(max(corners)-row['net_gain_upper']))})
- maxerr=max(x['max_error'] for x in differences)
- add('conditional_ratio_outer_bound_audit',{'largest_endpoint_error':maxerr,'examples':differences,'separates_at_scoring_tolerance':maxerr>D['study_metadata']['acceptance']['numeric_absolute'],'counted_as_difficulty_evidence':False},'outer intervals contain sharp intervals within 0.0001; no method is rejected merely for using an accurate approximation',all(x['outer_lower']<=x['sharp_lower']+.0001 and x['outer_upper']>=x['sharp_upper']-.0001 for x in differences))
- rows={r['id']:r for r in ref['global_policies']};limits=D['study_metadata']['decision'];winner=rows[ref['selection']['policy']];safe=[r for r in rows.values() if r['worst_harm']<=limits['maximum_harm'] and r['worst_cost']<=limits['maximum_cost'] and r['minimum_eligibility']>=limits['minimum_eligibility']];runner=max(r['resource_adjusted_score'] for r in safe if r['id']!=winner['id']);gap=winner['resource_adjusted_score']-runner;acc=D['study_metadata']['acceptance']
- margins={'harm':limits['maximum_harm']-winner['worst_harm'],'cost':limits['maximum_cost']-winner['worst_cost'],'eligibility':winner['minimum_eligibility']-limits['minimum_eligibility'],'score_gap':gap}
- add('reference_gate_clearance',margins,'decision gap >= 3 policy-score tolerances; all feasibility margins >= 3 numeric tolerances',gap>=3*acc['policy_score_absolute'] and min(margins[k] for k in ['harm','cost','eligibility'])>=3*acc['numeric_absolute'])
- wrapped=science([ref],data);add('wrapper_recovery',{'score':wrapped['final_score'],'checks':wrapped['checks']},'wrapper keeps all science and receives presentation deduction only',wrapped['final_score']==95 and all(wrapped['checks'].values()))
- add('three_slot_contract',{'files':strict_read(data.parent/'required_deliverables.json'),'task_mentions_auxiliary_execution_file':any('run_summary' in p.read_text() for p in data.parent.rglob('*') if p.is_file())},'the task requests exactly the three existing submission slots',strict_read(data.parent/'required_deliverables.json')==['run_pipeline.py','final_answer.json','analysis.md'] and not any('run_summary' in p.read_text() for p in data.parent.rglob('*') if p.is_file()))
- result={'role':'scientific_robustness_and_wrong_method_controls_not_model_runs','status':'pass' if all(r['status']=='pass' for r in checks) else 'fail','checks':checks};out=HERE/'robustness_checks';(out/'result.json').write_text(json.dumps(result,indent=2)+'\n');(out/'result.md').write_text('# Robustness evidence\n\n'+'\n'.join(f"* {c['check']}: {c['status']}. {c['criterion']}. Observed: {json.dumps(c['observed'])}" for c in checks)+'\n');print(json.dumps(result,indent=2));return 0 if result['status']=='pass' else 1
-if __name__=='__main__':sys.exit(run())
+
+def run(independent_dir=None):
+    data = EXPERT.parent/'task/data'; D = load_data(data); D['data_dir'] = str(data)
+    answer = read_json(EXPERT/'final_answer.json'); report = (EXPERT/'analysis.md').read_text()
+    grade = assess(answer, D, report); checks = []
+    def record(name, passed, details): checks.append(dict(name=name, passed=bool(passed), details=details))
+    ratios = [g['value']/g['threshold'] for g in grade['scientific_gates'] if g['threshold']]
+    record('expert_scientific_gate_clearance', grade['passed'] and max(ratios) <= 1/3,
+           {'max_error_to_limit_ratio': max(ratios), 'score': grade['final_score']})
+    # Full physical family has a binding-equivalent reflection at zero denaturant offset.
+    X = features(D['bits']); truth = read_json(EXPERT/'private/truth.json')
+    symmetry, apo_gaps = [], []
+    for p in D['meta']['proteins']:
+        en = X@np.asarray(truth['proteins'][p['id']]['coefficients']).T
+        transformed = np.column_stack([-en[:, 0], en[:, 1]+en[:, 0], en[:, 2]+en[:, 0]])
+        co = [c for c in D['meta']['screen_conditions'] if c['urea'] == 0]
+        original = occupancy(en, slope(D['bits'], p), co)[:2]
+        changed = occupancy(transformed, slope(D['bits'], p), co)[:2]
+        symmetry.append(max(float(np.max(np.abs(a-b))) for a, b in zip(original, changed)))
+        apo_gaps.append(float(np.sqrt(np.mean((expit(-en[:, 0])-expit(en[:, 0]))**2))))
+    record('binding_fit_alone_does_not_identify_apo_folding', max(symmetry) < 1e-12 and min(apo_gaps) > .2,
+           {'maximum_zero_offset_occupancy_difference': max(symmetry), 'minimum_apo_rmse_between_reflections': min(apo_gaps),
+            'scope': 'A baseline-offset-only mathematical control. Additional supplied denaturation measurements distinguish the states; no claim that both fit the full task.'})
+    baseline, fits = two_stage(D)
+    with tempfile.TemporaryDirectory() as tmp:
+        write_outputs(baseline, D, tmp, 'Per-variant denaturation profiles are estimated first and then projected onto quadratic sequence energies by ordinary least squares.')
+        bad = assess(baseline, D, (Path(tmp)/'analysis.md').read_text())
+    record('two_stage_latent_estimation_control', not bad['passed'],
+           {'score': bad['final_score'], 'failed_gates': bad['failed_gates'], 'per_variant_fits_before_sequence_projection': fits,
+            'interpretation': 'Individual measured-variant fits can look adequate while extrapolated sequence landscapes fail. These fit diagnostics precede sequence projection; they are not claims about the final projected capture residual.'})
+    wrapped = assess([answer], D, report)
+    record('correct_science_presentation_recovery', wrapped['passed'] and wrapped['final_score'] == 95 and not wrapped['failed_gates'],
+           {'score': wrapped['final_score']})
+    fabricated = report.replace('capture_deviance_per_observation', 'uncomputed_claim')
+    fabricated_grade = assess(answer, D, fabricated)
+    record('computed_report_evidence_enforcement', fabricated_grade['final_score'] == 95 and not fabricated_grade['failed_gates'],
+           {'score': fabricated_grade['final_score'], 'report_points': fabricated_grade['report_points']})
+    if independent_dir:
+        alt = read_json(Path(independent_dir)/'final_answer.json')
+        alt_report = (Path(independent_dir)/'analysis.md').read_text()
+    else:
+        from independent_oracle import infer
+        alt, _ = infer(data)
+        with tempfile.TemporaryDirectory() as tmp:
+            write_outputs(alt, D, tmp, 'Independent weighted apparent-energy least squares with endpoint calibration.')
+            alt_report = (Path(tmp)/'analysis.md').read_text()
+    independent_grade = assess(alt, D, alt_report)
+    record('independent_correct_estimator', independent_grade['passed'],
+           {'score': independent_grade['final_score'], 'failed_gates': independent_grade['failed_gates'],
+            'method': 'Independent feature order, endpoint calibration, transformed-energy criterion, Levenberg-Marquardt, direct state arithmetic'})
+    record('three_solver_slots_and_expert_metadata',
+           read_json(EXPERT.parent/'task/deliverables.json') == ['run_pipeline.py', 'final_answer.json', 'analysis.md'] and
+           (EXPERT/'config/parameters.yaml').is_file() and (EXPERT/'results/run_summary.json').is_file(),
+           {'slots': read_json(EXPERT.parent/'task/deliverables.json'), 'expert_summary_present': (EXPERT/'results/run_summary.json').is_file()})
+    result = dict(case_id=D['meta']['case_id'], status='success' if all(c['passed'] for c in checks) else 'fail',
+                  checks=checks, model_evaluation='not performed by these scientific controls; fresh external runs required')
+    (HERE/'result.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
+    text = '# Scientific robustness checks\n\nThese are deterministic scientific controls, not Meta Muse model attempts.\n\n'
+    text += '| Check | Passed |\n|---|---|\n'+''.join('|'+c['name']+'|'+str(c['passed'])+'|\n' for c in checks)
+    (HERE/'result.md').write_text(text)
+    print(json.dumps({'status': result['status'], 'checks': len(checks)}))
+    return result
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(); p.add_argument('--independent-output', type=Path); a = p.parse_args()
+    sys.exit(0 if run(a.independent_output)['status'] == 'success' else 1)

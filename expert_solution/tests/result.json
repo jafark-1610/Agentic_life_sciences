@@ -1,39 +1,8 @@
 {
-  "role": "package_tests_not_model_trials",
   "status": "success",
-  "exit_code": 0,
-  "tests_run": 24,
-  "elapsed_seconds": 0.362,
-  "passed_tests": [
-    "test_01_data_validation",
-    "test_02_schema",
-    "test_03_reference_full_score",
-    "test_04_wrapper_recovery",
-    "test_05_numeric_strings",
-    "test_06_order_invariance",
-    "test_07_wrong_bound_rejected",
-    "test_08_point_fit_is_not_identification",
-    "test_09_wrong_policy_rejected",
-    "test_10_wrong_envelope_rejected",
-    "test_11_delivery_evidence",
-    "test_12_delivery_order_and_rounding",
-    "test_13_strict_json",
-    "test_14_extra_field_presentation_only",
-    "test_15_duplicate_scientific_ids_rejected",
-    "test_16_fractional_bounds_analytic",
-    "test_17_benchmark_identity",
-    "test_18_complete_type_family",
-    "test_19_observation_normalization",
-    "test_20_only_existing_three_slots",
-    "test_21_stable_serialization",
-    "test_22_rubric_reproducibility",
-    "test_23_missing_scientific_content_rejected",
-    "test_24_compact_and_reordered_json"
-  ],
-  "python": "3.12.14",
-  "dependencies": {
-    "numpy": "2.3.5",
-    "scipy": "1.17.0",
-    "jsonschema": "4.26.0"
-  }
+  "tests_run": 22,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 18.698,
+  "test_module_sha256": "1f49f7c05c12a9a01293c9bcb1fe181a51386544e82cc528e76eaddff0a51e5e"
 }

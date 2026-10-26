@@ -1,10 +1,23 @@
 {
   "status": "success",
-  "required_slots": [
+  "required_solver_slots": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
-  "checked_against": "user-reported existing three slots",
-  "platform_ingestion_and_UI_state": "not accessible from this package; not claimed verified"
+  "required_expert_paths_checked": [
+    "run_pipeline.py",
+    "expert_solution.py",
+    "final_answer.json",
+    "rubric.json",
+    "rubric.md",
+    "score_rubric.py",
+    "config/parameters.yaml",
+    "results/run_summary.json",
+    "results/final_answer.json",
+    "results/analysis.md",
+    "tests/test_package.py",
+    "robustness_checks/run_checks.py"
+  ],
+  "platform_import_status": "requires upload and platform validation; package preflight does not inspect UI state"
 }

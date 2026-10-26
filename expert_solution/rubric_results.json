@@ -1,23 +1,611 @@
 {
-  "role": "scientific_answer_evaluation",
-  "checks": {
-    "sharp_bounds": true,
-    "identification": true,
-    "global_envelopes": true,
-    "policy_decision": true
-  },
-  "details": {
-    "max_bound_error": 0.0
-  },
-  "raw_score": 100,
+  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "role": "numerical_artifact_grading",
+  "pipeline_execution": "not established by artifact grading; verify_submission.py required",
+  "scientific_gates": [
+    {
+      "protein": "s00",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s01",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s02",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s03",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s04",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s05",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s06",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s07",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s08",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s09",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s10",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "s11",
+      "metric": "calibration_validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.0009414983999504611,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.001969772425784233,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.00020707677519061536,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 6.497009179492403e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.0006245025431724782,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.045709203770810405,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.09168117003836791,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.0003408681736856557,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 1.0437553276143608e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.0005302483143622139,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.006042165453196711,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.011917618013714045,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.0004436518072632823,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 2.274275360205097e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.00062608907351136,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.00792392498716933,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.016293304826138433,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.00028067443948327135,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 1.5626341229615462e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.0008473980922155122,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.010345351548680574,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.02204333353644281,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.00017506907526914923,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 2.073245590527611e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.0005032184505199266,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "validity",
+      "passed": true,
+      "value": null,
+      "threshold": null
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "energy_rmse",
+      "passed": true,
+      "value": 0.0015588673144772002,
+      "threshold": 0.3
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "energy_p95",
+      "passed": true,
+      "value": 0.0032032625506167142,
+      "threshold": 0.6
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "apo_rmse",
+      "passed": true,
+      "value": 0.00018645847366806405,
+      "threshold": 0.025
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "challenge_rmse",
+      "passed": true,
+      "value": 5.6402833537313004e-05,
+      "threshold": 0.02
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "challenge_max_abs",
+      "passed": true,
+      "value": 0.0006886550879397491,
+      "threshold": 0.12
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "design_regret",
+      "passed": true,
+      "value": 0.0,
+      "threshold": 0.03
+    }
+  ],
+  "credit_items": [
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0b8c50c7",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_0cf797f3",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_82ef5504",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_41646adf",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_e059740b",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "energy_rmse",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "energy_p95",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "apo_rmse",
+      "points": 3.3333333333333335,
+      "maximum": 3.3333333333333335
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "challenge_rmse",
+      "points": 2.5,
+      "maximum": 2.5
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "challenge_max_abs",
+      "points": 1.6666666666666667,
+      "maximum": 1.6666666666666667
+    },
+    {
+      "protein": "binder_8352f9d7",
+      "metric": "design_regret",
+      "points": 5.0,
+      "maximum": 5.0
+    }
+  ],
+  "report_findings": [],
+  "presentation_findings": [],
+  "raw_score": 100.0,
   "scientific_cap_applied": false,
-  "presentation_deduction": 0,
-  "final_score": 100,
-  "passed": true,
-  "scope": "Complete submission also requires actual isolated input-dependent execution.",
-  "schema_errors": [],
-  "delivery": {
-    "errors": [],
-    "deduction": 0
-  }
+  "failed_gates": [],
+  "report_points": 5,
+  "final_score": 100.0,
+  "passed": true
 }

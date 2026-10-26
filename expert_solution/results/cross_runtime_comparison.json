@@ -1,26 +1,21 @@
 {
-  "role": "oracle_cross_runtime_validation",
   "status": "success",
-  "runtimes": [
-    {
-      "python": "3.12.14",
-      "dependencies": {
-        "numpy": "2.3.5",
-        "scipy": "1.17.0",
-        "jsonschema": "4.26.0"
-      }
-    },
-    {
-      "python": "3.13.5",
-      "dependencies": {
-        "numpy": "2.2.4",
-        "scipy": "1.15.3",
-        "jsonschema": "4.19.2"
-      }
+  "role": "independent_runtime_compatibility",
+  "alternate_runtime": {
+    "python": "3.13.5",
+    "dependencies": {
+      "numpy": "2.2.4",
+      "scipy": "1.15.3",
+      "jsonschema": "4.19.2"
     }
-  ],
-  "answer_sha256": "3843d4c4d82b0ddb8aac73426bc2ed00d8a83cc6eb3fc0471da4caca2197bbeb",
-  "byte_identical": true,
-  "exact_leaf_mismatches": 0,
-  "scope": "Final pipeline outputs, including resource-adjusted scores, from two Python/NumPy/SciPy environments"
+  },
+  "maximum_absolute_field_differences": {
+    "energy": 5.600000001493299e-06,
+    "apo_folded": 3.999999999837467e-07,
+    "challenge_a": 1.0000000005838672e-07
+  },
+  "all_selections_identical": true,
+  "alternate_scientific_score": 100.0,
+  "comparison_tolerance": 1e-05,
+  "public_error_thresholds": "study_metadata.json; acceptance is against physical truth, not byte equality with one optimizer"
 }

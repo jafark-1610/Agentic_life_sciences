@@ -1,184 +1,124 @@
 {
-  "role": "scientific_robustness_and_wrong_method_controls_not_model_runs",
-  "status": "pass",
+  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "status": "success",
   "checks": [
     {
-      "check": "independent_family_assembly_and_fractional_bisection",
-      "observed": {
-        "max_bound_difference": 3.6732482910084574e-06
-      },
-      "criterion": "independent enumeration and bisection agree within 0.0001",
-      "status": "pass"
+      "name": "expert_scientific_gate_clearance",
+      "passed": true,
+      "details": {
+        "max_error_to_limit_ratio": 0.15280195006394653,
+        "score": 100.0
+      }
     },
     {
-      "check": "compatible_point_law_baseline",
-      "observed": {
-        "table_band_violation": 0.0,
-        "selected": {
-          "status": "selected",
-          "policy": "policy_02"
-        },
-        "score": 0,
-        "checks": {
-          "sharp_bounds": false,
-          "identification": false,
-          "global_envelopes": false,
-          "policy_decision": false
-        }
-      },
-      "criterion": "a perfectly compatible point-law decision differs from the sharp robust decision and fails",
-      "status": "pass"
+      "name": "binding_fit_alone_does_not_identify_apo_folding",
+      "passed": true,
+      "details": {
+        "maximum_zero_offset_occupancy_difference": 9.992007221626409e-16,
+        "minimum_apo_rmse_between_reflections": 0.5879713948552866,
+        "scope": "A baseline-offset-only mathematical control. Additional supplied denaturation measurements distinguish the states; no claim that both fit the full task."
+      }
     },
     {
-      "check": "independent_world_baseline",
-      "observed": {
-        "score": 0,
-        "checks": {
-          "sharp_bounds": false,
-          "identification": false,
-          "global_envelopes": false,
-          "policy_decision": false
-        },
-        "selected": {
-          "status": "selected",
-          "policy": "policy_02"
-        },
-        "single_world_marginals_used_exactly": true,
-        "benchmark_identity_preserved": true
-      },
-      "criterion": "marginal fit and benchmark identity do not validate independent-world paired-clone quantities; baseline must fail",
-      "status": "pass"
-    },
-    {
-      "check": "conditional_ratio_outer_bound_audit",
-      "observed": {
-        "largest_endpoint_error": 0.00021501762007872238,
-        "examples": [
+      "name": "two_stage_latent_estimation_control",
+      "passed": true,
+      "details": {
+        "score": 45.833333,
+        "failed_gates": [
+          "binder_0cf797f3:energy_rmse",
+          "binder_0cf797f3:energy_p95",
+          "binder_0cf797f3:apo_rmse",
+          "binder_0cf797f3:challenge_max_abs",
+          "binder_82ef5504:energy_rmse",
+          "binder_82ef5504:energy_p95",
+          "binder_82ef5504:apo_rmse",
+          "binder_82ef5504:challenge_max_abs",
+          "binder_41646adf:energy_rmse",
+          "binder_41646adf:energy_p95",
+          "binder_41646adf:apo_rmse",
+          "binder_41646adf:challenge_max_abs",
+          "binder_e059740b:energy_rmse",
+          "binder_e059740b:energy_p95",
+          "binder_e059740b:apo_rmse",
+          "binder_e059740b:challenge_max_abs",
+          "binder_e059740b:design_regret",
+          "binder_8352f9d7:energy_rmse",
+          "binder_8352f9d7:energy_p95",
+          "binder_8352f9d7:apo_rmse",
+          "binder_8352f9d7:challenge_rmse",
+          "binder_8352f9d7:challenge_max_abs"
+        ],
+        "per_variant_fits_before_sequence_projection": [
           {
-            "context": "cohort_01",
-            "policy": "policy_02",
-            "outer_lower": 0.1445849823799213,
-            "sharp_lower": 0.1448,
-            "outer_upper": 0.17790445553302067,
-            "sharp_upper": 0.1779,
-            "max_error": 0.00021501762007872238
+            "id": "binder_0b8c50c7",
+            "measured_variant_deviance_per_observation": 0.7869582707857832,
+            "measured_variant_capture_rmse": 3.1781764655758694e-05
           },
           {
-            "context": "cohort_01",
-            "policy": "policy_08",
-            "outer_lower": 0.22134107368218162,
-            "sharp_lower": 0.22153,
-            "outer_upper": 0.2446681647063143,
-            "sharp_upper": 0.24467,
-            "max_error": 0.00018892631781838864
+            "id": "binder_0cf797f3",
+            "measured_variant_deviance_per_observation": 0.8741790870053635,
+            "measured_variant_capture_rmse": 1.8167623181502845e-05
           },
           {
-            "context": "cohort_01",
-            "policy": "policy_14",
-            "outer_lower": 0.04161448391435859,
-            "sharp_lower": 0.04164,
-            "outer_upper": 0.06122593492742993,
-            "sharp_upper": 0.06123,
-            "max_error": 2.5516085641413833e-05
+            "id": "binder_82ef5504",
+            "measured_variant_deviance_per_observation": 0.7618429640235698,
+            "measured_variant_capture_rmse": 2.1763396930796674e-05
           },
           {
-            "context": "cohort_02",
-            "policy": "policy_02",
-            "outer_lower": 0.11166905471614468,
-            "sharp_lower": 0.11188,
-            "outer_upper": 0.14594961784197052,
-            "sharp_upper": 0.14595,
-            "max_error": 0.0002109452838553183
+            "id": "binder_41646adf",
+            "measured_variant_deviance_per_observation": 0.7583182939132257,
+            "measured_variant_capture_rmse": 2.0740734156186356e-05
           },
           {
-            "context": "cohort_02",
-            "policy": "policy_08",
-            "outer_lower": 0.20406244771722842,
-            "sharp_lower": 0.20426,
-            "outer_upper": 0.22666863957510525,
-            "sharp_upper": 0.22667,
-            "max_error": 0.00019755228277157366
+            "id": "binder_e059740b",
+            "measured_variant_deviance_per_observation": 0.7822535288955749,
+            "measured_variant_capture_rmse": 2.10477395181614e-05
           },
           {
-            "context": "cohort_02",
-            "policy": "policy_14",
-            "outer_lower": 0.03571164024627136,
-            "sharp_lower": 0.03574,
-            "outer_upper": 0.05753797980951431,
-            "sharp_upper": 0.05754,
-            "max_error": 2.8359753728640635e-05
-          },
-          {
-            "context": "cohort_03",
-            "policy": "policy_02",
-            "outer_lower": 0.05190584060978899,
-            "sharp_lower": 0.05202,
-            "outer_upper": 0.08697828164821743,
-            "sharp_upper": 0.08698,
-            "max_error": 0.00011415939021100496
-          },
-          {
-            "context": "cohort_03",
-            "policy": "policy_08",
-            "outer_lower": 0.1729781450023653,
-            "sharp_lower": 0.17316,
-            "outer_upper": 0.1956755579853445,
-            "sharp_upper": 0.19568,
-            "max_error": 0.00018185499763470614
-          },
-          {
-            "context": "cohort_03",
-            "policy": "policy_14",
-            "outer_lower": 0.004189463048819683,
-            "sharp_lower": 0.00419,
-            "outer_upper": 0.027781314942809145,
-            "sharp_upper": 0.02778,
-            "max_error": 1.314942809145514e-06
+            "id": "binder_8352f9d7",
+            "measured_variant_deviance_per_observation": 0.7484108658119265,
+            "measured_variant_capture_rmse": 2.8648576631744484e-05
           }
         ],
-        "separates_at_scoring_tolerance": false,
-        "counted_as_difficulty_evidence": false
-      },
-      "criterion": "outer intervals contain sharp intervals within 0.0001; no method is rejected merely for using an accurate approximation",
-      "status": "pass"
+        "interpretation": "Individual measured-variant fits can look adequate while extrapolated sequence landscapes fail. These fit diagnostics precede sequence projection; they are not claims about the final projected capture residual."
+      }
     },
     {
-      "check": "reference_gate_clearance",
-      "observed": {
-        "harm": 0.17206,
-        "cost": 0.1180000000000001,
-        "eligibility": 0.1654,
-        "score_gap": 0.006760000000000002
-      },
-      "criterion": "decision gap >= 3 policy-score tolerances; all feasibility margins >= 3 numeric tolerances",
-      "status": "pass"
+      "name": "correct_science_presentation_recovery",
+      "passed": true,
+      "details": {
+        "score": 95.0
+      }
     },
     {
-      "check": "wrapper_recovery",
-      "observed": {
-        "score": 95,
-        "checks": {
-          "sharp_bounds": true,
-          "identification": true,
-          "global_envelopes": true,
-          "policy_decision": true
-        }
-      },
-      "criterion": "wrapper keeps all science and receives presentation deduction only",
-      "status": "pass"
+      "name": "computed_report_evidence_enforcement",
+      "passed": true,
+      "details": {
+        "score": 95.0,
+        "report_points": 0
+      }
     },
     {
-      "check": "three_slot_contract",
-      "observed": {
-        "files": [
+      "name": "independent_correct_estimator",
+      "passed": true,
+      "details": {
+        "score": 100.0,
+        "failed_gates": [],
+        "method": "Independent feature order, endpoint calibration, transformed-energy criterion, Levenberg-Marquardt, direct state arithmetic"
+      }
+    },
+    {
+      "name": "three_solver_slots_and_expert_metadata",
+      "passed": true,
+      "details": {
+        "slots": [
           "run_pipeline.py",
           "final_answer.json",
           "analysis.md"
         ],
-        "task_mentions_auxiliary_execution_file": false
-      },
-      "criterion": "the task requests exactly the three existing submission slots",
-      "status": "pass"
+        "expert_summary_present": true
+      }
     }
-  ]
+  ],
+  "model_evaluation": "not performed by these scientific controls; fresh external runs required"
 }

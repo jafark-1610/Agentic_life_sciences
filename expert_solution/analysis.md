@@ -1,23 +1,56 @@
-# Scientific method and completeness
+# Protein design analysis
 
-The uncertainty set is the entire structural model family in the task, rather than a fitted finite-mixture prior. The implementation uses a finite representation because all observable and intervention variables are binary.
+Capture controls calibrate the background and ceiling independently for each assay. The four-state partition model is fitted jointly to all screen counts using quadratic genotype energies. Predictions retain competitive ligand binding and the measured genotype dependence of denaturation. The selected variant maximizes the published manufacturing and occupancy utility over the supplied candidate panel.
 
-For a fixed latent biological state, the biological functions are identified by their complete truth tables. There are three monotone activation functions, six viability functions monotone in both parents, nine neutralization functions monotone in rescue but unrestricted in activation, two natural priming functions, and four natural rescue functions. Their Cartesian product has 1296 elements. The implementation assigns an arbitrary joint probability to each element conditional on true genotype, with a separate normalized probability vector for each genotype. It does not factor these probabilities over functions.
+The following diagnostics are calculated from the serialized answer and staged counts.
 
-This representation is exhaustive. Any admissible latent-state model induces these joint probabilities by grouping latent states with identical response and assignment functions. Conversely, any nonnegative normalized pair of such probability vectors defines an admissible latent-state model by taking the function tuple itself as the latent variable. Measurement and randomized-assignment variables are then drawn independently exactly as stipulated. Thus no parametric biological restriction is introduced by finite enumeration.
+```json
+{
+  "proteins": [
+    {
+      "id": "binder_0b8c50c7",
+      "capture_deviance_per_observation": 1.003098,
+      "capture_rmse": 3.89e-05,
+      "mean_apo_folded": 0.3834689,
+      "mean_worst_a": 0.103725
+    },
+    {
+      "id": "binder_0cf797f3",
+      "capture_deviance_per_observation": 0.971965,
+      "capture_rmse": 2.06e-05,
+      "mean_apo_folded": 0.0114604,
+      "mean_worst_a": 0.0032291
+    },
+    {
+      "id": "binder_82ef5504",
+      "capture_deviance_per_observation": 0.9774272,
+      "capture_rmse": 2.73e-05,
+      "mean_apo_folded": 0.0813336,
+      "mean_worst_a": 0.0167034
+    },
+    {
+      "id": "binder_41646adf",
+      "capture_deviance_per_observation": 0.9684643,
+      "capture_rmse": 2.6e-05,
+      "mean_apo_folded": 0.0557062,
+      "mean_worst_a": 0.0112474
+    },
+    {
+      "id": "binder_e059740b",
+      "capture_deviance_per_observation": 0.9902679,
+      "capture_rmse": 2.58e-05,
+      "mean_apo_folded": 0.0219819,
+      "mean_worst_a": 0.0172955
+    },
+    {
+      "id": "binder_8352f9d7",
+      "capture_deviance_per_observation": 0.9599514,
+      "capture_rmse": 3.54e-05,
+      "mean_apo_folded": 0.2110884,
+      "mean_worst_a": 0.3561573
+    }
+  ]
+}
+```
 
-Each observational coefficient integrates the known laboratory genotype mixture, the genotype assay, stable imaging noise, and any design-specific assignment randomization. A dead culture contributes to the single NA cell regardless of its latent neutralization capacity. All eight laboratory/design distributions constrain the same pair of biological probability vectors in a cohort. Their cell intervals and the two normalization equations define a bounded polytope.
-
-Target coefficients instead use the target genotype mixture and apply both policies to the same response-function tuple, baseline assay, and imaging variable. The eligibility coefficient is the joint survival indicator; the net-gain coefficient multiplies that indicator by the within-clone response difference. The harm coefficient multiplies it by the exclusive-harm indicator. Cost is an unconditional target expectation.
-
-For an admissible probability vector w, a conditional quantity is (n dot w)/(d dot w). Its sharp bounds are computed by a linear-fractional transformation: z=w*t, t=1/(d dot w), with d dot z=1. Observation inequalities become A*z-b*t <= 0 and normalization becomes E*z-f*t=0. Optimizing n dot z globally gives the exact extrema over the declared compatible family. Eligibility and cost use ordinary linear objectives. The implementation checks positive lower eligibility before applying this transformation.
-
-There is also a structural positivity explanation. Monotone activation and viability imply that survival under every menu policy and the benchmark is at least survival under fixed A=0,B=0. Their joint survival therefore includes that population. The released randomized data constrain this viability floor away from zero. The independent validation assembles the function family in a different column order and uses bisection of linear support functions rather than the transformation above.
-
-Point identification is assessed from the sharp net-gain interval. A feasible biological distribution, even the generating distribution, is not a certificate of identification. The benchmark compared to itself has exactly zero gain and harm; this identity is explicitly tested. The wrong-method controls preserve factual fit and, where applicable, this benchmark identity before assessing the paired-world target.
-
-Policy selection uses the specified resource-adjusted score, computed from the separately defined worst gain and worst cost envelopes. It does not substitute an unrequested joint utility functional or use a cohort average. Harm, cost and eligibility constraints are checked before score optimization. The selected score exceeds the next qualifying score by more than three public policy-score tolerances, and its feasibility margins also clear the public tolerances by more than threefold.
-
-The compatibility tables describe population-limit probabilities with bounded numerical uncertainty. The output intervals are causal-model bounds, not confidence intervals. Simulation choices used to generate one compatible law are not inference assumptions. In particular, the oracle never reads the generation-law file. The independent execution verifier regenerates lawful population tables and requires the submitted source to recompute its answer. A stored-answer pipeline passes the original tables but is rejected on the regenerated tables.
-
-Local mathematical controls do not establish the Meta Muse failure rate. External qualification remains unconfirmed until the frozen candidate has undergone the required independent model runs and platform review.
+The assays are synthetic equilibrium measurements. The genotype model restricts energies to second order; conclusions do not establish clinical efficacy, dynamics, or behavior outside the specified mutation panel and thermodynamic conditions. A low capture residual does not independently validate latent energies or extrapolated designs.

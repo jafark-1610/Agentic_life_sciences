@@ -1,68 +1,170 @@
-import unittest,json,copy,sys,tempfile,subprocess,re
+"""Physical model, grading, portability, and package-contract regression tests."""
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+import sys
 from pathlib import Path
-import numpy as np,jsonschema
-from scipy import sparse
-HERE=Path(__file__).resolve().parents[1];DATA=HERE.parent/'task/data';sys.path.insert(0,str(HERE))
-from expert_solution import load
-from artifacts import write_outputs,stable
-from causal_model import coefficients,REF,N,solve,ratio,observation
-from score_rubric import science,delivery,strict_read
+EXPERT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(EXPERT))
+import ast
+import copy
+import hashlib
+import json
+import tempfile
+import unittest
+import numpy as np
+import jsonschema
+from scipy.special import expit
+from model import load_data, read_json, features, occupancy, slope, protein_arrays, evidence
+from score_rubric import assess, load_answer
+from build_rubric_md import build
+from export_solver import export
 
-class Tests(unittest.TestCase):
- @classmethod
- def setUpClass(cls):cls.a=strict_read(HERE/'final_answer.json');cls.D=load(DATA)
- def test_01_data_validation(self):subprocess.run([sys.executable,str(DATA/'validate_dataset.py')],check=True,capture_output=True)
- def test_02_schema(self):jsonschema.validate(self.a,strict_read(DATA/'output_schema.json'))
- def test_03_reference_full_score(self):self.assertEqual(science(self.a,DATA)['final_score'],100)
- def test_04_wrapper_recovery(self):
-  r=science([self.a],DATA);self.assertEqual(r['final_score'],95);self.assertTrue(all(r['checks'].values()));self.assertFalse(r['scientific_cap_applied'])
- def test_05_numeric_strings(self):
-  a=copy.deepcopy(self.a);a['contexts'][0]['policies'][0]['net_gain_lower']=str(a['contexts'][0]['policies'][0]['net_gain_lower']);self.assertEqual(science(a,DATA)['final_score'],95)
- def test_06_order_invariance(self):
-  a=copy.deepcopy(self.a);a['contexts'].reverse();a['global_policies'].reverse()
-  for c in a['contexts']:c['policies'].reverse()
-  self.assertEqual(science(a,DATA)['final_score'],100)
- def test_07_wrong_bound_rejected(self):
-  a=copy.deepcopy(self.a);a['contexts'][0]['policies'][0]['net_gain_lower']+=.1;self.assertFalse(science(a,DATA)['passed'])
- def test_08_point_fit_is_not_identification(self):
-  a=copy.deepcopy(self.a);a['contexts'][0]['policies'][0]['point_identified']=not a['contexts'][0]['policies'][0]['point_identified'];self.assertFalse(science(a,DATA)['checks']['identification'])
- def test_09_wrong_policy_rejected(self):
-  a=copy.deepcopy(self.a);a['selection']['policy']='policy_02';self.assertFalse(science(a,DATA)['checks']['policy_decision'])
- def test_10_wrong_envelope_rejected(self):
-  a=copy.deepcopy(self.a);a['global_policies'][0]['worst_cost']+=.1;self.assertFalse(science(a,DATA)['checks']['global_envelopes'])
- def test_11_delivery_evidence(self):
-  with tempfile.TemporaryDirectory() as t:
-   write_outputs(self.a,self.D,t);self.assertEqual(delivery(self.a,DATA,t)['deduction'],0);(Path(t)/'analysis.md').write_text('All passed');self.assertEqual(delivery(self.a,DATA,t)['deduction'],5)
- def test_12_delivery_order_and_rounding(self):
-  with tempfile.TemporaryDirectory() as t:
-   write_outputs(self.a,self.D,t);p=Path(t)/'analysis.md';text=p.read_text();b=json.loads(re.search(r'```json\s*\n(.*?)\n```',text,re.S)[1]);b['context_diagnostics'].reverse();b['context_diagnostics'][0]['largest_net_gain_width']=round(b['context_diagnostics'][0]['largest_net_gain_width'],3);p.write_text('```json\n'+json.dumps(b)+'\n```\n');self.assertEqual(delivery(self.a,DATA,t)['deduction'],0)
- def test_13_strict_json(self):
-  for text in ['{"x":NaN}','{"x":1e999}','{"x":1,"x":2}']:
-   with tempfile.TemporaryDirectory() as t:
-    p=Path(t)/'a';p.write_text(text)
-    with self.assertRaises(ValueError):strict_read(p)
- def test_14_extra_field_presentation_only(self):
-  a=copy.deepcopy(self.a);a['extra']='note';r=science(a,DATA);self.assertEqual(r['final_score'],95);self.assertFalse(r['scientific_cap_applied'])
- def test_15_duplicate_scientific_ids_rejected(self):
-  a=copy.deepcopy(self.a);a['contexts'][0]['policies'].append(a['contexts'][0]['policies'][0]);self.assertFalse(science(a,DATA)['checks']['sharp_bounds'])
- def test_16_fractional_bounds_analytic(self):
-  P={'A_ub':sparse.csr_matrix([[1.,0.]]),'b_ub':np.array([1.]),'A_eq':sparse.csr_matrix([[1.,1.]]),'b_eq':np.array([1.]),'bounds':(0,None)};num=np.array([-.1,.4]);den=np.array([.6,1.]);self.assertAlmostEqual(ratio(P,num,den),-1/6,places=8);self.assertAlmostEqual(ratio(P,num,den,True),.4,places=8)
- def test_17_benchmark_identity(self):
-  v=coefficients(self.D['contexts'][0],REF);self.assertTrue(np.all(v['gain']==0));self.assertTrue(np.all(v['harm']==0));np.testing.assert_allclose(v['eligibility'],v['survival'])
- def test_18_complete_type_family(self):self.assertEqual(N,3*6*9*2*4)
- def test_19_observation_normalization(self):
-  c=self.D['contexts'][0];lab=c['labs'][0]
-  for p in ['natural','priming_trial','rescue_trial','sequential_trial']:
-   sums=np.asarray(observation(c,lab,p).sum(axis=0)).ravel();np.testing.assert_allclose(sums[:N],1-lab['x1']);np.testing.assert_allclose(sums[N:],lab['x1'])
- def test_20_only_existing_three_slots(self):
-  want=['run_pipeline.py','final_answer.json','analysis.md']
-  for name in ['deliverables.json','required_deliverables.json']:self.assertEqual(strict_read(DATA.parent/name),want)
-  self.assertEqual(strict_read(HERE/'config/parameters.yaml')['required_deliverables'],want)
-  self.assertNotIn('run_summary', (DATA.parent/'prompt.md').read_text())
- def test_21_stable_serialization(self):self.assertEqual(stable(self.a),stable(stable(self.a)))
- def test_22_rubric_reproducibility(self):subprocess.run([sys.executable,str(HERE/'build_rubric_md.py'),'--check'],check=True)
- def test_23_missing_scientific_content_rejected(self):
-  a=copy.deepcopy(self.a);a['contexts']=[];self.assertFalse(science(a,DATA)['passed'])
- def test_24_compact_and_reordered_json(self):
-  a=json.loads(json.dumps(dict(reversed(list(self.a.items()))),separators=(',',':')));self.assertEqual(science(a,DATA)['final_score'],100)
-if __name__=='__main__':unittest.main()
+
+class PackageTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.data = EXPERT.parent/'task/data'
+        cls.D = load_data(cls.data); cls.D['data_dir'] = str(cls.data)
+        cls.answer = read_json(EXPERT/'final_answer.json')
+        cls.report = (EXPERT/'analysis.md').read_text()
+
+    def test_input_integrity_and_keys(self):
+        import runpy
+        self.assertTrue(runpy.run_path(str(self.data/'validate_dataset.py'))['validate'](self.data))
+
+    def test_schema(self):
+        jsonschema.validate(self.answer, read_json(self.data/'output_schema.json'))
+
+    def test_oracle_100_and_margin(self):
+        r = assess(self.answer, self.D, self.report)
+        self.assertEqual(r['final_score'], 100)
+        self.assertTrue(all(g['value'] <= g['threshold']/3 for g in r['scientific_gates'] if g['threshold']))
+
+    def test_full_quadratic_feature_rank(self):
+        train = [i for i, r in enumerate(self.D['rows']) if r['role'] == 'screen']
+        X = features(self.D['bits'][train])
+        self.assertEqual(X.shape[1], 1+20+190)
+        self.assertEqual(np.linalg.matrix_rank(X), X.shape[1])
+
+    def test_partition_matches_independent_direct_formula(self):
+        en = np.array([[.7, -1.3, .4], [-2., .2, -1.]])
+        m = np.array([1.1, .8]); co = [dict(urea=.6, ligand_a=2., ligand_b=3.)]
+        f = np.exp(-en[:, 0]-m*.6); a = 2*f*np.exp(-en[:, 1]); b = 3*f*np.exp(-en[:, 2]); z = 1+f+a+b
+        pa, pb, folded = occupancy(en, m, co)
+        np.testing.assert_allclose(pa[:, 0], a/z, atol=1e-15)
+        np.testing.assert_allclose(pb[:, 0], b/z, atol=1e-15)
+        np.testing.assert_allclose(folded[:, 0], (f+a+b)/z, atol=1e-15)
+
+    def test_apo_identity_and_probability_conservation(self):
+        en = np.array([[1000., -1000., 0.], [-1000., 1., 2.], [.3, .2, -.4]])
+        pa, pb, folded = occupancy(en, np.ones(3), [dict(urea=0, ligand_a=0, ligand_b=0)])
+        np.testing.assert_allclose(folded[:, 0], expit(-en[:, 0]), atol=1e-14)
+        self.assertTrue(np.isfinite(folded).all()); self.assertTrue(np.max(pa+pb) <= 1)
+
+    def test_capture_rows_have_no_order_dependence(self):
+        D = dict(self.D); D['counts'] = list(reversed(self.D['counts']))
+        p = self.D['meta']['proteins'][0]
+        for a, b in zip(protein_arrays(D, p), protein_arrays(self.D, p)):
+            np.testing.assert_array_equal(a, b)
+
+    def test_zero_urea_reflection_and_denaturation_break(self):
+        en = np.array([[1.2, -.6, .7], [-1.4, .8, -1.]])
+        reflected = np.column_stack([-en[:, 0], en[:, 1]+en[:, 0], en[:, 2]+en[:, 0]])
+        co = [dict(urea=0., ligand_a=2., ligand_b=4.), dict(urea=1., ligand_a=2., ligand_b=4.)]
+        a = occupancy(en, np.ones(2), co)[0]; b = occupancy(reflected, np.ones(2), co)[0]
+        np.testing.assert_allclose(a[:, 0], b[:, 0], atol=1e-15)
+        self.assertGreater(float(np.max(np.abs(a[:, 1]-b[:, 1]))), .01)
+
+    def test_wrapped_answer_only_loses_format_points(self):
+        r = assess([self.answer], self.D, self.report)
+        self.assertEqual(r['final_score'], 95); self.assertFalse(r['scientific_cap_applied'])
+
+    def test_transpose_and_numeric_string_recovery(self):
+        a = copy.deepcopy(self.answer)
+        a['proteins'][0]['energy'] = np.array(a['proteins'][0]['energy']).T.tolist()
+        a['proteins'][1]['energy'][0][0] = str(a['proteins'][1]['energy'][0][0])
+        r = assess(a, self.D, self.report)
+        self.assertEqual(r['final_score'], 95); self.assertFalse(r['failed_gates'])
+
+    def test_one_probability_failure_cannot_pass(self):
+        a = copy.deepcopy(self.answer); a['proteins'][0]['apo_folded'][0] = -.1
+        r = assess(a, self.D, self.report)
+        self.assertFalse(r['passed']); self.assertTrue(r['scientific_cap_applied'])
+
+    def test_bad_energy_cannot_hide_behind_accurate_occupancy(self):
+        a = copy.deepcopy(self.answer)
+        a['proteins'][0]['energy'] = (np.array(a['proteins'][0]['energy'])+2).tolist()
+        r = assess(a, self.D, self.report)
+        self.assertFalse(r['passed']); self.assertTrue(any('energy_rmse' in g for g in r['failed_gates']))
+
+    def test_wrong_design_is_scored_against_truth(self):
+        from score_rubric import true_outputs
+        truth = true_outputs(self.D, read_json(EXPERT/'private/truth.json'))
+        a = copy.deepcopy(self.answer); obj = a['proteins'][0]
+        i = int(np.argmin(truth[obj['id']]['utility']))
+        obj['selected_variant'] = self.D['rows'][i]['variant_id']
+        r = assess(a, self.D, self.report)
+        self.assertFalse(r['passed']); self.assertIn(obj['id']+':design_regret', r['failed_gates'])
+
+    def test_report_must_be_computed(self):
+        r = assess(self.answer, self.D, 'All results are correct.')
+        self.assertEqual(r['final_score'], 95); self.assertFalse(r['scientific_cap_applied'])
+
+    def test_malformed_and_huge_values_do_not_crash(self):
+        for bad in ['not_a_number', float('inf'), 10**400, True]:
+            a = copy.deepcopy(self.answer); a['proteins'][0]['energy'][0][0] = bad
+            r = assess(a, self.D, self.report)
+            self.assertFalse(r['passed']); self.assertTrue(r['scientific_cap_applied'])
+
+    def test_duplicates_recover_last_json_value(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp)/'answer.json'; p.write_text('{"a":1,"a":2}')
+            obj, findings, error = load_answer(p)
+            self.assertEqual(obj, {'a': 2}); self.assertTrue(findings); self.assertIsNone(error)
+
+    def test_unreadable_answer_is_zero(self):
+        r = assess(None, self.D, self.report)
+        self.assertEqual(r['final_score'], 0)
+
+    def test_rubric_generated_from_contract_and_answer(self):
+        for name, content in zip(['rubric.json', 'rubric.md'], build()):
+            self.assertEqual((EXPERT/name).read_text(), content)
+        contract = read_json(self.data/'grading_contract.json')
+        self.assertEqual(sum(g['points'] for g in contract['groups'])+contract['report_points'], 100)
+        prompt = (EXPERT.parent/'task/prompt.md').read_text()
+        for g in contract['groups']: self.assertIn(g['threshold'], prompt)
+
+    def test_exact_slots_and_required_expert_paths(self):
+        slots = ['run_pipeline.py', 'final_answer.json', 'analysis.md']
+        for name in ['deliverables.json', 'required_deliverables.json']:
+            self.assertEqual(read_json(EXPERT.parent/'task'/name), slots)
+        for name in ['config/parameters.yaml', 'results/run_summary.json']:
+            self.assertTrue((EXPERT/name).is_file(), name)
+        self.assertFalse(any('run_summary' in p.read_text() for p in (EXPERT.parent/'task').rglob('*') if p.is_file()))
+
+    def test_summary_hashes_identify_shipped_inputs_and_answer(self):
+        summary = read_json(EXPERT/'results/run_summary.json')
+        self.assertEqual(summary['answer_sha256'], hashlib.sha256((EXPERT/'final_answer.json').read_bytes()).hexdigest())
+        self.assertEqual(summary['data_manifest_sha256'], hashlib.sha256((self.data/'data_manifest.json').read_bytes()).hexdigest())
+
+    def test_single_file_export_has_no_local_imports_or_truth_reads(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            code = export(Path(tmp)/'run_pipeline.py'); tree = ast.parse(code)
+            imports = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
+            self.assertFalse(imports & {'model', 'artifacts', 'expert_solution'})
+            self.assertNotIn('private/truth', code)
+
+    def test_missing_expert_summary_is_detected(self):
+        # Simulate the exact prior missing path without altering shipped artifacts.
+        import validate_package
+        from unittest.mock import patch
+        original = Path.is_file
+        def present(path):
+            return False if path == EXPERT/'results/run_summary.json' else original(path)
+        with patch.object(Path, 'is_file', present):
+            with self.assertRaisesRegex(AssertionError, 'expert_solution/results/run_summary.json'):
+                validate_package.validate(EXPERT.parent)
+
+
+if __name__ == '__main__':
+    unittest.main()

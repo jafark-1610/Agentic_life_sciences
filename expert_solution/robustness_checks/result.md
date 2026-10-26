@@ -1,9 +1,13 @@
-# Robustness evidence
+# Scientific robustness checks
 
-* independent_family_assembly_and_fractional_bisection: pass. independent enumeration and bisection agree within 0.0001. Observed: {"max_bound_difference": 3.6732482910084574e-06}
-* compatible_point_law_baseline: pass. a perfectly compatible point-law decision differs from the sharp robust decision and fails. Observed: {"table_band_violation": 0.0, "selected": {"status": "selected", "policy": "policy_02"}, "score": 0, "checks": {"sharp_bounds": false, "identification": false, "global_envelopes": false, "policy_decision": false}}
-* independent_world_baseline: pass. marginal fit and benchmark identity do not validate independent-world paired-clone quantities; baseline must fail. Observed: {"score": 0, "checks": {"sharp_bounds": false, "identification": false, "global_envelopes": false, "policy_decision": false}, "selected": {"status": "selected", "policy": "policy_02"}, "single_world_marginals_used_exactly": true, "benchmark_identity_preserved": true}
-* conditional_ratio_outer_bound_audit: pass. outer intervals contain sharp intervals within 0.0001; no method is rejected merely for using an accurate approximation. Observed: {"largest_endpoint_error": 0.00021501762007872238, "examples": [{"context": "cohort_01", "policy": "policy_02", "outer_lower": 0.1445849823799213, "sharp_lower": 0.1448, "outer_upper": 0.17790445553302067, "sharp_upper": 0.1779, "max_error": 0.00021501762007872238}, {"context": "cohort_01", "policy": "policy_08", "outer_lower": 0.22134107368218162, "sharp_lower": 0.22153, "outer_upper": 0.2446681647063143, "sharp_upper": 0.24467, "max_error": 0.00018892631781838864}, {"context": "cohort_01", "policy": "policy_14", "outer_lower": 0.04161448391435859, "sharp_lower": 0.04164, "outer_upper": 0.06122593492742993, "sharp_upper": 0.06123, "max_error": 2.5516085641413833e-05}, {"context": "cohort_02", "policy": "policy_02", "outer_lower": 0.11166905471614468, "sharp_lower": 0.11188, "outer_upper": 0.14594961784197052, "sharp_upper": 0.14595, "max_error": 0.0002109452838553183}, {"context": "cohort_02", "policy": "policy_08", "outer_lower": 0.20406244771722842, "sharp_lower": 0.20426, "outer_upper": 0.22666863957510525, "sharp_upper": 0.22667, "max_error": 0.00019755228277157366}, {"context": "cohort_02", "policy": "policy_14", "outer_lower": 0.03571164024627136, "sharp_lower": 0.03574, "outer_upper": 0.05753797980951431, "sharp_upper": 0.05754, "max_error": 2.8359753728640635e-05}, {"context": "cohort_03", "policy": "policy_02", "outer_lower": 0.05190584060978899, "sharp_lower": 0.05202, "outer_upper": 0.08697828164821743, "sharp_upper": 0.08698, "max_error": 0.00011415939021100496}, {"context": "cohort_03", "policy": "policy_08", "outer_lower": 0.1729781450023653, "sharp_lower": 0.17316, "outer_upper": 0.1956755579853445, "sharp_upper": 0.19568, "max_error": 0.00018185499763470614}, {"context": "cohort_03", "policy": "policy_14", "outer_lower": 0.004189463048819683, "sharp_lower": 0.00419, "outer_upper": 0.027781314942809145, "sharp_upper": 0.02778, "max_error": 1.314942809145514e-06}], "separates_at_scoring_tolerance": false, "counted_as_difficulty_evidence": false}
-* reference_gate_clearance: pass. decision gap >= 3 policy-score tolerances; all feasibility margins >= 3 numeric tolerances. Observed: {"harm": 0.17206, "cost": 0.1180000000000001, "eligibility": 0.1654, "score_gap": 0.006760000000000002}
-* wrapper_recovery: pass. wrapper keeps all science and receives presentation deduction only. Observed: {"score": 95, "checks": {"sharp_bounds": true, "identification": true, "global_envelopes": true, "policy_decision": true}}
-* three_slot_contract: pass. the task requests exactly the three existing submission slots. Observed: {"files": ["run_pipeline.py", "final_answer.json", "analysis.md"], "task_mentions_auxiliary_execution_file": false}
+These are deterministic scientific controls, not Meta Muse model attempts.
+
+| Check | Passed |
+|---|---|
+|expert_scientific_gate_clearance|True|
+|binding_fit_alone_does_not_identify_apo_folding|True|
+|two_stage_latent_estimation_control|True|
+|correct_science_presentation_recovery|True|
+|computed_report_evidence_enforcement|True|
+|independent_correct_estimator|True|
+|three_solver_slots_and_expert_metadata|True|

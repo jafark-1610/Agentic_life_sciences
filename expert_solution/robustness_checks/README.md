@@ -1,7 +1,7 @@
-# Scientific validation workflow
+# Scientific controls
 
-Run `python expert_solution/robustness_checks/run_checks.py` from the package root. It checks independently assembled conditional bounds using bisection, evaluates a compatible point-law decision and an independent-world approximation, audits separate-extrema ratio enclosures, verifies reference gate clearance and presentation recovery, and checks the exact three-slot contract.
+Run `python robustness_checks/run_checks.py` from `expert_solution/`. The workflow checks numerical clearance, the binding-equivalent baseline energy reflection, two-stage latent-energy extrapolation, evidence calculations, presentation recovery, and an independent transformed-energy estimator. Denaturant conditions are signed offsets from a positive baseline concentration.
 
-The wrong-method controls reproduce factual information yet can miss the target paired-clone quantity. They are not Meta Muse or other solver-model trials. Approximations that fall within the public numeric tolerance are not counted as demonstrated scientific failures. Recorded result fields explicitly distinguish these cases.
+`baselines.py` implements the two-stage control. The measured-variant diagnostics are recorded before sequence projection; the final projected outputs are graded separately. `result.json` records metrics and interpretations, and `result.md` indexes the check outcomes.
 
-Use the full verifier separately for actual submitted-code isolation and regenerated-input checks. Its completed evidence is stored under `../results/verification_result.json`.
+The isolated runtime and regenerated-input experiment is executed by `verify_submission.py`. Artifact grading, scientific controls, and isolated execution have distinct records.

@@ -1,33 +1,73 @@
-import argparse,csv,json,hashlib,itertools,math
+"""Validate input hashes, every count, and all cross-file keys."""
+import argparse
+import csv
+import hashlib
+import json
 from pathlib import Path
 
+
 def validate(data):
- d=Path(data);read=lambda n:json.loads((d/(n+'.json')).read_text())
- for name,v in read('data_manifest')['files'].items():
-  raw=(d/name).read_bytes();assert len(raw)==v['bytes'] and hashlib.sha256(raw).hexdigest()==v['sha256'],name+' hash mismatch'
- cs=read('contexts');ps=read('policies')
- with (d/'tables.csv').open() as stream:rows=list(csv.DictReader(stream))
- assert len(cs)==3 and len({c['id'] for c in cs})==3
- assert len(ps)==24 and len({p['id'] for p in ps})==24
- for p in ps+[read('benchmark')]:
-  assert len(p['a'])==2 and len(p['b'])==2 and all(len(r)==2 for r in p['b']);assert all(x in [0,1] for x in p['a']+[x for r in p['b'] for x in r])
- protocols=['natural','priming_trial','rescue_trial','sequential_trial'];seen=set();groups={}
- contexts={c['id']:c for c in cs}
- for c in cs:
-  assert all(0<c[k]<1 for k in ['z_false_positive','z_false_negative','image_flip','target_x1'])
-  assert c['z_false_positive']+c['z_false_negative']<1 and c['image_flip']<.5
-  assert c['rescue_cost']>0 and 0<c['probability_band']<.001
-  assert len(c['labs'])==2 and len({l['id'] for l in c['labs']})==2 and all(0<l['x1']<1 for l in c['labs'])
- for row in rows:
-  cid=row['context'];assert cid in contexts and row['lab'] in {l['id'] for l in contexts[cid]['labs']} and row['protocol'] in protocols
-  bits=tuple(int(row[k]) for k in ['Z','A','W','B','S']);assert all(v in [0,1] for v in bits)
-  assert (bits[-1]==0 and row['Y']=='NA') or (bits[-1]==1 and row['Y'] in ['0','1'])
-  key=(cid,row['lab'],row['protocol'],*bits,row['Y']);assert key not in seen;seen.add(key)
-  p=float(row['probability']);assert math.isfinite(p) and 0<=p<=1
-  groups.setdefault((cid,row['lab'],row['protocol']),[]).append(p)
- assert len(rows)==1152 and len(groups)==24 and all(len(v)==48 and abs(sum(v)-1)<1e-9 for v in groups.values())
- for f in ['deliverables.json','required_deliverables.json']:
-  if (d.parent/f).exists():assert json.loads((d.parent/f).read_text())==['run_pipeline.py','final_answer.json','analysis.md']
- return {'status':'success','contexts':len(cs),'policies':len(ps),'table_rows':len(rows),'required_slots':['run_pipeline.py','final_answer.json','analysis.md']}
-if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--data',type=Path,default=Path(__file__).resolve().parent);a=p.parse_args();print(json.dumps(validate(a.data)))
+    data = Path(data)
+    meta = json.loads((data/'study_metadata.json').read_text())
+    manifest = json.loads((data/'data_manifest.json').read_text())
+    for name, info in manifest['files'].items():
+        raw = (data/name).read_bytes()
+        assert len(raw) == info['bytes'] and hashlib.sha256(raw).hexdigest() == info['sha256'], name+' integrity mismatch'
+    assert meta['case_id'] == 'ALS_THERMODYNAMIC_DESIGN_004'
+    with (data/'variants.csv').open() as f:
+        reader = csv.DictReader(f); assert reader.fieldnames == ['variant_id', 'mutations', 'role']; rows = list(reader)
+    assert len(rows) == meta['n_variants']
+    ids, screen = set(), set()
+    for r in rows:
+        assert r['variant_id'] not in ids
+        ids.add(r['variant_id'])
+        assert len(r['mutations']) == len(meta['positions']) and set(r['mutations']) <= {'0', '1'}
+        code = sum(int(b) << i for i, b in enumerate(r['mutations']))
+        assert r['variant_id'] == 'v'+format(code, '05x')
+        assert r['role'] in ['screen', 'candidate']
+        if r['role'] == 'screen': screen.add(r['variant_id'])
+    assert len(screen) == meta['n_screen']
+    proteins = {p['id'] for p in meta['proteins']}
+    assert len(proteins) == len(meta['proteins'])
+    for p in meta['proteins']:
+        assert p['m0']-sum(abs(x) for x in p['mutation_m_shift']) > 0
+        assert len(p['mutation_m_shift']) == len(meta['positions'])
+    conditions = {c['id'] for c in meta['screen_conditions']}
+    assert len(conditions) == len(meta['screen_conditions'])
+    for c in meta['screen_conditions']:
+        assert c['reporter'] in ['A', 'B']
+        assert c['ligand_a' if c['reporter'] == 'A' else 'ligand_b'] > 0
+        assert c['ligand_b' if c['reporter'] == 'A' else 'ligand_a'] == 0
+    seen = set()
+    with (data/'capture_counts.csv').open() as f:
+        reader = csv.DictReader(f)
+        assert reader.fieldnames == ['protein_id', 'variant_id', 'condition_id', 'trials', 'captured']
+        for r in reader:
+            key = r['protein_id'], r['variant_id'], r['condition_id']
+            assert key not in seen and key[0] in proteins and key[1] in screen and key[2] in conditions
+            seen.add(key)
+            n, k = int(r['trials']), int(r['captured']); assert n > 0 and 0 <= k <= n
+    assert len(seen) == len(proteins)*len(screen)*len(conditions)
+    seen = set(); control_fractions = {c: set() for c in conditions}
+    with (data/'calibration_counts.csv').open() as f:
+        reader = csv.DictReader(f)
+        assert reader.fieldnames == ['condition_id', 'control_id', 'bound_fraction', 'trials', 'captured']
+        for r in reader:
+            key = r['condition_id'], r['control_id']
+            assert key not in seen and key[0] in conditions
+            seen.add(key)
+            n, k = int(r['trials']), int(r['captured']); t = float(r['bound_fraction'])
+            assert n > 0 and 0 <= k <= n and 0 <= t <= 1
+            control_fractions[key[0]].add(t)
+    assert all(0 in t and 1 in t and len(t) >= 3 for t in control_fractions.values())
+    assert len({c['id'] for c in meta['challenge_conditions']}) == len(meta['challenge_conditions'])
+    for c in meta['challenge_conditions']:
+        assert c['ligand_a'] > 0 and c['ligand_b'] > 0
+        assert meta['urea_baseline_molar']+c['urea'] >= 0
+    print('Input validation passed: complete variants, assays, calibration controls and integrity manifest.')
+    return True
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(); p.add_argument('--data', type=Path, default=Path(__file__).resolve().parent)
+    validate(p.parse_args().data)

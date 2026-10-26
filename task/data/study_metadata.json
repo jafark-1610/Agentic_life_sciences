@@ -1,22 +1,321 @@
 {
-  "case_id": "ALS_PAIRED_IMMUNITY_003",
-  "schema": "paired_immunity/1",
-  "acceptance": {
-    "numeric_absolute": 0.001,
-    "decision_slack": 0.001,
-    "identification_width": 0.0001,
-    "policy_score_absolute": 0.002
+  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "positions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "energy_columns": [
+    "fold",
+    "bind_a",
+    "bind_b"
+  ],
+  "urea_baseline_molar": 1.0,
+  "n_variants": 16384,
+  "n_screen": 1400,
+  "proteins": [
+    {
+      "id": "binder_0b8c50c7",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        0.0237,
+        0.01345,
+        -0.019874,
+        -0.026221,
+        -0.008745,
+        0.017772,
+        0.016463,
+        -0.006098,
+        0.010145,
+        0.022694,
+        -0.03036,
+        0.002681,
+        0.017911,
+        0.022773,
+        -0.019662,
+        -0.001125,
+        -0.009372,
+        -0.016426,
+        0.020883,
+        0.004211
+      ]
+    },
+    {
+      "id": "binder_0cf797f3",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        0.028573,
+        -0.019036,
+        0.022616,
+        -0.021673,
+        -0.005684,
+        -0.025535,
+        -0.002619,
+        -0.028408,
+        -0.00805,
+        0.032726,
+        0.027859,
+        0.007539,
+        -0.003475,
+        0.024952,
+        0.027986,
+        0.030819,
+        -0.00422,
+        -0.017604,
+        0.010059,
+        0.02499
+      ]
+    },
+    {
+      "id": "binder_82ef5504",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        -0.030934,
+        -0.013941,
+        -0.024583,
+        0.025171,
+        0.032885,
+        0.024425,
+        0.033656,
+        -0.033633,
+        -0.034164,
+        0.004713,
+        -0.019053,
+        0.031125,
+        -0.005865,
+        -0.027276,
+        0.000879,
+        -0.023045,
+        -0.01058,
+        -0.010009,
+        -0.025836,
+        -0.021362
+      ]
+    },
+    {
+      "id": "binder_41646adf",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        -0.023805,
+        -0.017058,
+        0.033729,
+        -0.000315,
+        -0.030012,
+        -0.014803,
+        0.010506,
+        0.023442,
+        -0.021605,
+        -0.004941,
+        0.016431,
+        0.031314,
+        0.0311,
+        0.006345,
+        0.006501,
+        -0.029922,
+        -0.007615,
+        -0.016809,
+        0.02979,
+        -0.005171
+      ]
+    },
+    {
+      "id": "binder_e059740b",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        0.02421,
+        -0.019659,
+        0.030518,
+        -0.02439,
+        -0.012596,
+        0.002199,
+        0.030162,
+        -0.005573,
+        -0.006042,
+        -0.02959,
+        -0.009688,
+        0.020875,
+        -0.015063,
+        -0.028779,
+        -0.029181,
+        0.01621,
+        -0.018711,
+        0.030284,
+        -0.01507,
+        0.022207
+      ]
+    },
+    {
+      "id": "binder_8352f9d7",
+      "m0": 1.08,
+      "mutation_m_shift": [
+        0.014432,
+        -0.024565,
+        0.006122,
+        -0.002336,
+        0.022293,
+        -0.034744,
+        -0.005293,
+        0.002685,
+        -0.017928,
+        0.027839,
+        0.016674,
+        -0.014633,
+        -0.007187,
+        -0.020453,
+        0.030405,
+        -0.022356,
+        0.018963,
+        -0.006215,
+        0.028227,
+        0.025414
+      ]
+    }
+  ],
+  "screen_conditions": [
+    {
+      "id": "s00",
+      "urea": 0.0,
+      "ligand_a": 0.15,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s01",
+      "urea": 0.0,
+      "ligand_a": 2.0,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s02",
+      "urea": 0.0,
+      "ligand_a": 0.0,
+      "ligand_b": 0.15,
+      "reporter": "B"
+    },
+    {
+      "id": "s03",
+      "urea": 0.0,
+      "ligand_a": 0.0,
+      "ligand_b": 2.0,
+      "reporter": "B"
+    },
+    {
+      "id": "s04",
+      "urea": 0.7,
+      "ligand_a": 0.15,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s05",
+      "urea": 0.7,
+      "ligand_a": 2.0,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s06",
+      "urea": 0.7,
+      "ligand_a": 0.0,
+      "ligand_b": 0.15,
+      "reporter": "B"
+    },
+    {
+      "id": "s07",
+      "urea": 0.7,
+      "ligand_a": 0.0,
+      "ligand_b": 2.0,
+      "reporter": "B"
+    },
+    {
+      "id": "s08",
+      "urea": 1.4,
+      "ligand_a": 0.15,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s09",
+      "urea": 1.4,
+      "ligand_a": 2.0,
+      "ligand_b": 0.0,
+      "reporter": "A"
+    },
+    {
+      "id": "s10",
+      "urea": 1.4,
+      "ligand_a": 0.0,
+      "ligand_b": 0.15,
+      "reporter": "B"
+    },
+    {
+      "id": "s11",
+      "urea": 1.4,
+      "ligand_a": 0.0,
+      "ligand_b": 2.0,
+      "reporter": "B"
+    }
+  ],
+  "challenge_conditions": [
+    {
+      "id": "q0",
+      "urea": -0.7,
+      "ligand_a": 0.4,
+      "ligand_b": 0.7
+    },
+    {
+      "id": "q1",
+      "urea": -0.2,
+      "ligand_a": 1.0,
+      "ligand_b": 3.0
+    },
+    {
+      "id": "q2",
+      "urea": 0.4,
+      "ligand_a": 2.0,
+      "ligand_b": 10.0
+    },
+    {
+      "id": "q3",
+      "urea": 1.0,
+      "ligand_a": 5.0,
+      "ligand_b": 20.0
+    }
+  ],
+  "design": {
+    "mutation_cost": 0.003,
+    "utility": "apo_folded * min(challenge_a) - mutation_cost * mutation_count"
   },
-  "decision": {
-    "maximum_harm": 0.22,
-    "maximum_cost": 1.3,
-    "minimum_eligibility": 0.8,
-    "resource_penalty": 0.215
+  "acceptance_thresholds": {
+    "energy_rmse_max": 0.3,
+    "energy_p95_max": 0.6,
+    "apo_rmse_max": 0.025,
+    "challenge_rmse_max": 0.02,
+    "challenge_max_abs_max": 0.12,
+    "design_regret_max": 0.03
   },
-  "units": {
-    "gain": "probability difference",
-    "harm": "probability",
-    "eligibility": "probability",
-    "cost": "resource units"
+  "report_tolerances": {
+    "capture_deviance_per_observation": 0.05,
+    "capture_rmse": 1e-06,
+    "mean_apo_folded": 1e-06,
+    "mean_worst_a": 1e-06
   }
 }

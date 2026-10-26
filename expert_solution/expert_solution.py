@@ -1,50 +1,112 @@
-"""Sharp same-clone estimands over the full compatible causal family."""
-from pathlib import Path
-import csv,json
+"""Joint count-likelihood inference of quadratic folding and binding landscapes."""
 import numpy as np
-from causal_model import poly,coefficients,solve,ratio
-PROTOCOLS=['natural','priming_trial','rescue_trial','sequential_trial']
-def load(data):
- d=Path(data);D={k:json.loads((d/(k+'.json')).read_text()) for k in ['study_metadata','contexts','policies','benchmark','protocols']}
- with (d/'tables.csv').open() as stream:D['tables']=list(csv.DictReader(stream))
- return D
+from scipy.special import expit, xlogy
+from scipy.linalg import cho_factor, cho_solve, solve_triangular
+from model import (load_data, features, slope, protein_arrays, calibration,
+                   occupancy, utility)
 
-def observed_vector(D,c):
- records={(o['lab'],o['protocol'],int(o['Z']),int(o['A']),int(o['W']),int(o['B']),int(o['S']),o['Y']):float(o['probability']) for o in D['tables'] if o['context']==c['id']}
- out=[]
- for lab in c['labs']:
-  for protocol in PROTOCOLS:
-   for z in range(2):
-    for a in range(2):
-     for w in range(2):
-      for b in range(2):
-       for s,y in [(0,'NA'),(1,'0'),(1,'1')]:out.append(records[(lab['id'],protocol,z,a,w,b,s,y)])
- return out
 
-def summarize(D,contexts):
- lookup={c['id']:c for c in contexts};global_rows=[];limits=D['study_metadata']['decision']
- for p in D['policies']:
-  rows=[next(r for r in c['policies'] if r['id']==p['id']) for c in contexts]
-  global_rows.append({'id':p['id'],'worst_net_gain':min(r['net_gain_lower'] for r in rows),'worst_harm':max(r['harm_upper'] for r in rows),'worst_cost':max(r['cost_upper'] for r in rows),'minimum_eligibility':min(r['eligibility_lower'] for r in rows)})
- for row in global_rows:row['resource_adjusted_score']=row['worst_net_gain']-limits['resource_penalty']*row['worst_cost']
- safe=[p for p in global_rows if p['worst_harm']<=limits['maximum_harm'] and p['worst_cost']<=limits['maximum_cost'] and p['minimum_eligibility']>=limits['minimum_eligibility']]
- if not safe:selection={'status':'no_qualifying_policy','policy':None}
- else:
-  best=max(p['resource_adjusted_score'] for p in safe);winner=min((p for p in safe if p['resource_adjusted_score']>=best-1e-7),key=lambda p:p['id']);selection={'status':'selected','policy':winner['id']}
- return global_rows,selection
+def fit_landscape(X, m, n, k, conditions, cal, config):
+    ng, d = X.shape
+    u = np.array([c['urea'] for c in conditions])
+    ligand = np.array([max(c['ligand_a'], c['ligand_b']) for c in conditions])
+    species = np.array([int(c['reporter'] == 'B') for c in conditions])
+    bg = np.array([c['background'] for c in cal])
+    amp = np.array([c['ceiling']-c['background'] for c in cal])
+    y = k/n
+    Q, R = np.linalg.qr(X, mode='reduced')
+    Q *= np.sqrt(ng)
+    R /= np.sqrt(ng)
+    p = np.clip((y-bg)/amp, 1e-7, 1-1e-7)
+    h = np.log(ligand)-np.log(p/(1-p))
+    weights = n*(amp*p*(1-p))**2/np.maximum(y*(1-y), 1e-8)
+    mu = m[:, None]*u
+    grid = np.linspace(config['initial_fold_min'], config['initial_fold_max'], config['initial_fold_grid'])
+    losses = np.zeros((ng, len(grid)))
+    for j, f in enumerate(grid):
+        z = h-np.logaddexp(0, f+mu)
+        for s in [0, 1]:
+            mask = species == s
+            average = np.sum(weights[:, mask]*z[:, mask], axis=1)/np.sum(weights[:, mask], axis=1)
+            losses[:, j] += np.sum(weights[:, mask]*(z[:, mask]-average[:, None])**2, axis=1)
+    fhat = grid[np.argmin(losses, axis=1)]
 
-def analyse(data):
- D=load(data);contexts=[]
- # Validate that the implemented design is the declared one, rather than silently ignoring edits.
- assert D['protocols']['randomization']=={'P_A1':.45,'P_B1_given_W':[.7,.35]}
- assert D['benchmark']=={'a':[1,1],'b':[[0,1],[0,1]]}
- for c in D['contexts']:
-  P=poly(c,observed_vector(D,c));solve(P,np.zeros(P['A_eq'].shape[1]));rows=[]
-  for policy in D['policies']:
-   v=coefficients(c,policy);gl=solve(P,v['eligibility'])[0];gu=-solve(P,-v['eligibility'])[0]
-   if gl<=1e-5:raise ValueError('Eligibility can vanish: conditional estimand needs a separate limit analysis')
-   low=ratio(P,v['gain'],v['eligibility']);high=ratio(P,v['gain'],v['eligibility'],True);harm=ratio(P,v['harm'],v['eligibility'],True);cost=-solve(P,-v['cost'])[0]
-   rows.append({'id':policy['id'],'eligibility_lower':gl,'eligibility_upper':gu,'net_gain_lower':low,'net_gain_upper':high,'harm_upper':max(0.,harm),'cost_upper':max(0.,cost),'point_identified':bool(high-low<=D['study_metadata']['acceptance']['identification_width'])})
-  contexts.append({'id':c['id'],'policies':rows})
- globals_,selection=summarize(D,contexts)
- return {'schema':D['study_metadata']['schema'],'case_id':D['study_metadata']['case_id'],'contexts':contexts,'global_policies':globals_,'selection':selection}
+    def objective(T, derivatives=False):
+        fields = Q@T.T
+        F = fields[:, 0, None]+mu
+        P = expit(np.log(ligand)-fields[:, 1:][:, species]-np.logaddexp(0, F))
+        q = bg+amp*P
+        value = float(np.sum(n*(xlogy(y, y/q)+xlogy(1-y, (1-y)/(1-q))))/ng)
+        if not derivatives:
+            return value
+        a = -amp*P*(1-P)
+        der = [a*expit(F), a*(species == 0), a*(species == 1)]
+        g = np.empty((3, d))
+        H = np.empty((3*d, 3*d))
+        v, w = n*(q-y)/(q*(1-q))/ng, n/(q*(1-q))/ng
+        for i in range(3):
+            g[i] = Q.T@np.sum(v*der[i], axis=1)
+            for j in range(i+1):
+                block = Q.T@(Q*np.sum(w*der[i]*der[j], axis=1)[:, None])
+                H[i*d:(i+1)*d, j*d:(j+1)*d] = block
+                H[j*d:(j+1)*d, i*d:(i+1)*d] = block.T
+        return value, g.ravel(), H
+
+    best = None
+    traces = []
+    for start in config['starts']:
+        fh = fhat if start == 'profile' else np.full(ng, float(start))
+        T = [np.linalg.lstsq(Q, fh, rcond=None)[0]]
+        for s in [0, 1]:
+            mask = species == s
+            z = h[:, mask]-np.logaddexp(0, fh[:, None]+mu[:, mask])
+            z = np.sum(z*weights[:, mask], axis=1)/np.sum(weights[:, mask], axis=1)
+            T.append(np.linalg.lstsq(Q, z, rcond=None)[0])
+        T, damping = np.array(T), config['initial_damping']
+        accepted = False
+        for iteration in range(config['max_iterations']):
+            loss, g, H = objective(T, True)
+            diag = np.maximum(np.diag(H), .01)
+            accepted = False
+            for _ in range(24):
+                delta = cho_solve(cho_factor(H+damping*np.diag(diag)), g).reshape(3, d)
+                trial = T-delta
+                new_loss = objective(trial)
+                if new_loss < loss:
+                    T = trial
+                    damping = max(1e-12, damping*.25)
+                    accepted = True
+                    break
+                damping *= 5
+            if not accepted or np.max(np.abs(delta)) < config['step_tolerance']:
+                break
+        final_loss = objective(T)
+        traces.append(dict(start=start, iterations=iteration+1, loss=final_loss,
+                           gradient_max=float(np.max(np.abs(objective(T, True)[1])))))
+        if best is None or final_loss < best[0]:
+            best = (final_loss, T.copy())
+    beta = solve_triangular(R, best[1].T).T
+    return beta, traces
+
+
+def analyse(data, config):
+    D = load_data(data)
+    cal = calibration(D)
+    X = features(D['bits'])
+    output, diagnostics = [], []
+    for protein in D['meta']['proteins']:
+        train, n, k = protein_arrays(D, protein)
+        m = slope(D['bits'], protein)
+        beta, traces = fit_landscape(X[train], m[train], n, k,
+                                     D['meta']['screen_conditions'], cal, config)
+        energy = X@beta.T
+        pa, _, _ = occupancy(energy, m, D['meta']['challenge_conditions'])
+        apo = expit(-energy[:, 0])
+        score = utility(apo, pa, D['bits'], D['meta'])
+        index = int(np.argmax(score))
+        output.append(dict(id=protein['id'], energy=energy.tolist(), apo_folded=apo.tolist(),
+                           challenge_a=pa.tolist(), selected_variant=D['rows'][index]['variant_id']))
+        diagnostics.append(dict(id=protein['id'], optimizer_starts=traces,
+                                coefficients=beta.tolist(), selected_utility=float(score[index])))
+    return dict(schema='thermodynamic_design/1', case_id=D['meta']['case_id'],
+                calibration=cal, proteins=output), diagnostics, D

@@ -3,140 +3,129 @@
   "required": [
     "schema",
     "case_id",
-    "contexts",
-    "global_policies",
-    "selection"
+    "calibration",
+    "proteins"
   ],
+  "additionalProperties": false,
   "properties": {
     "schema": {
-      "const": "paired_immunity/1"
+      "const": "thermodynamic_design/1"
     },
     "case_id": {
-      "const": "ALS_PAIRED_IMMUNITY_003"
+      "const": "ALS_THERMODYNAMIC_DESIGN_004"
     },
-    "contexts": {
+    "calibration": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
           "id",
-          "policies"
+          "background",
+          "ceiling"
         ],
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string"
+            "enum": [
+              "s00",
+              "s01",
+              "s02",
+              "s03",
+              "s04",
+              "s05",
+              "s06",
+              "s07",
+              "s08",
+              "s09",
+              "s10",
+              "s11"
+            ]
           },
-          "policies": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "eligibility_lower",
-                "eligibility_upper",
-                "net_gain_lower",
-                "net_gain_upper",
-                "harm_upper",
-                "cost_upper",
-                "point_identified"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "eligibility_lower": {
-                  "type": "number"
-                },
-                "eligibility_upper": {
-                  "type": "number"
-                },
-                "net_gain_lower": {
-                  "type": "number"
-                },
-                "net_gain_upper": {
-                  "type": "number"
-                },
-                "harm_upper": {
-                  "type": "number"
-                },
-                "cost_upper": {
-                  "type": "number"
-                },
-                "point_identified": {
-                  "type": "boolean"
-                }
-              },
-              "additionalProperties": false
-            },
-            "minItems": 24,
-            "maxItems": 24
+          "background": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "ceiling": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
           }
-        },
-        "additionalProperties": false
-      },
-      "minItems": 3,
-      "maxItems": 3
-    },
-    "global_policies": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "worst_net_gain",
-          "worst_harm",
-          "worst_cost",
-          "minimum_eligibility",
-          "resource_adjusted_score"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "worst_net_gain": {
-            "type": "number"
-          },
-          "worst_harm": {
-            "type": "number"
-          },
-          "worst_cost": {
-            "type": "number"
-          },
-          "minimum_eligibility": {
-            "type": "number"
-          },
-          "resource_adjusted_score": {
-            "type": "number"
-          }
-        },
-        "additionalProperties": false
-      },
-      "minItems": 24,
-      "maxItems": 24
-    },
-    "selection": {
-      "type": "object",
-      "required": [
-        "status",
-        "policy"
-      ],
-      "properties": {
-        "status": {
-          "enum": [
-            "selected",
-            "no_qualifying_policy"
-          ]
-        },
-        "policy": {
-          "type": [
-            "string",
-            "null"
-          ]
         }
       },
-      "additionalProperties": false
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "proteins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "energy",
+          "apo_folded",
+          "challenge_a",
+          "selected_variant"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "binder_0b8c50c7",
+              "binder_0cf797f3",
+              "binder_82ef5504",
+              "binder_41646adf",
+              "binder_e059740b",
+              "binder_8352f9d7"
+            ]
+          },
+          "energy": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "minItems": 16384,
+            "maxItems": 16384
+          },
+          "apo_folded": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 16384,
+            "maxItems": 16384
+          },
+          "challenge_a": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "minItems": 16384,
+            "maxItems": 16384
+          },
+          "selected_variant": {
+            "type": "string",
+            "pattern": "^v[0-9a-f]{5}$"
+          }
+        }
+      },
+      "minItems": 6,
+      "maxItems": 6
     }
   },
-  "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

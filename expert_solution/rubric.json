@@ -1,58 +1,98 @@
 {
-  "case_id": "ALS_PAIRED_IMMUNITY_003",
-  "version": "1.0",
-  "weights": {
-    "policy_decision": 40,
-    "sharp_bounds": 35,
-    "global_envelopes": 15,
-    "identification": 10
-  },
+  "case_id": "ALS_THERMODYNAMIC_DESIGN_004",
+  "total_points": 100,
   "pass_threshold": 80,
-  "scientific_failure_cap": 79,
-  "presentation_deduction": 5,
-  "delivery_deduction": 5,
-  "automatic_zero": [
-    "absent/unreadable/duplicate-key/nonfinite answer JSON",
-    "missing or non-running pipeline during full verification"
+  "scientific_gate_cap": 79,
+  "groups": [
+    {
+      "metric": "energy_rmse",
+      "threshold": "energy_rmse_max",
+      "points": 10,
+      "field": "proteins[].energy",
+      "prompt_section": "Scientific acceptance"
+    },
+    {
+      "metric": "energy_p95",
+      "threshold": "energy_p95_max",
+      "points": 10,
+      "field": "proteins[].energy",
+      "prompt_section": "Scientific acceptance"
+    },
+    {
+      "metric": "apo_rmse",
+      "threshold": "apo_rmse_max",
+      "points": 20,
+      "field": "proteins[].apo_folded",
+      "prompt_section": "Scientific acceptance"
+    },
+    {
+      "metric": "challenge_rmse",
+      "threshold": "challenge_rmse_max",
+      "points": 15,
+      "field": "proteins[].challenge_a",
+      "prompt_section": "Scientific acceptance"
+    },
+    {
+      "metric": "challenge_max_abs",
+      "threshold": "challenge_max_abs_max",
+      "points": 10,
+      "field": "proteins[].challenge_a",
+      "prompt_section": "Scientific acceptance"
+    },
+    {
+      "metric": "design_regret",
+      "threshold": "design_regret_max",
+      "points": 30,
+      "field": "proteins[].selected_variant",
+      "prompt_section": "Design objective and Scientific acceptance"
+    }
   ],
-  "execution_gate": "Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.",
-  "required_deliverables": [
+  "scientific_weights": "Each group divided equally across binders; every validity/accuracy gate mandatory. An invalid or unreadable binder block earns no scientific credit for that binder.",
+  "report_points": 5,
+  "report_evidence": "Computed analysis evidence section and report_tolerances",
+  "presentation_deduction": 5,
+  "presentation_policy": "Execution section; one deduction for any number of recoverable deviations",
+  "automatic_zero": "Missing/non-running pipeline, missing/unparseable answer, or demonstrated cached/external answers under isolated replay.",
+  "rubric_version": "1.0",
+  "acceptance_thresholds": {
+    "energy_rmse_max": 0.3,
+    "energy_p95_max": 0.6,
+    "apo_rmse_max": 0.025,
+    "challenge_rmse_max": 0.02,
+    "challenge_max_abs_max": 0.12,
+    "design_regret_max": 0.03
+  },
+  "report_tolerances": {
+    "capture_deviance_per_observation": 0.05,
+    "capture_rmse": 1e-06,
+    "mean_apo_folded": 1e-06,
+    "mean_worst_a": 1e-06
+  },
+  "numeric_tolerance": 0.0001,
+  "numeric_tolerance_role": "serialization comparison only; scientific tolerances are the six named thresholds",
+  "binder_ids": [
+    "binder_0b8c50c7",
+    "binder_0cf797f3",
+    "binder_82ef5504",
+    "binder_41646adf",
+    "binder_e059740b",
+    "binder_8352f9d7"
+  ],
+  "variant_count": 16384,
+  "screen_variant_count": 1400,
+  "energy_columns": [
+    "fold",
+    "bind_a",
+    "bind_b"
+  ],
+  "screen_condition_count": 12,
+  "challenge_condition_count": 4,
+  "canonical_answer_sha256": "9e3b8f9b13b82bb27f84bedee9af893f7c04fc01272715b913b900e3e0cc0cf1",
+  "solver_slots": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
-  "tolerances": {
-    "numeric_absolute": 0.001,
-    "decision_slack": 0.001,
-    "identification_width": 0.0001,
-    "policy_score_absolute": 0.002
-  },
-  "numeric_tolerance": 1e-05,
-  "numeric_tolerance_scope": "Oracle cross-runtime comparison fallback only; scientific solver tolerance remains the public numeric_absolute.",
-  "path_tolerances": {
-    "/contexts/*/policies/*/eligibility_lower": 0.001,
-    "/contexts/*/policies/*/eligibility_upper": 0.001,
-    "/contexts/*/policies/*/net_gain_lower": 0.001,
-    "/contexts/*/policies/*/net_gain_upper": 0.001,
-    "/contexts/*/policies/*/harm_upper": 0.001,
-    "/contexts/*/policies/*/cost_upper": 0.001,
-    "/global_policies/*/worst_net_gain": 0.001,
-    "/global_policies/*/worst_harm": 0.001,
-    "/global_policies/*/worst_cost": 0.001,
-    "/global_policies/*/minimum_eligibility": 0.001,
-    "/global_policies/*/resource_adjusted_score": 0.002
-  },
-  "dimensions": {
-    "contexts": 3,
-    "policies": 24
-  },
-  "field_contract": {
-    "sharp_bounds": "prompt.md: Policy worlds and target quantities",
-    "identification": "prompt.md: Policy worlds and target quantities",
-    "policy_decision": "prompt.md: Policy worlds and target quantities",
-    "global_envelopes": "prompt.md: Policy worlds and target quantities",
-    "delivery": "prompt.md: Execution and output"
-  },
-  "policy": "All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.",
-  "full_grading_command": "python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control"
+  "grading_scope": "Hidden simulation truth for scientific metrics; report evidence recomputed from submitted arrays",
+  "execution_scope": "Artifact grader cannot establish execution. Full verification requires isolated base and regenerated runs."
 }

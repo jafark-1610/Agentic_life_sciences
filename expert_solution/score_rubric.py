@@ -1,107 +1,192 @@
-import json,re,math,argparse,sys
+"""Data-derived numerical grading; isolated execution is a separate required check."""
+import os
+import sys
+sys.dont_write_bytecode = True
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+import argparse
+import json
+import re
 from pathlib import Path
-import jsonschema
-from expert_solution import load
-from artifacts import evidence
-HERE=Path(__file__).resolve().parent
+import numpy as np
+from scipy.special import expit
+from model import load_data, read_json, features, slope, occupancy, utility, evidence
 
-def strict_read(path):
- def pair(rows):
-  out={}
-  for k,v in rows:
-   if k in out:raise ValueError('duplicate JSON key')
-   out[k]=v
-  return out
- def number(x):
-  v=float(x)
-  if not math.isfinite(v):raise ValueError('nonfinite JSON number')
-  return v
- def invalid(x):raise ValueError('nonfinite JSON number')
- return json.loads(Path(path).read_text(),object_pairs_hook=pair,parse_float=number,parse_constant=invalid)
+HERE = Path(__file__).resolve().parent
 
-def normalize(raw):
- changed=False
- if isinstance(raw,list) and len(raw)==1 and isinstance(raw[0],dict):raw=raw[0];changed=True
- def convert(v,key=None):
-  nonlocal changed
-  if isinstance(v,dict):return {k:convert(x,k) for k,x in v.items()}
-  if isinstance(v,list):return [convert(x,key) for x in v]
-  if isinstance(v,str) and key not in ['id','case_id','schema','policy','status'] and re.fullmatch(r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?',v):
-   x=float(v)
-   if math.isfinite(x):changed=True;return x
-  return v
- return convert(raw),changed
 
-def keyed(rows):
- out={}
- for row in rows:
-  if row['id'] in out:raise ValueError('duplicate ID')
-  out[row['id']]=row
- return out
+def load_answer(path):
+    findings = []
+    def pairs(items):
+        out = {}
+        for k, v in items:
+            if k in out: findings.append('duplicate key; last value used')
+            out[k] = v
+        return out
+    try:
+        return json.loads(Path(path).read_text(), object_pairs_hook=pairs), findings, None
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
+        return None, findings, 'unreadable JSON: '+type(exc).__name__
 
-def science(raw,data,reference=None):
- D=load(data);a=D['study_metadata']['acceptance'];tol=a['numeric_absolute'];ref=reference or strict_read(HERE/'final_answer.json');rub=strict_read(HERE/'rubric.json');answer,presentation=normalize(raw)
- errors=list(jsonschema.Draft202012Validator(strict_read(Path(data)/'output_schema.json')).iter_errors(answer));presentation|=bool(errors);checks={};details={}
- def close(x,y):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=tol
- try:
-  cs=keyed(answer['contexts']);rc=keyed(ref['contexts']);ok=set(cs)==set(rc);maxerr=0.
-  for cid,r in rc.items():
-   actual=keyed(cs[cid]['policies']);expected=keyed(r['policies']);ok &=set(actual)==set(expected)
-   for pid,p in expected.items():
-    for k in ['eligibility_lower','eligibility_upper','net_gain_lower','net_gain_upper','harm_upper','cost_upper']:
-     x=actual[pid][k];ok &=close(x,p[k]);maxerr=max(maxerr,abs(x-p[k]))
-  checks['sharp_bounds']=bool(ok);details['max_bound_error']=maxerr
- except (KeyError,TypeError,ValueError,OverflowError):checks['sharp_bounds']=False
- try:
-  ok=True
-  for cid,r in rc.items():
-   actual=keyed(cs[cid]['policies'])
-   for p in r['policies']:
-    v=actual[p['id']]['point_identified'];ok &=type(v) is bool and v==p['point_identified']
-  checks['identification']=bool(ok)
- except (KeyError,TypeError,ValueError,UnboundLocalError):checks['identification']=False
- try:
-  global_=keyed(answer['global_policies']);rg=keyed(ref['global_policies']);ok=set(global_)==set(rg)
-  for pid,r in rg.items():
-   for k in ['worst_net_gain','worst_harm','worst_cost','minimum_eligibility']:ok &=close(global_[pid][k],r[k])
-   x=global_[pid]['resource_adjusted_score'];ok &=isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-r['resource_adjusted_score'])<=a['policy_score_absolute']
-  checks['global_envelopes']=bool(ok)
- except (KeyError,TypeError,ValueError):checks['global_envelopes']=False
- try:
-  limits=D['study_metadata']['decision'];eligible=[p for p in ref['global_policies'] if p['worst_harm']<=limits['maximum_harm'] and p['worst_cost']<=limits['maximum_cost'] and p['minimum_eligibility']>=limits['minimum_eligibility']];s=answer['selection']
-  if not eligible:ok=s['status']=='no_qualifying_policy' and s['policy'] is None
-  else:
-   best=max(p['resource_adjusted_score'] for p in eligible);valid={p['id'] for p in eligible if p['resource_adjusted_score']>=best-a['decision_slack']};ok=s['status']=='selected' and s['policy'] in valid
-  checks['policy_decision']=bool(ok)
- except (KeyError,TypeError,ValueError):checks['policy_decision']=False
- rawscore=sum(rub['weights'][k] for k,v in checks.items() if v);capped=not all(checks.values());score=min(rawscore,rub['scientific_failure_cap']) if capped else rawscore
- if presentation:score-=rub['presentation_deduction']
- return {'role':'scientific_answer_evaluation','checks':checks,'details':details,'raw_score':rawscore,'scientific_cap_applied':capped,'presentation_deduction':rub['presentation_deduction'] if presentation else 0,'final_score':max(0,score),'passed':score>=rub['pass_threshold'],'scope':'Complete submission also requires actual isolated input-dependent execution.','schema_errors':[e.message for e in errors]}
 
-def delivery(raw,data,folder):
- answer,_=normalize(raw);D=load(data);errors=[]
- try:
-  text=(Path(folder)/'analysis.md').read_text();blocks=re.findall(r'```json\s*\n(.*?)\n```',text,re.S);assert len(blocks)==1;got=json.loads(blocks[0]);want=evidence(answer,D)
-  def eq(x,y,key=''):
-   if isinstance(y,dict):return isinstance(x,dict) and all(k in x and eq(x[k],v,k) for k,v in y.items())
-   if isinstance(y,list):
-    if key=='context_diagnostics':
-     xx=keyed(x);yy=keyed(y);return set(xx)==set(yy) and all(eq(xx[k],yy[k]) for k in yy)
-    return isinstance(x,list) and len(x)==len(y) and all(eq(xx,yy,key) for xx,yy in zip(x,y))
-   if isinstance(y,bool):return type(x) is bool and x==y
-   if isinstance(y,(int,float)):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x) and abs(x-y)<=D['study_metadata']['acceptance']['numeric_absolute']
-   return x==y
-  assert eq(got,want)
- except (OSError,KeyError,TypeError,ValueError,AssertionError):errors.append('Required analysis diagnostic block missing or inconsistent')
- return {'errors':errors,'deduction':5 if errors else 0}
+def coerce(raw, shape, findings):
+    def scan(x):
+        if isinstance(x, bool): raise ValueError('boolean is not a number')
+        if isinstance(x, str): findings.append('numeric string')
+        if isinstance(x, list):
+            for v in x: scan(v)
+    try:
+        scan(raw)
+        with np.errstate(all='ignore'):
+            a = np.asarray(raw, dtype=float)
+        if a.shape == shape: return a
+        if len(shape) == 2 and a.shape == tuple(reversed(shape)):
+            findings.append('transposed matrix'); return a.T
+        if len(shape) == 2 and a.ndim == 1 and a.size == int(np.prod(shape)):
+            findings.append('flattened matrix'); return a.reshape(shape)
+    except (TypeError, ValueError, OverflowError, RecursionError):
+        pass
+    return None
 
-def evaluate(path,data,artifacts=None,reference=None):
- try:raw=strict_read(path);r=science(raw,data,reference)
- except (OSError,ValueError,TypeError,OverflowError) as e:return {'final_score':0,'passed':False,'automatic_zero':str(e)}
- if artifacts:
-  d=delivery(raw,data,artifacts);r['delivery']=d;r['final_score']=max(0,r['final_score']-d['deduction']);r['passed']=r['final_score']>=80
- return r
-if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--answer',type=Path,required=True);p.add_argument('--data',type=Path,default=HERE.parent/'task/data');p.add_argument('--artifacts-dir',type=Path);p.add_argument('--output',type=Path);a=p.parse_args();r=evaluate(a.answer,a.data,a.artifacts_dir);text=json.dumps(r,indent=2,allow_nan=False)+'\n'
- if a.output:a.output.write_text(text)
- print(text);sys.exit(0 if r['passed'] else 1)
+
+def true_outputs(D, truth):
+    X = features(D['bits'])
+    result = {}
+    for p in D['meta']['proteins']:
+        en = X@np.asarray(truth['proteins'][p['id']]['coefficients']).T
+        apo = expit(-en[:, 0])
+        pa = occupancy(en, slope(D['bits'], p), D['meta']['challenge_conditions'])[0]
+        util = utility(apo, pa, D['bits'], D['meta'])
+        result[p['id']] = dict(energy=en, apo=apo, pa=pa, utility=util)
+    return result
+
+
+def assess(answer, D, analysis_text='', truth=None, load_findings=None):
+    contract = read_json(Path(D['data_dir'])/'grading_contract.json') if 'data_dir' in D else None
+    if contract is None:
+        contract = read_json(HERE.parent/'task/data/grading_contract.json')
+    meta = D['meta']; findings = list(load_findings or [])
+    result = dict(case_id=meta['case_id'], role='numerical_artifact_grading',
+                  pipeline_execution='not established by artifact grading; verify_submission.py required',
+                  scientific_gates=[], credit_items=[], report_findings=[], presentation_findings=findings)
+    if isinstance(answer, list) and len(answer) == 1 and isinstance(answer[0], dict):
+        answer = answer[0]; findings.append('one-object wrapper')
+    if not isinstance(answer, dict):
+        result.update(final_score=0, passed=False, automatic_zero='answer is not a readable object')
+        return result
+    if answer.get('schema') != 'thermodynamic_design/1' or answer.get('case_id') != meta['case_id']:
+        findings.append('schema or case_id')
+    if set(answer)-{'schema', 'case_id', 'calibration', 'proteins'}: findings.append('extra top-level metadata')
+    truth = truth or read_json(HERE/'private/truth.json')
+    truth_arrays = true_outputs(D, truth)
+
+    def keyed(raw, allowed, fields):
+        out = {}
+        if not isinstance(raw, list): return out
+        for obj in raw:
+            if not isinstance(obj, dict) or not isinstance(obj.get('id'), str): continue
+            key = obj['id']
+            if key not in allowed: findings.append('unknown object id'); continue
+            if key in out: findings.append('repeated id; first used'); continue
+            if set(obj)-set(fields): findings.append('extra object metadata')
+            out[key] = obj
+        return out
+
+    def gate(pid, metric, passed, value=None, threshold=None):
+        result['scientific_gates'].append(dict(protein=pid, metric=metric, passed=bool(passed),
+                                               value=float(value) if value is not None and np.isfinite(value) else None,
+                                               threshold=threshold))
+    cal = keyed(answer.get('calibration'), {c['id'] for c in meta['screen_conditions']}, ['id', 'background', 'ceiling'])
+    cal_normalized = []
+    for c in meta['screen_conditions']:
+        obj = cal.get(c['id'], {})
+        a = coerce([obj.get('background'), obj.get('ceiling')], (2,), findings)
+        valid = a is not None and np.isfinite(a).all() and 0 <= a[0] < a[1] <= 1
+        gate(c['id'], 'calibration_validity', valid)
+        if valid: cal_normalized.append(dict(id=c['id'], background=float(a[0]), ceiling=float(a[1])))
+    by_id = keyed(answer.get('proteins'), {p['id'] for p in meta['proteins']},
+                  ['id', 'energy', 'apo_folded', 'challenge_a', 'selected_variant'])
+    nf, nc, np_ = meta['n_variants'], len(meta['challenge_conditions']), len(meta['proteins'])
+    variant_index = {r['variant_id']: i for i, r in enumerate(D['rows'])}
+    normalized, raw = [], 0.
+    for p in meta['proteins']:
+        pid = p['id']; obj = by_id.get(pid, {}); truth_p = truth_arrays[pid]
+        en = coerce(obj.get('energy'), (nf, 3), findings)
+        apo = coerce(obj.get('apo_folded'), (nf,), findings)
+        pa = coerce(obj.get('challenge_a'), (nf, nc), findings)
+        selected = obj.get('selected_variant')
+        valid = (en is not None and apo is not None and pa is not None and
+                 all(np.isfinite(a).all() for a in [en, apo, pa]) and
+                 np.min(apo) >= 0 and np.max(apo) <= 1 and np.min(pa) >= 0 and np.max(pa) <= 1 and
+                 isinstance(selected, str) and selected in variant_index)
+        gate(pid, 'validity', valid)
+        metrics = {}
+        if valid:
+            with np.errstate(over='ignore', invalid='ignore'):
+                metrics = dict(energy_rmse=float(np.sqrt(np.mean((en-truth_p['energy'])**2))),
+                               energy_p95=float(np.percentile(np.abs(en-truth_p['energy']), 95)),
+                               apo_rmse=float(np.sqrt(np.mean((apo-truth_p['apo'])**2))),
+                               challenge_rmse=float(np.sqrt(np.mean((pa-truth_p['pa'])**2))),
+                               challenge_max_abs=float(np.max(np.abs(pa-truth_p['pa']))),
+                               design_regret=float(np.max(truth_p['utility'])-truth_p['utility'][variant_index[selected]]))
+            normalized.append(dict(id=pid, energy=en.tolist(), apo_folded=apo.tolist(), challenge_a=pa.tolist(), selected_variant=selected))
+        for group in contract['groups']:
+            metric, threshold = group['metric'], meta['acceptance_thresholds'][group['threshold']]
+            value = metrics.get(metric, np.inf)
+            ok = valid and np.isfinite(value) and value <= threshold
+            gate(pid, metric, ok, value, threshold)
+            points = group['points']/np_ if ok else 0.
+            raw += points
+            result['credit_items'].append(dict(protein=pid, metric=metric, points=points, maximum=group['points']/np_))
+    # Report evidence is independently recomputed from normalized submitted arrays.
+    report_ok = False
+    try:
+        blocks = re.findall(r'```json\s*([\s\S]*?)```', analysis_text)
+        assert len(blocks) == 1
+        report = json.loads(blocks[0])
+        rows = report['proteins']; assert isinstance(rows, list) and len(rows) == np_
+        rb = {r['id']: r for r in rows}; assert len(rb) == np_
+        assert len(normalized) == np_ and len(cal_normalized) == len(meta['screen_conditions'])
+        ev = evidence(dict(proteins=normalized, calibration=cal_normalized), D)
+        for r in ev:
+            for key, tol in meta['report_tolerances'].items():
+                v = rb[r['id']][key]
+                assert not isinstance(v, bool) and np.isfinite(float(v)) and abs(float(v)-r[key]) <= tol, r['id']+':'+key
+        report_ok = True
+    except (ValueError, TypeError, KeyError, AssertionError, OverflowError, IndexError, ZeroDivisionError) as exc:
+        result['report_findings'].append('calculated evidence missing, unreadable, or inconsistent: '+str(exc)[:200])
+    if report_ok: raw += contract['report_points']
+    failed = [g for g in result['scientific_gates'] if not g['passed']]
+    capped = min(raw, contract['scientific_gate_cap']) if failed else raw
+    final = max(0, capped-(contract['presentation_deduction'] if findings else 0))
+    result.update(raw_score=round(raw, 6), scientific_cap_applied=bool(failed),
+                  failed_gates=[g['protein']+':'+g['metric'] for g in failed], report_points=5 if report_ok else 0,
+                  final_score=round(final, 6), passed=bool(final >= contract['pass_threshold']))
+    return result
+
+
+def evaluate(answer_path, data, analysis_path=None, truth=None):
+    D = load_data(data); D['data_dir'] = str(data)
+    answer, findings, error = load_answer(answer_path)
+    try: analysis = Path(analysis_path).read_text() if analysis_path else ''
+    except (OSError, UnicodeError): analysis = ''
+    result = assess(answer, D, analysis, truth, findings)
+    if error: result['automatic_zero'] = error
+    return result
+
+
+def write_result(result, out):
+    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    (out/'rubric_results.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
+    text = '# Thermodynamic prediction grading\n\nScore: '+str(result['final_score'])+'; passed: '+str(result['passed'])+'.\n\n'
+    text += 'Artifact grading does not establish isolated pipeline execution.\n\n'
+    text += '| Binder or condition | Metric | Value | Threshold | Passed |\n|---|---|---:|---:|---|\n'
+    for g in result.get('scientific_gates', []): text += '|{protein}|{metric}|{value}|{threshold}|{passed}|\n'.format(**g)
+    (out/'rubric_results.md').write_text(text)
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(); p.add_argument('--answer', type=Path, required=True)
+    p.add_argument('--analysis', type=Path); p.add_argument('--data', type=Path, default=HERE.parent/'task/data')
+    p.add_argument('--output-dir', type=Path, required=True); a = p.parse_args()
+    r = evaluate(a.answer, a.data, a.analysis); write_result(r, a.output_dir)
+    print(json.dumps({'final_score': r['final_score'], 'passed': r['passed'], 'failed_gates': r.get('failed_gates')}))

@@ -1,15 +1,63 @@
+"""Generate both rubric representations from staged facts and predictions."""
+import argparse
+import sys
+sys.dont_write_bytecode = True
+import hashlib
+import json
 from pathlib import Path
-import json,argparse
-HERE=Path(__file__).resolve().parent
+from model import read_json
+HERE = Path(__file__).resolve().parent
+
 
 def build():
- meta=json.loads((HERE.parent/'task/data/study_metadata.json').read_text());ref=json.loads((HERE/'final_answer.json').read_text());numeric=meta['acceptance']['numeric_absolute']
- r={'case_id':meta['case_id'],'version':'1.0','weights':{'policy_decision':40,'sharp_bounds':35,'global_envelopes':15,'identification':10},'pass_threshold':80,'scientific_failure_cap':79,'presentation_deduction':5,'delivery_deduction':5,'automatic_zero':['absent/unreadable/duplicate-key/nonfinite answer JSON','missing or non-running pipeline during full verification'],'execution_gate':'Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.','required_deliverables':['run_pipeline.py','final_answer.json','analysis.md'],'tolerances':meta['acceptance'],'numeric_tolerance':1e-5,'numeric_tolerance_scope':'Oracle cross-runtime comparison fallback only; scientific solver tolerance remains the public numeric_absolute.','path_tolerances':{'/contexts/*/policies/*/eligibility_lower':numeric,'/contexts/*/policies/*/eligibility_upper':numeric,'/contexts/*/policies/*/net_gain_lower':numeric,'/contexts/*/policies/*/net_gain_upper':numeric,'/contexts/*/policies/*/harm_upper':numeric,'/contexts/*/policies/*/cost_upper':numeric,'/global_policies/*/worst_net_gain':numeric,'/global_policies/*/worst_harm':numeric,'/global_policies/*/worst_cost':numeric,'/global_policies/*/minimum_eligibility':numeric,'/global_policies/*/resource_adjusted_score':meta['acceptance']['policy_score_absolute']},'dimensions':{'contexts':len(ref['contexts']),'policies':len(ref['global_policies'])},'field_contract':{'sharp_bounds':'prompt.md: Policy worlds and target quantities','identification':'prompt.md: Policy worlds and target quantities','policy_decision':'prompt.md: Policy worlds and target quantities','global_envelopes':'prompt.md: Policy worlds and target quantities','delivery':'prompt.md: Execution and output'},'policy':'All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.','full_grading_command':'python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control'}
- text='# Rubric\n\n'+'\n'.join(f'* {key}: {value} points.' for key,value in r['weights'].items())+'\n\n'+r['policy']+'\n\n'+r['execution_gate']+'\n\nAutomatic zero: '+ '; '.join(r['automatic_zero'])+'.\n\nRequired deliverables: '+', '.join(r['required_deliverables'])+'.\n\nFull grading: `'+r['full_grading_command']+'`.\n\n## Machine-readable policy\n\n```json\n'+json.dumps(r,indent=2)+'\n```\n'
- return json.dumps(r,indent=2)+'\n',text
-if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args()
- for name,text in zip(['rubric.json','rubric.md'],build()):
-  path=HERE/name
-  if a.check:assert path.read_text()==text,'rubric drift: '+name
-  else:path.write_text(text)
+    data = HERE.parent/'task/data'
+    meta = read_json(data/'study_metadata.json')
+    answer = read_json(HERE/'final_answer.json')
+    contract = read_json(data/'grading_contract.json')
+    assert {p['id'] for p in answer['proteins']} == {p['id'] for p in meta['proteins']}
+    for p in answer['proteins']:
+        assert len(p['energy']) == len(p['apo_folded']) == len(p['challenge_a']) == meta['n_variants']
+    rubric = dict(contract, rubric_version='1.0', acceptance_thresholds=meta['acceptance_thresholds'],
+                  report_tolerances=meta['report_tolerances'], numeric_tolerance=0.0001,
+                  numeric_tolerance_role='serialization comparison only; scientific tolerances are the six named thresholds',
+                  binder_ids=[p['id'] for p in meta['proteins']], variant_count=meta['n_variants'],
+                  screen_variant_count=meta['n_screen'], energy_columns=meta['energy_columns'],
+                  screen_condition_count=len(meta['screen_conditions']), challenge_condition_count=len(meta['challenge_conditions']),
+                  canonical_answer_sha256=hashlib.sha256((HERE/'final_answer.json').read_bytes()).hexdigest(),
+                  solver_slots=read_json(HERE.parent/'task/deliverables.json'),
+                  grading_scope='Hidden simulation truth for scientific metrics; report evidence recomputed from submitted arrays',
+                  execution_scope='Artifact grader cannot establish execution. Full verification requires isolated base and regenerated runs.')
+    js = json.dumps(rubric, indent=2)+'\n'
+    text = '# Thermodynamic protein design rubric\n\nGenerated from `rubric.json`, the public contract, metadata, and canonical answer.\n\n'
+    text += ('The answer covers '+str(len(rubric['binder_ids']))+' binders and '+str(rubric['variant_count'])+
+             ' variants per binder, with '+str(rubric['screen_variant_count'])+' measured variants, '+
+             str(rubric['screen_condition_count'])+' screen conditions, and '+str(rubric['challenge_condition_count'])+
+             ' competitive challenges. Arrays follow the staged variant order.\n\n')
+    text += ('Each scientific group is divided equally among binders. Every validity and accuracy requirement is mandatory. '
+             'An invalid binder block earns no scientific credit for that binder. Any failed scientific gate caps the score at '+
+             str(rubric['scientific_gate_cap'])+'. Passing requires '+str(rubric['pass_threshold'])+' points, inclusive.\n\n')
+    text += '| Metric | Answer field | Package points | Maximum error |\n|---|---|---:|---:|\n'
+    for g in rubric['groups']:
+        text += '|'+g['metric']+'|`'+g['field']+'`|'+str(g['points'])+'|'+str(rubric['acceptance_thresholds'][g['threshold']])+'|\n'
+    text += ('\nError definitions and utility are in the public prompt. The private simulation coefficients generate the scoring truth. '
+             'A selection within the regret limit receives full decision credit, regardless of tie order or estimator.\n\n')
+    text += ('The '+str(rubric['report_points'])+' report points require the complete calculated JSON evidence block. '
+             'An absent or inconsistent block withholds those points and never activates the scientific cap.\n\n')
+    text += '| Computed report field | Absolute comparison tolerance |\n|---|---:|\n'
+    for k, v in rubric['report_tolerances'].items(): text += '|'+k+'|'+str(v)+'|\n'
+    text += ('\nRecoverable presentation deviations listed in the public Execution section cost '+str(rubric['presentation_deduction'])+
+             ' points once, after any scientific cap. They never activate the cap. Missing or unreadable answers and missing or '
+             'non-running pipelines receive zero. Stored answers and external evidence require documented isolated-execution evidence.\n\n')
+    text += ('Artifact grading establishes numerical results only. `verify_submission.py` executes the single source file against the '
+             'published and regenerated inputs with private files inaccessible. Infrastructure failures are blocked checks, not model failures. '
+             'The generic numeric comparison tolerance is '+str(rubric['numeric_tolerance'])+
+             '; the named scientific limits above are the authoritative accuracy gates.\n\n')
+    text += 'Canonical answer SHA-256: `'+rubric['canonical_answer_sha256']+'`.\n'
+    return js, text
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(); p.add_argument('--check', action='store_true'); a = p.parse_args()
+    for name, text in zip(['rubric.json', 'rubric.md'], build()):
+        if a.check: assert (HERE/name).read_text() == text, name+' is stale'
+        else: (HERE/name).write_text(text)

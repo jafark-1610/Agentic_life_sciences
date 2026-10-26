@@ -1,80 +1,103 @@
-# Required deliverables
+# ALS_THERMODYNAMIC_DESIGN_004
 
 Required deliverables: run_pipeline.py, final_answer.json, analysis.md
 
-These are the only three solver submission slots. `required_deliverables.json` and `deliverables.json` both contain this exact flat filename list. The dependency list in `task/requirements.txt` is supplied task input, not an additional solver submission.
+## Protein engineering from selection assays
 
-# ALS_PAIRED_IMMUNITY_003
+Recover the thermodynamic landscapes of six synthetic protein binders and select a variant for each binder that retains useful binding in competition. The supplied mutation library contains 20 binary mutation positions and 16,384 variants. Only variants labelled `screen` have capture measurements. Predict every supplied variant, including those with no capture measurements. Every supplied variant is eligible for selection.
 
-## Paired-clone immune rescue under viability-gated readout
+The files under `data/` are the complete experimental inputs. These are simulated equilibrium experiments, not clinical observations. The six binders have different unknown landscapes. The capture apparatus calibration is shared across binders at each screen condition. Do not transfer a binder's sequence coefficients to another binder.
 
-Three synthetic immune-culture cohorts were assayed in two laboratory mixtures under four priming/rescue assignment designs. Choose one assay-adaptive policy for use in every target cohort. The scientific target is a paired-clone contrast among clones that would remain viable under both the proposed policy and the benchmark, with sharp bounds over the entire causal family compatible with the released tables. No patient or clinical efficacy claim is involved.
+## Physical model
 
-## Biological and measurement model
+A variant is the binary vector x in the `mutations` column of `variants.csv`. Character i is position i in `study_metadata.json -> positions`; the first character is the first position. The mutation labels have no external sequence or structural annotation.
 
-For one clone let X be its binary receptor genotype and U its latent biological state. The distribution of U conditional on X can differ between cohorts. Within a cohort it is identical in both laboratories and the target population. The known laboratory and target frequencies of X=1 are in `data/contexts.json`. No other population-transport restriction is imposed.
+At the baseline denaturant concentration of 1.0 M, its folding free energy F(x), ligand-A binding free energy A(x), and ligand-B binding free energy B(x) each belong to the full quadratic family
 
-Z is a noisy baseline genotype assay: P(Z=1|X=0) is z_false_positive, and P(Z=0|X=1) is z_false_negative. Conditional on X, its measurement randomness is independent of U and the imaging variable E. E is Bernoulli(image_flip), independent of X,U,Z and assignment randomization. Z and E are clone attributes in the potential-world model below.
+    E(x) = beta_0 + sum_i beta_i*x_i + sum_{i<j} beta_ij*x_i*x_j.
 
-A is the initial priming assignment; M is the true early activation state; W is the recorded activation image; B is the later rescue assignment; S is viability; and Y is binary neutralization capacity. Each satisfies
+All coefficients are unknown, real, and binder-specific. No sparsity, sign restriction, common contact graph, or higher order terms are assumed. Energies are dimensionless in units of kBT. This is a constraint on energies, not on occupancies or capture probabilities.
 
-    M = f_M(A,U)
-    W = M XOR E
-    S = f_S(M,B,U)
-    Y = f_Y(M,B,U).
+The denaturation slope is known from an independent characterization:
 
-All arguments and outputs except U are binary. For each fixed U, f_M is nondecreasing in A. f_S is nondecreasing in each of M and B, holding its other argument fixed. For each fixed M,U, f_Y is nondecreasing in B. There is no monotonicity restriction on f_Y in M: early activation can also induce exhaustion. The joint distribution of all biological response functions and natural-assignment functions conditional on X is otherwise unrestricted.
+    m(x) = m0 + sum_i mutation_m_shift[i]*x_i
+    F_u(x) = F(x) + m(x)*urea.
 
-Y is recorded only when S=1. When S=0 its table label is NA, and this cell aggregates both possible latent values of Y. S itself is always observed. NA is not a zero response and is not a separate biological outcome. There are no omitted table cells or finite-sample standard errors.
+Use the binder's values in `study_metadata.json`. The condition field `urea` is the signed molar offset from `urea_baseline_molar`, not an absolute concentration: actual concentration is 1.0 M plus that field. Thus a challenge offset of -0.7 means 0.3 M absolute denaturant. Ligand activities a and b are dimensionless and share a fixed standard state. Binding energies do not change with denaturant. Both ligands bind only the folded state, competitively at the same site. There are four states with weights
 
-Natural assignment obeys A=g_A(U), B=g_B(W,U), with arbitrary binary natural-assignment functions. These functions remain properties of the clone in randomized designs even when assignment is overridden. There is no direct effect of laboratory or assignment-design labels on biological functions or measurement laws.
+    unfolded:                  1
+    folded, unoccupied:        exp(-F_u)
+    folded, bound to A:        a*exp(-F_u-A)
+    folded, bound to B:        b*exp(-F_u-B).
 
-## Assignment designs and tables
+Their sum is the partition function Z. Occupancy of A is its state weight divided by Z, and likewise for B. The apo folded fraction requested below is the probability of the folded state at offset urea=0 (the 1.0 M baseline) with neither ligand present. There are no kinetic, aggregation, multimerization, or direct unfolded-state binding effects.
 
-In `data/protocols.json`:
+## Measurements
 
-* natural: both assignments use their natural functions.
-* priming_trial: A is randomized with P(A=1)=0.45; B uses its natural function.
-* rescue_trial: A uses its natural function; B is randomized with P(B=1|W=0)=0.7 and P(B=1|W=1)=0.35.
-* sequential_trial: both stages use those randomized rules.
+`capture_counts.csv` has one row per binder, screen variant, and screen condition. The `trials` molecules in that row are independent Bernoulli trials; `captured` is their observed success count. The relevant true binding occupancy p is A or B according to the condition's `reporter`. Under that condition the success probability is
 
-Each randomized coin is independent of the biological and assay attributes conditional on its stated design variables. All protocols draw from the same cohort/laboratory population law. Table entries are joint probabilities of (Z,A,W,B,S,Y_recorded), conditional on laboratory and protocol. Do not renormalize the table to viable cultures. Each group has 48 mutually exclusive cells, including zero-valued probabilities.
+    q = background*(1-p) + ceiling*p.
 
-The supplied population probabilities are rounded to 12 decimal places. An admissible causal law must obey all structural, independence and transport assumptions and predict every released cell within the cohort's probability_band, inclusively. The same law must support every protocol and laboratory of its cohort simultaneously. All admissible laws, including those assigning probability to biological response functions not used by a chosen fitted representation, belong to the scientific uncertainty set. No distributional prior or parametric latent-family restriction is supplied.
+`background` and `ceiling` are unknown and condition-specific, with 0 < background < ceiling < 1. They are shared across all variants and binders in that condition. `calibration_counts.csv` contains independent binomial measurements on controls with known exact `bound_fraction`, following the same q model. Control trials are independent of the protein measurements. Counts are draws, not rounded probabilities. All incubation activities, reporters, denaturant values, and challenge conditions are in the metadata. There are no other assay covariates or external calibrations.
 
-## Policy worlds and target quantities
+## Design objective
 
-`data/policies.json` is the complete menu. Each policy has a two-entry array a indexed by Z and a 2-by-2 array b indexed first by Z and then W. Its counterfactual world sets A^p=a[Z], M^p=f_M(A^p,U), W^p=M^p XOR E, B^p=b[Z][W^p], followed by the biological S^p,Y^p equations. The benchmark in `data/benchmark.json` uses its own arrays in the same equations. In a paired-clone comparison, X,U,Z,E refer to that same clone in both worlds. The target expectations use target_x1 rather than either laboratory's genotype mixture. All policies start at the first assignment; no policy inherits states or natural assignment from another one.
+For a variant, let p_A,j be its true A occupancy in challenge condition j. Its manufacturing and binding utility is
 
-For policy p, let G_p be the event S^p=1 AND S^benchmark=1. For an admissible target law Q define
+    U(x) = apo_folded(x) * min_j p_A,j(x) - mutation_cost * sum_i x_i.
 
-    eligibility_p(Q) = P_Q(G_p)
-    net_gain_p(Q) = E_Q[Y^p - Y^benchmark | G_p]
-    harm_p(Q) = P_Q(Y^p=0, Y^benchmark=1 | G_p)
-    cost_p(Q) = E_Q[A^p + rescue_cost*B^p].
+The published `design.mutation_cost` applies to every binder. Select one supplied variant per binder. Design regret is the maximum true utility among the supplied variants minus the true utility of your selection. Any selection within the published regret tolerance is accepted; no particular tie-break is required.
 
-The conditioning event belongs to the same paired-clone law as its numerator. The supplied data guarantee strictly positive lower eligibility for every menu policy, so these conditional quantities are defined throughout each admissible set.
+## Answer contract
 
-For each cohort and policy, report the infimum and supremum of eligibility, the infimum and supremum of net_gain, the supremum of harm, and the supremum of cost over all admissible causal laws for that cohort. These are sharp population-model bounds. Every endpoint is optimized for its own stated quantity; a single fitted distribution is not the requested answer. `point_identified` is true iff the unrounded net-gain interval width is at most acceptance.identification_width. Any correct inference and optimization method is accepted.
+Write finite JSON to `results/final_answer.json`. Use `schema` = `thermodynamic_design/1`, `case_id` = `ALS_THERMODYNAMIC_DESIGN_004`, and the arrays `calibration` and `proteins`.
 
-For each policy across cohorts report worst_net_gain as the minimum cohort net_gain_lower; worst_harm as the maximum cohort harm_upper; worst_cost as the maximum cohort cost_upper; and minimum_eligibility as the minimum cohort eligibility_lower.
+For each screen condition, `calibration` has one object with `id`, `background`, and `ceiling`. For each binder, `proteins` has one object with:
 
-A policy qualifies when worst_harm <= decision.maximum_harm, worst_cost <= decision.maximum_cost, and minimum_eligibility >= decision.minimum_eligibility. The resource-adjusted policy score is worst_net_gain - decision.resource_penalty*worst_cost; report it as resource_adjusted_score. Among qualifying policies choose one maximizing this score. Any qualifying policy within acceptance.decision_slack of that maximum is accepted. A negative score does not permit abstention when a policy qualifies. Identifier order is only a convenient tie convention. If none qualifies, report no_qualifying_policy with null policy.
+- `id`: its published binder identifier.
+- `energy`: a 16,384 by 3 array in the exact row order of `variants.csv`; columns are F, A, B at the baseline denaturant concentration in that order. These are the latent physical energies, not apparent dissociation energies or capture logits.
+- `apo_folded`: a 16,384-element array in that same variant order, containing the apo folded fractions.
+- `challenge_a`: a 16,384 by 4 array in that same variant order; columns follow the published challenge-condition order and contain A occupancies in the simultaneous presence of both ligands.
+- `selected_variant`: one supplied variant identifier.
 
-## Execution and output
+Binder and calibration object order is immaterial. Probabilities must be between 0 and 1. The output schema is `data/output_schema.json`. Coefficients are not required and no particular estimation method is required. Decimal precision is unrestricted.
 
-Work in `solver_solution/` with `task/` available as a read-only sibling. Run offline with Python 3.11+, numpy, scipy and jsonschema available. Do not install packages or obtain external data. The exact command is
+## Scientific acceptance
+
+Each binder must satisfy all six error requirements in `study_metadata.json -> acceptance_thresholds`, measured against the generating physical system:
+
+- `energy_rmse_max`: root mean squared error over all entries of `energy`.
+- `energy_p95_max`: 95th percentile of absolute error over all entries of `energy`, using linear interpolation between order statistics.
+- `apo_rmse_max`: root mean squared error of `apo_folded` over all variants.
+- `challenge_rmse_max`: root mean squared error over all entries of `challenge_a`.
+- `challenge_max_abs_max`: maximum absolute error over all entries of `challenge_a`.
+- `design_regret_max`: the design regret defined above.
+
+The simulation coefficients are withheld. They are used for evaluation and never available during solver execution. The energy family, observation model, candidate panel, conditions, objective, error definitions, and tolerances given here fully specify the inference problem. A capture residual is a diagnostic and is not a replacement for latent-energy or design accuracy.
+
+Every binder must have finite energies, valid probability arrays, and a supplied selection. An invalid or unreadable binder block earns no scientific credit for that binder. Each calibration must satisfy 0 <= background < ceiling <= 1. Any failed scientific requirement caps the score at 79; passing requires at least 80. `data/grading_contract.json` publishes weights and the field-to-requirement mapping. A correct alternative estimator receives the same credit.
+
+## Computed analysis evidence
+
+Write `results/analysis.md` describing the calibration, inference, variant extrapolation, selection, and limitations. Include exactly one fenced block labelled `json` containing `{"proteins": [...]}`. Each binder object in that block has `id` and four numbers computed from the answer you actually serialized:
+
+- `capture_deviance_per_observation`: mean binomial deviance over all its capture rows, using its reported screen-variant energies, known m(x), reported calibration, and the physical model above. Deviance for n trials, k successes, and predicted q is 2*[k*log((k/n)/q) + (n-k)*log((1-k/n)/(1-q))], with a zero-count term defined as zero. Clip q to [1e-15, 1-1e-15] only for this diagnostic.
+- `capture_rmse`: root mean squared error between those predicted q values and observed k/n.
+- `mean_apo_folded`: arithmetic mean of its reported `apo_folded` array.
+- `mean_worst_a`: mean, over variants, of the minimum entry in each row of its reported `challenge_a` array.
+
+Diagnostic tolerances are in `report_tolerances`. The five report points are awarded for a complete, numerically consistent calculated evidence block; otherwise they are withheld. Report evidence cannot activate the scientific cap. No claim about an unobserved truth metric is required. The report must describe computations actually performed.
+
+## Execution
+
+Work in your own directory with `task/` as a read-only sibling. Validate inputs using:
+
+    python ../task/data/validate_dataset.py
+
+Create one self-contained `run_pipeline.py` and run:
 
     python run_pipeline.py --data ../task/data --output-dir results
 
-Accept arbitrary input and output directory paths. Validate input first:
+Accept arbitrary paths for both arguments. The entry point must contain all submitted computational code: there are no helper-code output slots. The three submission slots are `run_pipeline.py`, `final_answer.json`, and `analysis.md`; the last two are collected from `results/`. No extra solver deliverables are required. The environment supplies Python 3.11 or newer and numpy, pandas, scipy, scikit-learn, statsmodels, and jsonschema. No network access or package installation is available during execution. Derive results from the input files each time. Submitted code is rerun in isolation, with only task inputs visible, including a freshly simulated instance from the same model family. An input-dependent solution is required; cached answers do not meet the task.
 
-    python ../task/data/validate_dataset.py --data ../task/data
-
-The executable source is the run_pipeline.py submission. Write the final_answer.json and analysis.md submissions to the requested output directory. Recompute from staged scientific input on every execution; the evaluator also executes the submitted code on physically consistent regenerated population tables. Evaluator paths and stored answers are unavailable to the submitted runtime. Regular helper modules are permitted if they accompany the submitted source; symbolic links are unsupported. There is no required package-installation or additional dependency-declaration output.
-
-`data/output_schema.json` defines the answer. Its metadata are schema=paired_immunity/1 and case_id=ALS_PAIRED_IMMUNITY_003. Include every supplied cohort and policy exactly once and each policy once per cohort. Match by IDs; all list orders are accepted. Every numeric endpoint and global envelope must match its scientific target within acceptance.numeric_absolute, except resource_adjusted_score, which uses acceptance.policy_score_absolute to allow propagation of upstream numerical errors. No decimal-place convention is graded. All scientific requirements and input-dependent execution are required for acceptance.
-
-`analysis.md` must contain exactly one fenced json block with these fields: case_id; selected_policy (the selected ID or null); selected_policy_metrics (its global_policies object or null); decision_limits (the public decision object); interval_interpretation equal to sharp_bounds_over_compatible_causal_models; and context_diagnostics, listing each cohort's id, point_identified_policy_count, and largest_net_gain_width computed from its reported net-gain bounds. Narrative outside this block is optional. The executable grader validates these computed diagnostics; self-written success claims are not proof of scientific correctness.
-
-Unreadable, absent, duplicate-key or nonfinite JSON receives zero. A readable answer object wrapped in a one-element array is recovered before numerical scoring. Numeric strings in numeric fields are recovered. Wrapper recovery, numeric strings, extra fields and missing/incorrect schema metadata incur only the single published presentation deduction; they do not cause a scientific failure by themselves. Missing scientific content fails its group. A missing report or inconsistent diagnostic block receives a delivery deduction. A missing or non-running pipeline cannot satisfy execution. The numeric rubric specifies all scores, caps and deductions; there are no hidden formatting or annotation rules.
+Recoverable presentation deviations cost five points once, and do not activate the scientific cap: a one-object list wrapper, numeric strings, transposed or row-major flattened matrices, missing or incorrect schema/case_id, duplicate keys (last value used), repeated binder/condition ids (first occurrence used), or extra metadata. Standard field names and array shapes are authoritative; unrelated aliases are not guessed. Unreadable numeric blocks fail only their binder's scientific requirements. Missing/unparseable JSON or a missing/non-running pipeline receives zero. Invalid numeric values are scientific failures, never an exception in grading. External evidence and stored-answer substitution require documented isolated-execution evidence. Infrastructure failures are recorded as blocked, not counted as model failures.

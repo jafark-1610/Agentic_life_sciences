@@ -1,79 +1,33 @@
-# Rubric
+# Thermodynamic protein design rubric
 
-* policy_decision: 40 points.
-* sharp_bounds: 35 points.
-* global_envelopes: 15 points.
-* identification: 10 points.
+Generated from `rubric.json`, the public contract, metadata, and canonical answer.
 
-All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.
+The answer covers 6 binders and 16384 variants per binder, with 1400 measured variants, 12 screen conditions, and 4 competitive challenges. Arrays follow the staged variant order.
 
-Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.
+Each scientific group is divided equally among binders. Every validity and accuracy requirement is mandatory. An invalid binder block earns no scientific credit for that binder. Any failed scientific gate caps the score at 79. Passing requires 80 points, inclusive.
 
-Automatic zero: absent/unreadable/duplicate-key/nonfinite answer JSON; missing or non-running pipeline during full verification.
+| Metric | Answer field | Package points | Maximum error |
+|---|---|---:|---:|
+|energy_rmse|`proteins[].energy`|10|0.3|
+|energy_p95|`proteins[].energy`|10|0.6|
+|apo_rmse|`proteins[].apo_folded`|20|0.025|
+|challenge_rmse|`proteins[].challenge_a`|15|0.02|
+|challenge_max_abs|`proteins[].challenge_a`|10|0.12|
+|design_regret|`proteins[].selected_variant`|30|0.03|
 
-Required deliverables: run_pipeline.py, final_answer.json, analysis.md.
+Error definitions and utility are in the public prompt. The private simulation coefficients generate the scoring truth. A selection within the regret limit receives full decision credit, regardless of tie order or estimator.
 
-Full grading: `python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control`.
+The 5 report points require the complete calculated JSON evidence block. An absent or inconsistent block withholds those points and never activates the scientific cap.
 
-## Machine-readable policy
+| Computed report field | Absolute comparison tolerance |
+|---|---:|
+|capture_deviance_per_observation|0.05|
+|capture_rmse|1e-06|
+|mean_apo_folded|1e-06|
+|mean_worst_a|1e-06|
 
-```json
-{
-  "case_id": "ALS_PAIRED_IMMUNITY_003",
-  "version": "1.0",
-  "weights": {
-    "policy_decision": 40,
-    "sharp_bounds": 35,
-    "global_envelopes": 15,
-    "identification": 10
-  },
-  "pass_threshold": 80,
-  "scientific_failure_cap": 79,
-  "presentation_deduction": 5,
-  "delivery_deduction": 5,
-  "automatic_zero": [
-    "absent/unreadable/duplicate-key/nonfinite answer JSON",
-    "missing or non-running pipeline during full verification"
-  ],
-  "execution_gate": "Actual submitted source must run offline in isolation and pass on both base and regenerated population tables. Infrastructure capability failure is BLOCKED, not a solver failure. Failed scientific rerun prevents acceptance and caps at 79.",
-  "required_deliverables": [
-    "run_pipeline.py",
-    "final_answer.json",
-    "analysis.md"
-  ],
-  "tolerances": {
-    "numeric_absolute": 0.001,
-    "decision_slack": 0.001,
-    "identification_width": 0.0001,
-    "policy_score_absolute": 0.002
-  },
-  "numeric_tolerance": 1e-05,
-  "numeric_tolerance_scope": "Oracle cross-runtime comparison fallback only; scientific solver tolerance remains the public numeric_absolute.",
-  "path_tolerances": {
-    "/contexts/*/policies/*/eligibility_lower": 0.001,
-    "/contexts/*/policies/*/eligibility_upper": 0.001,
-    "/contexts/*/policies/*/net_gain_lower": 0.001,
-    "/contexts/*/policies/*/net_gain_upper": 0.001,
-    "/contexts/*/policies/*/harm_upper": 0.001,
-    "/contexts/*/policies/*/cost_upper": 0.001,
-    "/global_policies/*/worst_net_gain": 0.001,
-    "/global_policies/*/worst_harm": 0.001,
-    "/global_policies/*/worst_cost": 0.001,
-    "/global_policies/*/minimum_eligibility": 0.001,
-    "/global_policies/*/resource_adjusted_score": 0.002
-  },
-  "dimensions": {
-    "contexts": 3,
-    "policies": 24
-  },
-  "field_contract": {
-    "sharp_bounds": "prompt.md: Policy worlds and target quantities",
-    "identification": "prompt.md: Policy worlds and target quantities",
-    "policy_decision": "prompt.md: Policy worlds and target quantities",
-    "global_envelopes": "prompt.md: Policy worlds and target quantities",
-    "delivery": "prompt.md: Execution and output"
-  },
-  "policy": "All scientific groups are gates and group credit is all-or-nothing. Any scientific failure caps at 79. Presentation recovery is applied before science and costs 5 once without activating a gate. Missing/inconsistent analysis diagnostics cost 5. Caps precede deductions. Scores are floored at zero; pass threshold is 80 inclusive. No other score rules apply. IDs determine alignment; every array ordering is accepted. Any qualifying policy within public decision slack of the optimal resource-adjusted score is accepted.",
-  "full_grading_command": "python expert_solution/verify_submission.py --solver PATH --data task/data --output-dir OUTPUT --replay-control"
-}
-```
+Recoverable presentation deviations listed in the public Execution section cost 5 points once, after any scientific cap. They never activate the cap. Missing or unreadable answers and missing or non-running pipelines receive zero. Stored answers and external evidence require documented isolated-execution evidence.
+
+Artifact grading establishes numerical results only. `verify_submission.py` executes the single source file against the published and regenerated inputs with private files inaccessible. Infrastructure failures are blocked checks, not model failures. The generic numeric comparison tolerance is 0.0001; the named scientific limits above are the authoritative accuracy gates.
+
+Canonical answer SHA-256: `9e3b8f9b13b82bb27f84bedee9af893f7c04fc01272715b913b900e3e0cc0cf1`.
