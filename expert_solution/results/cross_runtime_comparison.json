@@ -1,15 +1,6 @@
 {
   "status": "success",
-  "role": "cross_runtime_scientific_check",
-  "maximum_nonwitness_numeric_difference": 1.000000082740371e-08,
-  "scientific_score": 100.0,
-  "runtime": {
-    "python": "3.13.5",
-    "dependencies": {
-      "numpy": "2.2.4",
-      "scipy": "1.15.3",
-      "jsonschema": "4.19.2"
-    }
-  },
-  "note": "Attaining witnesses and choices may differ when they meet the physical endpoint and regret limits."
+  "scientific_score": 100,
+  "python": "3.13.5",
+  "scope": "Independent Python/SciPy runtime; scientific agreement assessed by the published statistical criteria."
 }

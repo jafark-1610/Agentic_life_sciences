@@ -1,69 +1,15 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
   "pass_threshold": 80,
-  "scientific_gate_cap": 79,
-  "total_points": 100,
-  "groups": [
-    {
-      "id": "identification",
-      "points": 10,
-      "fields": [
-        "mixture_weights",
-        "exchange_generators",
-        "forward_bounds",
-        "backward_bounds",
-        "candidate_counts",
-        "retention_bounds"
-      ],
-      "prompt_section": "Answer structure and Retention, rate, and entropy ranges"
-    },
-    {
-      "id": "retained_entropy",
-      "points": 10,
-      "fields": [
-        "retained_epr_bounds"
-      ],
-      "prompt_section": "Retention, rate, and entropy ranges"
-    },
-    {
-      "id": "policy_probabilities",
-      "points": 15,
-      "fields": [
-        "policies[].success_bounds",
-        "policies[].loss_bounds",
-        "policies[].cost_bounds"
-      ],
-      "prompt_section": "Screening and intervention"
-    },
-    {
-      "id": "joint_gain_and_net",
-      "points": 25,
-      "fields": [
-        "policies[].gain_bounds",
-        "policies[].net_bounds"
-      ],
-      "prompt_section": "Screening and intervention"
-    },
-    {
-      "id": "robust_choice",
-      "points": 30,
-      "fields": [
-        "selected_policy"
-      ],
-      "prompt_section": "Screening and intervention"
-    },
-    {
-      "id": "attaining_witnesses",
-      "points": 5,
-      "fields": [
-        "net_witnesses"
-      ],
-      "prompt_section": "Answer structure and attaining witnesses"
-    }
-  ],
-  "group_division": "Each group divided equally across preparations. All scientific requirements are mandatory.",
+  "scientific_cap": 79,
+  "groups": {
+    "coverage": 5,
+    "rates_and_effects": 20,
+    "intervals": 20,
+    "classes": 20,
+    "group_contrasts": 20,
+    "sensitivity": 10
+  },
   "report_points": 5,
   "presentation_deduction": 5,
-  "numeric_policy": "Absolute endpoint error; candidate counts exact; allowed choices determined by true lower-net regret; arbitrary valid attaining witnesses accepted.",
-  "execution_policy": "Artifact grading does not establish execution. Full isolated original and regenerated runs are required; infrastructure failures are BLOCKED."
+  "numeric_tolerance": 0.0001
 }

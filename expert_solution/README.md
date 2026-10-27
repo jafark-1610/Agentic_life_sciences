@@ -1,16 +1,8 @@
-# Population kinetics and sharp policy envelopes
+# RNA inference pipeline
 
-The pipeline separates the persistent subtype distributions, reconstructs all locally compatible continuous-time cycles, applies the shared bulk turnover calibration, and computes conditional intervention envelopes over the surviving joint models.
+analysis_engine.py jointly fits compartment trajectories and pools parental contrasts. run_pipeline.py consumes config/parameters.yaml and writes results/final_answer.json, results/analysis.md and the expert execution metadata results/run_summary.json. The latter is outside solver slots. score_rubric.py grades all three settings using the public statistical allowances. Validation, tests and scientific controls are in tests/ and robustness_checks/. The source generator and simulation truth are evaluator-only.
 
-    python run_pipeline.py --data ../task/data --output-dir results --config config/parameters.yaml
+    python run_pipeline.py --data ../task/data --output-dir results
+    python -m unittest discover -s tests
 
-`kinetics.py` handles the state model, observation law, and competing first passage. `envelopes.py` filters joint microscopic models and computes sharp extrema. `expert_solution.py` builds the answer. `artifacts.py` computes the witness diagnostics. The configuration file is JSON-compatible YAML and is consumed at runtime. `results/run_summary.json` records the expert execution, hashes, versions, and candidate telemetry; it is outside the solver slots.
-
-`private/truth.json` stores the simulation invariants. `private/expected_answer.json` is independently computed from them by `compute_truth.py`. The inference pipeline does not read either file. `build_rubric_md.py` generates the machine rubric, explicit numerical comparison items, and human rubric. `score_rubric.py` accepts any method meeting the public limits and checks arbitrary attaining witnesses.
-
-    PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v
-    python robustness_checks/run_checks.py
-    python validate_package.py
-    python freeze_package.py --check
-
-`tests/independent_oracle.py` checks tensor recovery and the filtered uncertainty set by a different numerical route. `source_archive/generate_data.py` recreates the simulated observations and protocols. `export_solver.py` produces a temporary self-contained computational entry point for `verify_submission.py`, which executes original and regenerated inputs with private files and network access unavailable. `evaluation_status.json` records external model evaluation status.
+`calibrate.py` regenerates five reserved experiments and measures population-effect interval coverage. `method_notes.md` explains the mechanistic and statistical assumptions and distinguishes these checks from external model qualification.

@@ -7,12 +7,12 @@ HERE = Path(__file__).resolve().parent
 
 
 def export(destination):
-    modules = ['kinetics.py', 'envelopes.py', 'expert_solution.py', 'artifacts.py', 'run_pipeline.py']
+    modules = ['analysis_engine.py', 'artifacts.py', 'run_pipeline.py']
     statements = []
     for name in modules:
         tree = ast.parse((HERE/name).read_text())
         for node in tree.body:
-            if isinstance(node, ast.ImportFrom) and node.module in ['kinetics', 'envelopes', 'expert_solution', 'artifacts']:
+            if isinstance(node, ast.ImportFrom) and node.module in ['analysis_engine', 'artifacts']:
                 continue
             if name == 'run_pipeline.py' and isinstance(node, ast.FunctionDef) and node.name == 'main':
                 class ConfigTransform(ast.NodeTransformer):

@@ -1,131 +1,33 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "case_id": "ALS_RNA_TRANSPORT_006",
   "status": "success",
   "exit_code": 0,
-  "role": "expert_execution_metadata_outside_solver_slots",
-  "seconds": 48.911,
+  "seconds": 35.45107850400382,
   "python": "3.12.14",
-  "dependencies": {
-    "numpy": "2.3.5",
-    "scipy": "1.17.0",
-    "jsonschema": "4.26.0"
-  },
   "required_deliverables": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
   "configuration": {
-    "case_id": "ALS_HIDDEN_CYCLE_005",
+    "case_id": "ALS_RNA_TRANSPORT_006",
     "required_deliverables": [
       "run_pipeline.py",
       "final_answer.json",
       "analysis.md"
     ],
-    "tensor_contraction": [
-      0.431,
-      -0.217,
-      0.733
-    ]
+    "iterations": 65
   },
-  "telemetry": [
-    {
-      "id": "prep_485fd8f9",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 27138,
-      "selected_index": 59,
-      "selected_lower_net": 0.07228310802761831
+  "diagnostics": {
+    "base": {
+      "mean_deviance": 14.026324839229831,
+      "fits": 7200
     },
-    {
-      "id": "prep_c2319704",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 217568,
-      "selected_index": 38,
-      "selected_lower_net": 0.06255971635503159
-    },
-    {
-      "id": "prep_22eeb6a4",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 56840,
-      "selected_index": 58,
-      "selected_lower_net": 0.07454327633035478
-    },
-    {
-      "id": "prep_19d92d34",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 240900,
-      "selected_index": 26,
-      "selected_lower_net": 0.06777664143689355
-    },
-    {
-      "id": "prep_ca1a8bb6",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 190051,
-      "selected_index": 31,
-      "selected_lower_net": 0.0749310877620321
-    },
-    {
-      "id": "prep_07dfaec7",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 200916,
-      "selected_index": 53,
-      "selected_lower_net": 0.0800763482118555
-    },
-    {
-      "id": "prep_ad8c8bd5",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 237543,
-      "selected_index": 58,
-      "selected_lower_net": 0.06654326564232403
-    },
-    {
-      "id": "prep_8edfed11",
-      "candidate_counts": [
-        729,
-        729,
-        729
-      ],
-      "unconstrained_joint_count": 387420489,
-      "calibrated_joint_count": 135911,
-      "selected_index": 37,
-      "selected_lower_net": 0.07315976770969113
+    "early_window": {
+      "mean_deviance": 10.022294160882064,
+      "fits": 7200
     }
-  ],
-  "answer_sha256": "b9b9febf6f2db11da8dd6e4e0de44b64477680ec34431e492903ba184e8a261a",
-  "data_manifest_sha256": "8cb7f2010153fe29b694b901f43c89f2eb7d9c8b90aa3ef5d0d603f8edfac980"
+  },
+  "answer_sha256": "f38d8dd9bf7877f09f23364bc76051ffef087cf25abac2fffe3a24ab96c1f498",
+  "data_manifest_sha256": "9363701c46c8f073d126affeb83d5e9446f9459986db335394247d4867f4bd55"
 }

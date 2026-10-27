@@ -1,8 +1,7 @@
 {
   "status": "success",
-  "tests_run": 28,
-  "failures": 0,
+  "tests_run": 12,
   "errors": 0,
-  "seconds": 7.876,
-  "source_sha256": "8525694b4bf21f17b9c42933617d865641d589a86a355002af718296b73d9363"
+  "failures": 0,
+  "seconds": 7.378643222997198
 }

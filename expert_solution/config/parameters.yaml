@@ -1,13 +1,9 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "case_id": "ALS_RNA_TRANSPORT_006",
   "required_deliverables": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
-  "tensor_contraction": [
-    0.431,
-    -0.217,
-    0.733
-  ]
+  "iterations": 65
 }

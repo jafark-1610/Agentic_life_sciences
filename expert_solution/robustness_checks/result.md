@@ -1,12 +1,65 @@
-# Scientific control results
+# Scientific controls
 
-| Check | Passed |
-|---|---|
-|expert_gate_clearance|True|
-|exactly_fitting_single_model_fails_science|True|
-|outer_bounds_do_not_receive_sharpness_credit|True|
-|endpoint_occupancy_is_not_first_passage|True|
-|independent_pencil_and_joint_enumeration|True|
-|convexification_audit|True|
-|correct_science_format_recovery|True|
-|uncomputed_report_withholds_only_report_credit|True|
+{
+  "status": "success",
+  "checks": [
+    {
+      "name": "omit_cell_dilution",
+      "passed": true,
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
+    },
+    {
+      "name": "assume_complete_transcription_block",
+      "passed": true,
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
+    },
+    {
+      "name": "treat_fractions_as_pure",
+      "passed": true,
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
+    }
+  ],
+  "scope": "Wrong-method numerical controls, not external model attempts."
+}

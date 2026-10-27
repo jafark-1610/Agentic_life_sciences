@@ -1,89 +1,63 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
   "status": "success",
   "checks": [
     {
-      "name": "expert_gate_clearance",
+      "name": "omit_cell_dilution",
       "passed": true,
-      "details": {
-        "score": 100.0,
-        "maximum_error_to_tolerance_ratio": 6.666666626150193e-06
-      }
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
     },
     {
-      "name": "exactly_fitting_single_model_fails_science",
+      "name": "assume_complete_transcription_block",
       "passed": true,
-      "details": {
-        "score": 5.0,
-        "maximum_reset_moment_error": 1.5395670849294163e-17,
-        "all_bulk_intervals_satisfied": true,
-        "true_robust_choice_regrets": [
-          0.031732079999999996,
-          0.05390234,
-          0.032014230000000005,
-          0.06050788,
-          0.06958004000000001,
-          0.06127212,
-          0.05904775,
-          0.038671989999999996
-        ],
-        "maximum_choice_regret": 0.06958004000000001,
-        "failed_gate_count": 2248
-      }
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
     },
     {
-      "name": "outer_bounds_do_not_receive_sharpness_credit",
+      "name": "treat_fractions_as_pure",
       "passed": true,
-      "details": {
-        "score": 67.5,
-        "failed_gate_count": 1026
-      }
-    },
-    {
-      "name": "endpoint_occupancy_is_not_first_passage",
-      "passed": true,
-      "details": {
-        "score": 30.0,
-        "failed_gate_count": 2040
-      }
-    },
-    {
-      "name": "independent_pencil_and_joint_enumeration",
-      "passed": true,
-      "details": {
-        "score": 100.0,
-        "failed_gate_count": 0
-      }
-    },
-    {
-      "name": "convexification_audit",
-      "passed": true,
-      "details": {
-        "integer_lower_net": 0.0722831080286474,
-        "relaxed_lower_net": 0.07126680122192823,
-        "gap": 0.0010163068067191722,
-        "active_microscopic_models_per_subtype": [
-          1,
-          1,
-          2
-        ],
-        "interpretation": "Relaxing one generator per physical subtype to a mixture enlarges the admissible class. This audit does not require the gap to exceed a scientific tolerance and is not counted as model difficulty evidence."
-      }
-    },
-    {
-      "name": "correct_science_format_recovery",
-      "passed": true,
-      "details": {
-        "score": 95.0
-      }
-    },
-    {
-      "name": "uncomputed_report_withholds_only_report_credit",
-      "passed": true,
-      "details": {
-        "score": 95.0
-      }
+      "score": 10,
+      "failed_gates": [
+        "base:rates_and_effects",
+        "base:intervals",
+        "base:classes",
+        "base:group_contrasts",
+        "early_window:rates_and_effects",
+        "early_window:intervals",
+        "early_window:classes",
+        "early_window:group_contrasts",
+        "leave_parent_out:rates_and_effects",
+        "leave_parent_out:intervals",
+        "leave_parent_out:classes",
+        "leave_parent_out:group_contrasts"
+      ]
     }
   ],
-  "qualification": "Scientific controls are not Meta Muse attempts. External model qualification remains unverified."
+  "scope": "Wrong-method numerical controls, not external model attempts."
 }

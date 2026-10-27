@@ -1,0 +1,90 @@
+{
+  "role": "simulation accuracy checks, not model runs",
+  "records": [
+    {
+      "seed": 48040,
+      "results": {
+        "export": {
+          "median_absolute_effect_error": 0.038725445595962804,
+          "population_effect_interval_coverage": 0.9483333333333334
+        },
+        "nuclear_decay": {
+          "median_absolute_effect_error": 0.10798478280846643,
+          "population_effect_interval_coverage": 0.9583333333333334
+        },
+        "cytoplasmic_decay": {
+          "median_absolute_effect_error": 0.041111885038729326,
+          "population_effect_interval_coverage": 0.93
+        }
+      }
+    },
+    {
+      "seed": 48041,
+      "results": {
+        "export": {
+          "median_absolute_effect_error": 0.03675071889696631,
+          "population_effect_interval_coverage": 0.9583333333333334
+        },
+        "nuclear_decay": {
+          "median_absolute_effect_error": 0.11242599553566078,
+          "population_effect_interval_coverage": 0.945
+        },
+        "cytoplasmic_decay": {
+          "median_absolute_effect_error": 0.03618260450430918,
+          "population_effect_interval_coverage": 0.95
+        }
+      }
+    },
+    {
+      "seed": 48042,
+      "results": {
+        "export": {
+          "median_absolute_effect_error": 0.038270928210064094,
+          "population_effect_interval_coverage": 0.95
+        },
+        "nuclear_decay": {
+          "median_absolute_effect_error": 0.10340386349211383,
+          "population_effect_interval_coverage": 0.9483333333333334
+        },
+        "cytoplasmic_decay": {
+          "median_absolute_effect_error": 0.0337616695811217,
+          "population_effect_interval_coverage": 0.9633333333333334
+        }
+      }
+    },
+    {
+      "seed": 48043,
+      "results": {
+        "export": {
+          "median_absolute_effect_error": 0.03648831544275419,
+          "population_effect_interval_coverage": 0.9633333333333334
+        },
+        "nuclear_decay": {
+          "median_absolute_effect_error": 0.1027161657422211,
+          "population_effect_interval_coverage": 0.9616666666666667
+        },
+        "cytoplasmic_decay": {
+          "median_absolute_effect_error": 0.03490802453784218,
+          "population_effect_interval_coverage": 0.9483333333333334
+        }
+      }
+    },
+    {
+      "seed": 48044,
+      "results": {
+        "export": {
+          "median_absolute_effect_error": 0.03858709240490615,
+          "population_effect_interval_coverage": 0.9533333333333334
+        },
+        "nuclear_decay": {
+          "median_absolute_effect_error": 0.11366086069919991,
+          "population_effect_interval_coverage": 0.965
+        },
+        "cytoplasmic_decay": {
+          "median_absolute_effect_error": 0.03724410373085151,
+          "population_effect_interval_coverage": 0.9533333333333334
+        }
+      }
+    }
+  ]
+}

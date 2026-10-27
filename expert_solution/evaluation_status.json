@@ -1,84 +1,123 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
+  "case_id": "ALS_RNA_TRANSPORT_006",
   "status": "awaiting_external_model_evaluation",
   "qualification_claim": false,
   "autoreview_score": null,
-  "scientific_snapshot_policy": "Freeze science and grading before external model runs. Changes after responses require a new version, except documented infrastructure repairs.",
-  "prompt_only_pilots": {
+  "prompt_only_model_pilots": {
     "status": "not_run",
-    "reason": "No external model evaluation API is available in this environment. Scientific controls are not model attempts."
+    "reason": "No external model evaluation API is available; numerical controls are not model attempts."
   },
   "model_runs": [
     {
       "run": 1,
-      "status": "not_run",
-      "verdict": null
+      "status": "not_run"
     },
     {
       "run": 2,
-      "status": "not_run",
-      "verdict": null
+      "status": "not_run"
     },
     {
       "run": 3,
-      "status": "not_run",
-      "verdict": null
+      "status": "not_run"
     },
     {
       "run": 4,
-      "status": "not_run",
-      "verdict": null
+      "status": "not_run"
     },
     {
       "run": 5,
-      "status": "not_run",
-      "verdict": null
+      "status": "not_run"
     }
   ],
-  "qualification_rule": "At least three of five fresh ModelEvaluate graders must explicitly return FAIL. Local controls do not establish qualification.",
+  "qualification_rule": "At least three of five fresh platform graders must explicitly return FAIL.",
   "required_solver_slots": [
     "run_pipeline.py",
     "final_answer.json",
     "analysis.md"
   ],
-  "platform_import_status": "Pending external upload; package-side exact path, slot, schema, and hash preflight only.",
+  "verified_standalone_source_sha256": "b5a918d96e23d87c048c1ae935e86037851bd842aba824ede9eaf27cb25c5681",
   "local_checks": {
     "tests": {
       "status": "success",
-      "tests_run": 28,
-      "failures": 0,
+      "tests_run": 12,
       "errors": 0,
-      "seconds": 7.876,
-      "source_sha256": "8525694b4bf21f17b9c42933617d865641d589a86a355002af718296b73d9363"
+      "failures": 0,
+      "seconds": 7.378643222997198
     },
-    "scientific_controls": 8,
-    "independent_implementation_score": 100,
-    "cross_runtime": {
+    "wrong_method_controls": {
       "status": "success",
-      "role": "cross_runtime_scientific_check",
-      "maximum_nonwitness_numeric_difference": 1.000000082740371e-08,
-      "scientific_score": 100.0,
-      "runtime": {
-        "python": "3.13.5",
-        "dependencies": {
-          "numpy": "2.2.4",
-          "scipy": "1.15.3",
-          "jsonschema": "4.19.2"
+      "checks": [
+        {
+          "name": "omit_cell_dilution",
+          "passed": true,
+          "score": 10,
+          "failed_gates": [
+            "base:rates_and_effects",
+            "base:intervals",
+            "base:classes",
+            "base:group_contrasts",
+            "early_window:rates_and_effects",
+            "early_window:intervals",
+            "early_window:classes",
+            "early_window:group_contrasts",
+            "leave_parent_out:rates_and_effects",
+            "leave_parent_out:intervals",
+            "leave_parent_out:classes",
+            "leave_parent_out:group_contrasts"
+          ]
+        },
+        {
+          "name": "assume_complete_transcription_block",
+          "passed": true,
+          "score": 10,
+          "failed_gates": [
+            "base:rates_and_effects",
+            "base:intervals",
+            "base:classes",
+            "base:group_contrasts",
+            "early_window:rates_and_effects",
+            "early_window:intervals",
+            "early_window:classes",
+            "early_window:group_contrasts",
+            "leave_parent_out:rates_and_effects",
+            "leave_parent_out:intervals",
+            "leave_parent_out:classes",
+            "leave_parent_out:group_contrasts"
+          ]
+        },
+        {
+          "name": "treat_fractions_as_pure",
+          "passed": true,
+          "score": 10,
+          "failed_gates": [
+            "base:rates_and_effects",
+            "base:intervals",
+            "base:classes",
+            "base:group_contrasts",
+            "early_window:rates_and_effects",
+            "early_window:intervals",
+            "early_window:classes",
+            "early_window:group_contrasts",
+            "leave_parent_out:rates_and_effects",
+            "leave_parent_out:intervals",
+            "leave_parent_out:classes",
+            "leave_parent_out:group_contrasts"
+          ]
         }
-      },
-      "note": "Attaining witnesses and choices may differ when they meet the physical endpoint and regret limits."
+      ],
+      "scope": "Wrong-method numerical controls, not external model attempts."
     },
     "isolated_scores": [
-      100.0,
-      100.0
+      100,
+      100
     ],
-    "stored_answer_rejected": true,
-    "generation": {
+    "reserved_seeds": 5,
+    "cross_runtime": {
       "status": "success",
-      "public_data_files": 17,
-      "method": "Default generator reproduces every public data file byte-for-byte in a clean staged copy."
+      "scientific_score": 100,
+      "python": "3.13.5",
+      "scope": "Independent Python/SciPy runtime; scientific agreement assessed by the published statistical criteria."
     }
   },
-  "verified_standalone_source_sha256": "2cd89166444263e5ed3c1386b4f79833c6492aa82b513e50f4f7e3491af00a13",
-  "scientific_snapshot_sha256": "f6ecee0804087ac2c33571fb8aed530eb418293d4be627b2eee088d6fe64f6ad"
+  "scientific_snapshot_sha256": "510aeebc9cc5f7961f1645edd10d45c21fae12df63fee3b284dcb03d362f0a13"
 }

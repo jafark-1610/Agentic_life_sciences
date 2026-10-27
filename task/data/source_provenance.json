@@ -1,7 +1,5 @@
 {
-  "case_id": "ALS_HIDDEN_CYCLE_005",
-  "origin": "Original synthetic population experiments",
-  "measurements": "Exact three-replicate reset-outcome population laws stored in float64",
-  "system": "Persistent enzyme subtypes with exchange-coupled mechanochemical cycles",
-  "scope": "Nonclinical method simulation with no external data or annotations"
+  "origin": "Original synthetic two-compartment RNA study",
+  "system": "Export, nuclear destruction and cytoplasmic destruction under partial transcription attenuation",
+  "measurement": "Imperfect fractionation with physical origin standards and log-normal detection censoring"
 }

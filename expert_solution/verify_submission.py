@@ -36,7 +36,7 @@ def stage(path,solver,task):
 
 def verify(solver,out,timeout=600,replay_control=False):
     solver,out=Path(solver).resolve(),Path(out).resolve();out.mkdir(parents=True,exist_ok=True)
-    result=dict(case_id='ALS_HIDDEN_CYCLE_005',role='isolated_source_verification',status='blocked',passed=False,
+    result=dict(case_id='ALS_RNA_TRANSPORT_006',role='isolated_source_verification',status='blocked',passed=False,
                 required_deliverables=['run_pipeline.py','final_answer.json','analysis.md'],
                 runtime={'python':platform.python_version(),'dependencies':{p:importlib.metadata.version(p) for p in ['numpy','scipy','jsonschema']}},runs=[])
     def save():
@@ -47,7 +47,7 @@ def verify(solver,out,timeout=600,replay_control=False):
     with tempfile.TemporaryDirectory(prefix='cycle-isolated-') as tmp:
         work=Path(tmp);base=work/'base';stage(base,solver,HERE.parent/'task')
         canary=work/'private_canary';canary.write_text('unmounted')
-        private=[str(canary),str(HERE/'private/truth.json'),str(HERE/'private/expected_answer.json'),str(HERE/'final_answer.json')]
+        private=[str(canary),str(HERE/'private/truth.npz'),str(HERE/'private/expected_answer.json'),str(HERE/'final_answer.json')]
         probe="import pathlib,json,socket\nblocked=[]\nfor p in "+repr(private)+":\n try:pathlib.Path(p).read_bytes();blocked.append(False)\n except OSError:blocked.append(True)\nro=False\ntry:pathlib.Path('/task/data/forbidden').write_text('x')\nexcept OSError:ro=True\ns=socket.socket();s.settimeout(.5)\ntry:s.connect(('1.1.1.1',443));offline=False\nexcept OSError:offline=True\nprint(json.dumps({'private_reads_denied':all(blocked),'task_read_only':ro,'network_blocked':offline,'task_readable':pathlib.Path('/task/prompt.md').is_file()}))\n"
         (base/'solver/probe.py').write_text(probe);p=subprocess.run(command(base,['probe.py']),capture_output=True,text=True,timeout=20)
         if p.returncode:result['blocker']='namespace unavailable: '+p.stderr.strip();return save()
@@ -55,10 +55,10 @@ def verify(solver,out,timeout=600,replay_control=False):
         if not all(result['isolation'].values()):result['blocker']='isolation probe failed';return save()
         result['mounts']={'/task':'read-only public inputs','/solver':'one submitted source file','/results':'writable output','private':'unmounted','network':'isolated namespace'}
         sys.path.insert(0,str(HERE/'source_archive'));from generate_data import generate
-        mutant=work/'new_experiment';shutil.copytree(HERE.parent/'task',mutant/'task');generate(mutant,perturbation=1)
-        truth=json.loads((mutant/'expert_solution/private/truth.json').read_text());expected_path=work/'new_expected.json'
+        mutant=work/'new_experiment';shutil.copytree(HERE.parent/'task',mutant/'task');generate(mutant,seed=48032)
+        truth=None;expected_path=work/'new_expected.json'
         env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1')
-        trusted=subprocess.Popen([sys.executable,str(HERE/'compute_truth.py'),'--data',str(mutant/'task/data'),'--truth',str(mutant/'expert_solution/private/truth.json'),'--output',str(expected_path)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env)
+        trusted=subprocess.Popen([sys.executable,str(HERE/'compute_expected.py'),'--data',str(mutant/'task/data'),'--output',str(expected_path)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env)
         expected_mutant=None
         for name,task in [('base',HERE.parent/'task'),('regenerated',mutant/'task')]:
             path=base if name=='base' else work/'regenerated'
