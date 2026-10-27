@@ -23,7 +23,8 @@
         "type": "object",
         "required": [
           "genes",
-          "group_contrasts"
+          "group_contrasts",
+          "inference_trace"
         ],
         "properties": {
           "genes": {
@@ -117,6 +118,38 @@
             "type": "array",
             "minItems": 3,
             "maxItems": 3
+          },
+          "inference_trace": {
+            "type": "object",
+            "required": [
+              "parent_indices",
+              "time_indices",
+              "input_sha256",
+              "log2_rates"
+            ],
+            "properties": {
+              "parent_indices": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "time_indices": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "input_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "log2_rates": {
+                "type": "array",
+                "minItems": 600,
+                "maxItems": 600
+              }
+            }
           }
         }
       }

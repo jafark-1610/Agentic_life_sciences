@@ -35,89 +35,68 @@
     "final_answer.json",
     "analysis.md"
   ],
-  "verified_standalone_source_sha256": "b5a918d96e23d87c048c1ae935e86037851bd842aba824ede9eaf27cb25c5681",
+  "revision": "1.1-review-corrections",
+  "last_reported_autoreview_score": 2.5,
+  "corrected_revision_autoreview_score": null,
+  "delivery_owner_L2_status": "Pending external identity-matched reproduction; local receipt is not an owner attestation.",
   "local_checks": {
     "tests": {
       "status": "success",
-      "tests_run": 12,
-      "errors": 0,
+      "tests_run": 24,
       "failures": 0,
-      "seconds": 7.378643222997198
+      "errors": 0,
+      "seconds": 24.760766065999633
     },
-    "wrong_method_controls": {
-      "status": "success",
-      "checks": [
-        {
-          "name": "omit_cell_dilution",
-          "passed": true,
-          "score": 10,
-          "failed_gates": [
-            "base:rates_and_effects",
-            "base:intervals",
-            "base:classes",
-            "base:group_contrasts",
-            "early_window:rates_and_effects",
-            "early_window:intervals",
-            "early_window:classes",
-            "early_window:group_contrasts",
-            "leave_parent_out:rates_and_effects",
-            "leave_parent_out:intervals",
-            "leave_parent_out:classes",
-            "leave_parent_out:group_contrasts"
-          ]
-        },
-        {
-          "name": "assume_complete_transcription_block",
-          "passed": true,
-          "score": 10,
-          "failed_gates": [
-            "base:rates_and_effects",
-            "base:intervals",
-            "base:classes",
-            "base:group_contrasts",
-            "early_window:rates_and_effects",
-            "early_window:intervals",
-            "early_window:classes",
-            "early_window:group_contrasts",
-            "leave_parent_out:rates_and_effects",
-            "leave_parent_out:intervals",
-            "leave_parent_out:classes",
-            "leave_parent_out:group_contrasts"
-          ]
-        },
-        {
-          "name": "treat_fractions_as_pure",
-          "passed": true,
-          "score": 10,
-          "failed_gates": [
-            "base:rates_and_effects",
-            "base:intervals",
-            "base:classes",
-            "base:group_contrasts",
-            "early_window:rates_and_effects",
-            "early_window:intervals",
-            "early_window:classes",
-            "early_window:group_contrasts",
-            "leave_parent_out:rates_and_effects",
-            "leave_parent_out:intervals",
-            "leave_parent_out:classes",
-            "leave_parent_out:group_contrasts"
-          ]
-        }
-      ],
-      "scope": "Wrong-method numerical controls, not external model attempts."
+    "review_regressions": {
+      "correct": {
+        "score": 100,
+        "failed_gates": [],
+        "report_points": 5
+      },
+      "numeric_string_group_estimate": {
+        "score": 95,
+        "failed_gates": [],
+        "report_points": 5
+      },
+      "single_wrong_direction": {
+        "score": 79,
+        "failed_gates": [
+          "base:classes"
+        ],
+        "report_points": 5
+      },
+      "507_unsupported_directional_calls": {
+        "score": 70,
+        "failed_gates": [
+          "base:classes",
+          "early_window:classes",
+          "leave_parent_out:classes"
+        ],
+        "report_points": 5,
+        "altered_calls": 507
+      },
+      "base_copy_with_refreshed_counts": {
+        "score": 79,
+        "failed_gates": [
+          "leave_parent_out:classes",
+          "leave_parent_out:trace"
+        ],
+        "report_points": 5
+      },
+      "counts_only_report": {
+        "score": 95,
+        "report_points": 0
+      }
     },
-    "isolated_scores": [
+    "original_and_regenerated_scores": [
       100,
       100
     ],
-    "reserved_seeds": 5,
-    "cross_runtime": {
-      "status": "success",
-      "scientific_score": 100,
-      "python": "3.13.5",
-      "scope": "Independent Python/SciPy runtime; scientific agreement assessed by the published statistical criteria."
-    }
+    "delivery_identity": "results/delivery_identity.json",
+    "canary_python_and_child_denied": true,
+    "metadata_keyed_replay_rejected": true,
+    "parent_exclusion_response_verified": true
   },
-  "scientific_snapshot_sha256": "510aeebc9cc5f7961f1645edd10d45c21fae12df63fee3b284dcb03d362f0a13"
+  "scientific_snapshot_sha256": "c149b2949a825f97d7e7c61a97bb332e950f90aac863b929cbbff8e01b884f8b",
+  "verified_standalone_source_sha256": "3ad41053bd2438200560320fda0ab527da161e389507eb6c56a7a445148d7d45"
 }

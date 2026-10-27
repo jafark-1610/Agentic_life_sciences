@@ -1,4 +1,4 @@
-import json
+import json,hashlib
 from pathlib import Path
 import numpy as np
 from scipy.special import exprel,log_ndtr
@@ -55,7 +55,7 @@ def inference(est,m,indices,unpaired=False):
  group=[];mask=np.array(m['stress_group'])
  for k,name in enumerate(m['parameters']):
   v=diff[mask,:,k].mean(axis=0)-diff[~mask,:,k].mean(axis=0);s=v.std(ddof=1)/np.sqrt(n);group.append({'parameter':name,'estimate':float(v.mean()),'interval':[float(v.mean()-t.ppf(.975,n-1)*s),float(v.mean()+t.ppf(.975,n-1)*s)]})
- return {'genes':rows,'group_contrasts':group}
+ return {'genes':rows,'group_contrasts':group,'inference_trace':{'parent_indices':list(indices),'log2_rates':values[:,indices,:,1:].tolist()}}
 
 def analyse(data,config):
  m,D=load(data);G=len(m['genes']);P=m['parents'];est=np.zeros((G,P,2,4));analyses={};diagnostics={}
@@ -73,4 +73,7 @@ def analyse(data,config):
     result[:,p,arm]=x;losses.extend(loss.tolist())
   analyses[variant]=inference(result,m,list(range(P)),config.get('unpaired',False));diagnostics[variant]={'mean_deviance':float(np.mean(losses)),'fits':len(losses)}
   if variant=='base':est=result.copy()
+ for setting,body in analyses.items():
+  body['inference_trace']['time_indices']=list(range(len(m['times'])-2 if setting=='early_window' else len(m['times'])))
+  body['inference_trace']['input_sha256']=hashlib.sha256((Path(data)/'hybridization.npz').read_bytes()).hexdigest()
  return {'schema':'rna_transport/1','case_id':m['case_id'],'analyses':analyses},diagnostics

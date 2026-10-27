@@ -16,8 +16,11 @@
         "rates_and_effects": true,
         "intervals": true,
         "classes": true,
-        "group_contrasts": true
-      }
+        "group_contrasts": true,
+        "trace": true
+      },
+      "decision_errors": [],
+      "trace_errors": []
     },
     "early_window": {
       "coverage": 1.0,
@@ -32,8 +35,11 @@
         "rates_and_effects": true,
         "intervals": true,
         "classes": true,
-        "group_contrasts": true
-      }
+        "group_contrasts": true,
+        "trace": true
+      },
+      "decision_errors": [],
+      "trace_errors": []
     },
     "leave_parent_out": {
       "coverage": 1.0,
@@ -48,8 +54,11 @@
         "rates_and_effects": true,
         "intervals": true,
         "classes": true,
-        "group_contrasts": true
-      }
+        "group_contrasts": true,
+        "trace": true
+      },
+      "decision_errors": [],
+      "trace_errors": []
     }
   },
   "report_points": 5,

@@ -1,0 +1,41 @@
+{
+  "correct": {
+    "score": 100,
+    "failed_gates": [],
+    "report_points": 5
+  },
+  "numeric_string_group_estimate": {
+    "score": 95,
+    "failed_gates": [],
+    "report_points": 5
+  },
+  "single_wrong_direction": {
+    "score": 79,
+    "failed_gates": [
+      "base:classes"
+    ],
+    "report_points": 5
+  },
+  "507_unsupported_directional_calls": {
+    "score": 70,
+    "failed_gates": [
+      "base:classes",
+      "early_window:classes",
+      "leave_parent_out:classes"
+    ],
+    "report_points": 5,
+    "altered_calls": 507
+  },
+  "base_copy_with_refreshed_counts": {
+    "score": 79,
+    "failed_gates": [
+      "leave_parent_out:classes",
+      "leave_parent_out:trace"
+    ],
+    "report_points": 5
+  },
+  "counts_only_report": {
+    "score": 95,
+    "report_points": 0
+  }
+}

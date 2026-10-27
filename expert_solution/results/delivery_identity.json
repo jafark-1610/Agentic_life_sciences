@@ -1,0 +1,27 @@
+{
+  "scope": "Local disposable-runtime verification; delivery-owner/L2 attestation remains pending.",
+  "verified_source_artifact": "expert_solution/results/verified_submission/run_pipeline.py",
+  "verified_source_sha256": "3ad41053bd2438200560320fda0ab527da161e389507eb6c56a7a445148d7d45",
+  "modular_expert_entrypoint": "expert_solution/run_pipeline.py",
+  "modular_entrypoint_sha256": "7fa7fae25ea37439b61a10274392ddd416a80484a7e78b5484866258fa83bfdb",
+  "build": "python expert_solution/export_solver.py --output /tmp/rna-delivered/run_pipeline.py",
+  "owner_reproduction": "python expert_solution/verify_submission.py --solver expert_solution/results/verified_submission --output-dir /tmp/rna-owner-receipt --replay-control",
+  "receipt": "expert_solution/results/verification_result.json",
+  "receipt_sha256": "f4ae32345f845f61bf3eccf9160af2078b8d70f22a65fbab3903fb0e43fa1d63",
+  "identities": {
+    "scientific_snapshot_sha256": "c149b2949a825f97d7e7c61a97bb332e950f90aac863b929cbbff8e01b884f8b",
+    "verifier_sha256": "7e20a570966ccaa727efee36fb2b06b2e0d35186da5ee3ed13955f00747cd55f",
+    "grader_sha256": "65df3c69634ab887afdf3ca92b46397004ac28ca2f26c421a192c1efb0c9a241",
+    "configuration_sha256": "247bff62457911b971c49dc98e933079c36f64f22001a80a3028f40d1913ece5",
+    "rubric_sha256": "387f8e6ad898644070fb385c6c0e002f1dd46c46c00bd7e91b366426f6c3cc07",
+    "submitted_source_sha256": "3ad41053bd2438200560320fda0ab527da161e389507eb6c56a7a445148d7d45",
+    "python_executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "host_euid": 1000,
+    "host_egid": 1000,
+    "verification_scope": "local disposable runtime; delivery-owner/L2 attestation remains external"
+  },
+  "controlled_source_artifacts": {
+    "expert_solution/results/delivered_controls/missing_report/run_pipeline.py": "85cd75f78d2f53528a9336b2e5e7ba4016f9d758ff874039c6c21ecb81285ad7",
+    "expert_solution/results/delivered_controls/harmless_comment/run_pipeline.py": "d0c62a8ecdf8455631c9a05522845657eb9516fb763277959a28d24fb4af5c92"
+  }
+}

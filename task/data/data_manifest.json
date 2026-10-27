@@ -8,17 +8,13 @@
       "bytes": 1339,
       "sha256": "9d22ba5d4108478db35b82fa260dd7304a40a884e27b270c11a33253e0f8a2d5"
     },
-    "grading_contract.json": {
-      "bytes": 291,
-      "sha256": "cced29de6611b4e1f0bf90d7f7b73b12bb9dfd8895ea884fce8c8ed9cc5cd6af"
-    },
     "hybridization.npz": {
       "bytes": 986600,
       "sha256": "cf306ed5ee448629343f29c17e616897c8dda7b29b7e297a5320f175d94fb7a4"
     },
     "output_schema.json": {
-      "bytes": 3425,
-      "sha256": "824ff0afa60e8f1dc1b22ca8074f11fa747d91852d30fdad32c26fc039597385"
+      "bytes": 4329,
+      "sha256": "69cc3c2592b64a70aed6c77ff458a4d1841a5751b768ce36e8df3130f466c396"
     },
     "source_provenance.json": {
       "bytes": 284,

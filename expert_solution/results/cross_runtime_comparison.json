@@ -1,6 +1,7 @@
 {
   "status": "success",
+  "revision": "1.1",
   "scientific_score": 100,
-  "python": "3.13.5",
-  "scope": "Independent Python/SciPy runtime; scientific agreement assessed by the published statistical criteria."
+  "grader_sha256": "65df3c69634ab887afdf3ca92b46397004ac28ca2f26c421a192c1efb0c9a241",
+  "scope": "Corrected inference and report evaluated in the alternate Python runtime."
 }

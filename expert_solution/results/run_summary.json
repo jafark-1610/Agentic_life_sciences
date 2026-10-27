@@ -2,7 +2,7 @@
   "case_id": "ALS_RNA_TRANSPORT_006",
   "status": "success",
   "exit_code": 0,
-  "seconds": 35.45107850400382,
+  "seconds": 62.18985109598725,
   "python": "3.12.14",
   "required_deliverables": [
     "run_pipeline.py",
@@ -28,6 +28,6 @@
       "fits": 7200
     }
   },
-  "answer_sha256": "f38d8dd9bf7877f09f23364bc76051ffef087cf25abac2fffe3a24ab96c1f498",
-  "data_manifest_sha256": "9363701c46c8f073d126affeb83d5e9446f9459986db335394247d4867f4bd55"
+  "answer_sha256": "f6c75cdbff1512b99d902c4d7bc1ee0138fd3b7f8c2b43662dc0a5b6c37bf82f",
+  "data_manifest_sha256": "23ee065fd51138b7f1a8012113a3c8ef8572b906bef7a42becb7957566083c84"
 }
